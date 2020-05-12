@@ -180,6 +180,7 @@
     height: 1em;
   }
 
+/*Responsive browser for Desktop: Window width re-size*/
   @media (max-width:761px) {
     .grid {
         max-width:400px;
@@ -189,3 +190,23 @@
         width:400px;
     }
   }
+/*Responsive browser for Mobile: Portrait Orientation*/
+@media screen and (max-width: 479px) and (orientation: portrait) {
+.grid {
+        max-width:400px;
+    }
+	
+.buttonNav {
+        width:400px;
+    }
+}
+/*Responsive browser for Mobile: Landscape Orientation*/
+/*@media screen and (max-width: 479px) and (orientation: landscape) {
+/*.grid {
+        max-width: device-width;
+		padding: 3rem 0;
+    }	
+.buttonNav {
+        width:400px;
+    }
+}*/

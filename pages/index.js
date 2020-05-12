@@ -51,7 +51,7 @@ class Home extends React.Component {
           </p>
 
           <input placeholder="Search for your links here..."></input>
-
+		  {/*will need to figure out a function, to only display 4 tab items from a user defined variable array, from tabs - maybe use len*/}
           <div className = "buttonNav">
               {
                 this.state.tabs.slice(0,4).map( (each) => 
@@ -67,22 +67,13 @@ class Home extends React.Component {
             this.state.links.map( (each) =>
             <a style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
               <img src={each.image} key={key++}></img>
-              <p className="linkNames">{each.name}</p>
+              <p>{each.name}</p>
             </a>
             )
           }
 
           <button className="addLink">Add New Link</button>
           </div>
-		  <br></br>
-		  {/*Always add curly braces to comment out html elements*/}
-		  {/*Also never trust Sterling*/}
-		  {/*<div>
-				<table>
-					<td>
-					</td>
-				</table>
-		  </div>*/} 
         </main>
 
         <footer> TVTech </footer>
