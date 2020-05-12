@@ -74,9 +74,14 @@ class Home extends React.Component {
 
           <button className="addLink">Add New Link</button>
           </div>
-		   //<div>
-		//<p> This is test text </p>
-	  //</div>
+		  <br>
+		  <!-- <div>
+			<table id=testTable>
+				<tr>
+					<td>THIS IS A TEST CELL</td>
+				</tr>
+			</table>
+		  </div> -->
         </main>
 
         <footer> TVTech </footer>
