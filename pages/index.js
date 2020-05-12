@@ -74,14 +74,15 @@ class Home extends React.Component {
 
           <button className="addLink">Add New Link</button>
           </div>
-		  <br>
-		  /*<!-- <div>
-			<table id=testTable>
-				<tr>
-					<td>THIS IS A TEST CELL</td>
-				</tr>
-			</table>
-		  </div> -->*/
+		  <br></br>
+		  {/*Always add curly braces to comment out html elements*/}
+		  {/*Also never trust Sterling*/}
+		  {/*<div>
+				<table>
+					<td>
+					</td>
+				</table>
+		  </div>*/} 
         </main>
 
         <footer> TVTech </footer>
