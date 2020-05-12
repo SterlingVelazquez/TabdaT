@@ -93,6 +93,9 @@ class Home extends React.Component {
           }
         `}</style>
       </div>
+	  <div>
+		<p> This is test text </p>
+	  </div>
     )
   }
 }
