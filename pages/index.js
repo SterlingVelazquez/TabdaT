@@ -74,9 +74,9 @@ class Home extends React.Component {
 
           <button className="addLink">Add New Link</button>
           </div>
-		   <div>
-		<p> This is test text </p>
-	  </div>
+		   //<div>
+		//<p> This is test text </p>
+	  //</div>
         </main>
 
         <footer> TVTech </footer>
