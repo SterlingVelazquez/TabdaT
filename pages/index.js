@@ -5,7 +5,7 @@ import {database} from "../tools/database.js";
 import "./_app.js"
 
 var key=0;
-
+//This is a comment
 class Home extends React.Component {
 
   constructor (props) {
