@@ -1,0 +1,5 @@
+var num1 = {
+    name: "Bank Of America",
+    image: "bankofamerica-icon.jpg",
+    link: "https://www.bankofamerica.com/"
+}
