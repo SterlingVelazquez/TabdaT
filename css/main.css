@@ -71,6 +71,7 @@
 
   .searchBar {
       width:80%;
+      min-width:400px;
       padding: 6px 2%;
       font-size: 16px;
       font-family:'Noto Sans JP', sans-serif;
@@ -106,8 +107,8 @@
   }
 
   .addTabPlus {
-    position:absolute;
-    margin:10px 0px 0px 30px;
+    position:relative;
+    margin:10px 30px 0px 30px;
     height:15px;
     width:auto;
     box-shadow:none;
@@ -128,13 +129,14 @@
       margin:6px 5px;
       font-size:15px;
       border:none;
-      border-bottom:0px solid white;
+      border-bottom:0px solid;
+      text-shadow:1px 1px 2px gray;
       background-color:transparent;
       font-family:'Noto Sans JP', sans-serif;
       overflow:hidden;
       text-overflow:ellipsis;
       cursor:pointer;
-      transition:0.3s;
+      transition:0.1s;
   }
 
   .navBtns:active,

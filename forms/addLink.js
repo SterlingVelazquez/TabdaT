@@ -9,13 +9,17 @@ class AddLink extends React.Component {
             name : "", 
             link : "", 
             image : "",
-            uid : this.props.userId
+            uid : this.props.userId,
+            selectedTab : this.props.currTab,
         };
         this.submitForm = this.submitForm.bind(this);
     }
 
     static getDerivedStateFromProps(props) {
-        return {uid : props.userId}
+        return {
+            uid : props.userId,
+            selectedTab : props.currTab
+            }
     }
     
     setName(event) {
@@ -43,18 +47,18 @@ class AddLink extends React.Component {
         return (
             <div className="addForm" id="AddFormDiv">
                 <form id="addFormDiv" onSubmit={this.submitForm}>
-                    <h1> Add a New Link </h1>
-                    <label><b>Name</b></label>
+                    <h1> ADD NEW LINK </h1>
+                    <label><b>Title</b></label>
                     <input type="text" name="linkName" onChange={e =>this.setName(e)} required/>
 
-                    <label><b>Link</b></label>
+                    <label><b>URL</b></label>
                     <input type="text" name="link" onChange={e => this.setLink(e)} required/>
 
-                    <label><b>Image</b></label>
-                    <input type="text" name="image" onChange={e => this.setImage(e)} required/>
+                    <label style={{float:"none"}}><b>Image</b></label>
+                    <br/>
 
-                    <button type="submit" className="submit">Submit</button>
-                    <button type="button" className="submit" onClick={closeAddForm}>Close</button>
+                    <button type="submit" className="submit"><b>SUBMIT</b></button>
+                    <img src="x.png" className="submit" onClick={closeAddForm}></img>
                 </form>
             </div>
         );
