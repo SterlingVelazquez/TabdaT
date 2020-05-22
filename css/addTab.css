@@ -1,0 +1,16 @@
+.addTabForm {
+    position:relative;
+    width:0;
+    height:0;
+    opacity:0;
+    float:right;
+    margin-right:2%;
+    margin-top:0.5%;
+    background:red;
+    z-index:9;
+    font-family:'Noto Sans JP', sans-serif;
+  }
+
+.addTabForm label {
+  padding:8px;
+}

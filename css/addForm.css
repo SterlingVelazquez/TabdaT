@@ -1,0 +1,92 @@
+.addForm {
+    position: fixed;
+    width: 763px;
+    height:0px;
+    left: calc(50% - 385px);
+    top: 18%;
+    fill: white;
+    background-color: white;
+    z-index: 9;
+    border-radius: 10px;
+    overflow:hidden;
+    transition:0.5s;
+    opacity:0;
+}
+
+.addForm h1 {
+    margin-left: 3%;
+    font-size:30px;
+    color:rgba(0, 74, 160, 0.8);
+}
+
+.addForm input[type=text] {
+    width: 90%;
+    padding: 8px;
+    margin: 5px 3% 22px 3%;
+    border: none;
+    background: #f1f1f1;
+    font-size: large;
+    font-family: 'Roboto', sans-serif;
+}
+
+.addForm textarea {
+    width: 88%;
+    height:150px;
+    padding: 15px;
+    margin: 5px 3% 22px 3%;
+    border: none;
+    background: #f1f1f1;
+    font-size: large;
+    resize: none;
+    font-family: 'Roboto', sans-serif;
+}
+
+.addForm label {
+    margin-left: 3%;
+}
+
+.addForm button {
+    margin: 2%;
+    margin-bottom:0%;
+    right:15px;
+    bottom:20px;
+    background: linear-gradient( #45484d 0%,#000000 100%);
+    color: white;
+    border-radius:10px;
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 17px;
+    font-family: "Roboto", serif;
+    position:relative;
+    float: right;
+    transition:0.5s;
+}
+
+.addForm button:hover {
+    background: #ddd;
+    color: black;
+    cursor:pointer;
+}
+
+.addForm button:focus {
+    outline:none;
+}
+
+.addForm select {
+    width: 30%;
+    padding: 8px;
+    margin: 5px 3% 22px 3%;
+    border: none;
+    background: #f1f1f1;
+    font-size: large;
+    font-family: 'Roboto', sans-serif;
+}
+
+.addForm {
+    animation: fadeEffect 0.4s; 
+  }
+  
+  @keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
