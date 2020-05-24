@@ -149,6 +149,7 @@ class Home extends React.Component {
   }
 
   openAddLink() {
+    document.getElementById("AddFormDiv").style.pointerEvents = "all";
     document.getElementById("AddFormDiv").style.height = "390px";
     document.getElementById("AddFormDiv").style.opacity = "1";
     document.getElementById("shadow").style.opacity = "0.4";

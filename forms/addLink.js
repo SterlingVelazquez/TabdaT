@@ -57,6 +57,19 @@ class AddLink extends React.Component {
                     <label style={{float:"none"}}><b>Image</b></label>
                     <br/>
 
+                    <div className="imgContainer">
+                        <div className="defaultImg">
+                        </div>
+                        <p className="imgLabel">Default</p>
+                    </div>
+                    
+                    <div className="imgContainer">
+                        <div style={{backgroundColor:"rgba(144, 156, 175, 0.8)"}} className="defaultImg">
+                            <img src="white-arrow.png"></img>
+                        </div>
+                        <p className="imgLabel">Upload</p>
+                    </div>
+
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img src="x.png" className="submit" onClick={closeAddForm}></img>
                 </form>
@@ -68,6 +81,7 @@ class AddLink extends React.Component {
 function closeAddForm() {
     document.getElementById("AddFormDiv").style.height = "0";
     document.getElementById("AddFormDiv").style.opacity = "0";
+    document.getElementById("AddFormDiv").style.pointerEvents = "none";
     document.getElementById("shadow").style.opacity = "0";
     document.getElementById("shadow").style.height = "0";
     document.getElementById("addFormDiv").reset();

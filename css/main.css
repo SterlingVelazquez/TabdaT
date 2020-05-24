@@ -4,6 +4,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align:center;
     background-color:rgb(249, 251, 253);
   }
 
@@ -43,7 +44,7 @@
     height:35px;
     width:110px;
     top:2rem;
-    right:2rem;
+    right:3rem;
     cursor:pointer;
   }
 
@@ -94,7 +95,7 @@
   :-ms-input-placeholder { /* Internet Explorer 10-11 */
     color: rgb(165, 165, 165);
   }
-  
+
   ::-ms-input-placeholder { /* Microsoft Edge */
     color: rgb(165, 165, 165);
   }
@@ -107,7 +108,7 @@
   }
 
   .addTabPlus {
-    position:relative;
+    position:absolute;
     margin:10px 30px 0px 30px;
     height:15px;
     width:auto;
@@ -153,7 +154,6 @@
   }
 
   .signIn:after {
-    content:"Sign In To Google";
     margin-left:30px;
   }
 
@@ -201,6 +201,7 @@
     width:200px;
     height:35px;
     cursor:pointer;
+    text-align:left;
   }
 
   .addLink {

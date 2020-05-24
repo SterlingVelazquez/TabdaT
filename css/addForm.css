@@ -4,15 +4,16 @@
     padding:20px;
     padding-top:6px;
     width: 300px;
-    height:0px;
-    left: calc(50% - 200px);
-    top: 5%;
+    min-height:460px;
+    left: calc(50% - 170px);
+    top: calc(50% - 230px);
     background-color: rgb(246, 247, 253);
     z-index: 9;
     border-radius: 10px;
     overflow:hidden;
     transition:0.5s;
     opacity:0;
+    pointer-events:none;
     font-family:'Noto Sans JP', sans-serif;
 }
 
@@ -25,7 +26,7 @@
 .addForm input[type=text] {
     width: 90%;
     padding: 8px;
-    margin: 0px 3% 30px 2%;
+    margin: 0px 3% 25px 2%;
     border: none;
     border-bottom:1px solid rgba(99, 109, 126, 0.8);
     background: none;
@@ -43,8 +44,40 @@
     float:left;
 }
 
-.addForm button {
-    bottom:15px;
+.imgContainer {
+    display:inline-block;
+    text-align:center;
+    margin:5% 7% 1% 7%;
+    width:80px;
+    height:105px;
+    border:none;
+}
+
+.imgContainer .defaultImg img {
+    position:relative;
+    width:40px;
+    height:auto;
+    right:11.6%;
+    top:22%;
+}
+
+.imgContainer .imgLabel {
+    text-align:left;
+    margin-top:2px;
+    margin-left:18px;
+    color:rgba(99, 109, 126, 0.8);
+}
+
+.imgContainer .defaultImg {
+    width:80px;
+    height:80px;
+    border-radius:10px;
+    border:1px solid rgba(144, 156, 175, 0.8);
+}
+
+.addForm button.submit {
+    position:relative;
+    top:-32px;
     background: rgb(246, 247, 253);
     color: rgba(99, 109, 126, 0.8);
     border:none;
@@ -56,14 +89,13 @@
     transition:0.5s;
 }
 
-.addForm button:hover {
-    background: #ddd;
-    color: black;
+.addForm button.submit:hover {
+    color: rgb(26, 51, 122);
     cursor:pointer;
-    padding:6px 50px;
+    padding:6px 100px;
 }
 
-.addForm button:focus {
+.addForm button.submit:focus {
     outline:none;
 }
 
