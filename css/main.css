@@ -41,7 +41,7 @@
 
   .title {
     position:relative;
-    padding-top:12rem;
+    padding-top:8rem;
     padding-bottom:3rem;
     margin: 0;
     width:auto;
@@ -318,7 +318,7 @@
       padding-top:24rem;
     }
     100% {
-      padding-top:12rem;
+      padding-top:8rem;
     }
   }
 
