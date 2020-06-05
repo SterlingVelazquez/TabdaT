@@ -6,26 +6,58 @@ class AddLink extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            name : "", 
-            link : "", 
-            image : "",
-            uid : this.props.userId
+            name : null, 
+            link : null, 
+            image : null,
+            defaultImg: "defaultImg/doggo.png",
+            uid : this.props.userId,
+            selectedTab : this.props.currTab,
         };
         this.submitForm = this.submitForm.bind(this);
     }
 
     static getDerivedStateFromProps(props) {
-        return {uid : props.userId}
+        return {
+            uid : props.userId,
+            selectedTab : props.currTab
+        }
     }
-    
+
     setName(event) {
-        this.setState({name: event.target.value});
+        if (event.target.value !== "") {
+            this.setState({
+                name: event.target.value,
+                defaultImg: "defaultImg/" + event.target.value.charAt(0).toUpperCase() + ".png"
+            })
+        } else {
+            this.setState({
+                name: event.target.value,
+                defaultImg: "defaultImg/doggo.png"
+            })
+        }
     }
     setLink(event) {
         this.setState({link: event.target.value});
     }
     setImage(event) {
-        this.setState({image: event.target.value});
+        event.stopPropagation();
+        document.getElementById("fileUploader").addEventListener('change', async (event) => {
+            if (event.target.files.length !== 0) {
+                var files = event.target.files, reader = new FileReader();
+                reader.onload = function () {
+                    document.getElementById("outimage").src = reader.result;
+                }
+                reader.readAsDataURL(files[0])
+                this.setState({image: event.target.files})
+                if (document.getElementById("uploadimg").className !== "imgContainer active")
+                    this.toggleDefault();
+            }
+        })
+    }
+
+    toggleDefault() {
+        document.getElementById("defaultimg").classList.toggle("active");
+        document.getElementById("uploadimg").classList.toggle("active");
     }
 
     async submitForm(event) {
@@ -39,35 +71,59 @@ class AddLink extends React.Component {
         closeAddForm();
     }
 
+    async closeAddForm() {
+        document.getElementById("AddFormDiv").style.opacity = "0";
+        document.getElementById("AddFormDiv").style.top = "-500px";
+        document.getElementById("AddFormDiv").style.boxShadow = "0 0 0 rgb(246, 247, 253)";
+        document.getElementById("shadow").style.opacity = "0";
+        document.getElementById("shadow").style.height = "0";
+        document.getElementById("addFormDiv").reset();
+        window.formOpen = false;
+        this.setState({
+            image: null,
+            defaultImg: "defaultImg/doggo.png"
+        })
+        if (document.getElementById("uploadimg").className === "imgContainer active") {
+            this.toggleDefault();
+        }
+        document.getElementById("outimage").src = "arrow.png";
+    }
+
     render () {
         return (
             <div className="addForm" id="AddFormDiv">
                 <form id="addFormDiv" onSubmit={this.submitForm}>
-                    <h1> Add a New Link </h1>
-                    <label><b>Name</b></label>
+                    <h1> ADD NEW LINK </h1>
+                    <label><b>Title</b></label>
                     <input type="text" name="linkName" onChange={e =>this.setName(e)} required/>
 
-                    <label><b>Link</b></label>
+                    <label><b>URL</b></label>
                     <input type="text" name="link" onChange={e => this.setLink(e)} required/>
 
-                    <label><b>Image</b></label>
-                    <input type="text" name="image" onChange={e => this.setImage(e)} required/>
+                    <label style={{float:"none"}}><b>Image</b></label>
+                    <br/>
 
-                    <button type="submit" className="submit">Submit</button>
-                    <button type="button" className="submit" onClick={closeAddForm}>Close</button>
+                    <div id="defaultimg" onClick={e => this.toggleDefault()} className="imgContainer active">
+                        <div className="defaultImg">
+                            <img src={this.state.defaultImg}></img>
+                        </div>
+                        <p className="imgLabel">Default</p>
+                    </div>
+                    
+                    <div onClick={e => this.toggleDefault()} id="uploadimg" className="imgContainer">
+                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept=".png"></input>
+                            <div className="defaultImg">
+                                <img id="outimage" src="arrow.png"></img>
+                            </div>
+                        <p className="imgLabel">Upload</p>
+                    </div>
+
+                    <button type="submit" className="submit"><b>SUBMIT</b></button>
+                    <img type="button" src="cancel.png" className="submit" onClick={e => this.closeAddForm()}></img>
                 </form>
             </div>
         );
     }
-}
-
-function closeAddForm() {
-    document.getElementById("AddFormDiv").style.height = "0";
-    document.getElementById("AddFormDiv").style.opacity = "0";
-    document.getElementById("shadow").style.opacity = "0";
-    document.getElementById("shadow").style.height = "0";
-    document.getElementById("addFormDiv").reset();
-    window.formOpen = false;
 }
 
 export default AddLink;

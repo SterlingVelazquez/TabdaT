@@ -1,16 +1,137 @@
-.addTabForm {
+.addTabDiv {
     position:relative;
-    width:0;
-    height:0;
-    opacity:0;
-    float:right;
-    margin-right:2%;
-    margin-top:0.5%;
-    background:red;
+    display:inline-block;
+    max-width:0px;
+    max-height:100px;
+    font-size:15px;
+    opacity:1;
     z-index:9;
     font-family:'Noto Sans JP', sans-serif;
+    transition:1s;
   }
+.addTabDiv.active {
+  max-width:180px;
+  margin:11px 0px 11px 10px;
+}
 
-.addTabForm label {
+.addTabPlus {  
+    position:absolute;
+    top:35px;
+    height:15px;
+    margin-left:-8px;
+    width:auto;
+    box-shadow:none;
+    cursor:none;
+    pointer-events:none;
+    opacity:0;
+    transition:0.5s;
+  }
+.addTabPlus:focus,
+.addTabPlus:hover {
+      outline:none;
+      color:blue;
+      font-size:20px;
+  }
+.addTabPlus.active {
+  margin-top:3px;
+  opacity:1;
+  pointer-events:all;
+  cursor:pointer;
+}
+
+.addTabDiv label {
   padding:8px;
+}
+
+.tabInput {
+  border-bottom:thin solid gray;
+  font-size:15px;
+  width:85%;
+  margin-top:40px;
+  padding-right:15%;
+  text-shadow:1px 1px 2px gray;
+  opacity:0;
+  pointer-events:none;
+  transition:margin-top 0.5s, opacity 0.5s;
+}
+.tabInput.active {
+  pointer-events:all;
+  margin-top:3px;
+  opacity:1;
+}
+
+.colorPicker {
+  position:absolute;
+  right:0;
+  top:40px;
+  opacity:0;
+  width:20px;
+  cursor:pointer;
+  pointer-events:none;
+  transition:top 0.5s linear 0.2s, opacity 0.5s linear 0.2s;
+}
+.colorPicker.active {
+  pointer-events:all;
+  top:0;
+  opacity:1;
+}
+
+.tabCancel {
+  position:absolute;
+  left:0;
+  top:65px;
+  padding:5px 10px;
+  color: rgb(95, 95, 95);
+  letter-spacing:1px;
+  cursor:pointer;
+  pointer-events:none;
+  opacity:0;
+  transition:top 0.5s linear 0.4s, opacity 0.5s linear 0.4s, color 0.5s, letter-spacing 0.5s;
+}
+.tabCancel:hover {
+  color:rgb(115, 153, 235);
+  letter-spacing:0px;
+}
+.tabCancel.active {
+  pointer-events:all;
+  top:25px;
+  opacity:1;
+}
+
+.tabSubmit {
+  position:absolute;
+  right:0;
+  top:65px;
+  padding:5px 10px;
+  color: rgb(95, 95, 95);
+  letter-spacing:1px;
+  cursor:pointer;
+  pointer-events:none;
+  opacity:0;
+  transition:top 0.5s linear 0.6s, opacity 0.5s linear 0.6s, color 0.5s, letter-spacing 0.5s;
+}
+.tabSubmit:hover {
+  color:rgb(115, 153, 235);
+  letter-spacing:0px;
+}
+.tabSubmit.active {
+  pointer-events:all;
+  top:25px;
+  opacity:1;
+}
+
+.tabInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgb(165, 165, 165);
+  opacity: 1; /* Firefox */
+  text-shadow:none;
+}
+
+.tabInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgb(165, 165, 165);
+  text-shadow:none;
+}
+
+.tabInput::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgb(165, 165, 165);
+  text-shadow:none;
 }

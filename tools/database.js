@@ -2,9 +2,9 @@ import {firebase} from '../tools/config.js'
 
 class Database {
 
-    async getDefaultTabs() {
+    async getTabs(user) {
         var tabs = [];
-        await firebase.database().ref('default/Tabs').orderByChild("pos").once('value').then(async function(snapshot) {
+        await firebase.database().ref(user + '/Tabs').orderByChild("pos").once('value').then(async function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
                 tabs.push({
                     name: childSnapshot.val()["name"],
@@ -15,9 +15,9 @@ class Database {
         return tabs;
     }
 
-    async getDefaultLinks(tab) {
+    async getLinks(user, tab) {
         var links = [];
-        await firebase.database().ref('default/Links').orderByChild("tab").equalTo(tab).once('value').then(async function(snapshot) {
+        await firebase.database().ref(user + '/Links').orderByChild("tab").equalTo(tab).once('value').then(async function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
                 links.push({
                     name: childSnapshot.val()["name"],

@@ -1,19 +1,30 @@
+  * {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+  }
+
   .container {
     min-height: 100vh;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align:center;
     background-color:rgb(249, 251, 253);
   }
 
   main {
-    padding: 5rem 0;
+    height:100vh;
+    padding: 0 0;
     flex: 1;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    text-align:center;
+    overflow-x:hidden;
   }
 
   .shadow {
@@ -29,21 +40,47 @@
   }
 
   .title {
+    position:relative;
+    padding-top:12rem;
+    padding-bottom:3rem;
     margin: 0;
     width:auto;
     height:auto;
     line-height: 1.15;
     font-size: 4rem;
     text-align: center;
-    padding-bottom:3rem;
+    animation:titleSlide 3s;
+  }
+
+  .letter {
+    font-family:'Segoe UI', sans-serif;
+    margin-right:4px;
+  }
+
+  .letter:nth-child(1) { animation:fadeIn 0.4s; }
+  .letter:nth-child(2) { animation:fadeIn 0.8s; }
+  .letter:nth-child(3) { animation:fadeIn 1.2s; }
+  .letter:nth-child(4) { animation:fadeIn 1.5s; }
+  .letter:nth-child(5) { animation:fadeIn 1.8s; }
+  .letter:nth-child(6) { animation:fadeIn 2s; }
+
+  .bodyBox {
+    animation: bodyFade 5s;
   }
 
   .profilePic {
     position:fixed;
+    text-align:left;
+    z-index:8;
     height:35px;
-    width:110px;
-    top:2rem;
-    right:2rem;
+    width:100px;
+    padding:10px;
+    border:none;
+    background-color:rgb(249, 251, 253);
+    border-radius:20px;
+    box-shadow:0px 0px 15px rgb(249, 251, 253);
+    top:1.2rem;
+    right:1.8rem;
     cursor:pointer;
   }
 
@@ -58,8 +95,7 @@
 
   .profilePic p {
     display:inline;
-    margin:0;
-    padding:10px;
+    margin:5px 0 0 0;
     padding-right:15px;
     font-size:16px;
     transition:0.5s;
@@ -67,11 +103,15 @@
 
   .profilePic:hover p {
     font-size:17px;
+    box-shadow:0px 0px 100px rgb(249, 251, 253);
   }
 
   .searchBar {
+      position:relative;
       width:80%;
-      padding: 6px 2%;
+      max-width:800px;
+      min-width:200px;
+      padding: 6px 18px;
       font-size: 16px;
       font-family:'Noto Sans JP', sans-serif;
       border: none;
@@ -93,55 +133,45 @@
   :-ms-input-placeholder { /* Internet Explorer 10-11 */
     color: rgb(165, 165, 165);
   }
-  
+
   ::-ms-input-placeholder { /* Microsoft Edge */
     color: rgb(165, 165, 165);
   }
 
   .buttonNav {
-    height:30px;
+    display:inline-flex;
+    height:45px;
     margin-top: 2.5rem;
     margin-bottom:10px;
     text-align:center;
   }
 
-  .addTabPlus {
-    position:absolute;
-    margin:10px 0px 0px 30px;
-    height:15px;
-    width:auto;
-    box-shadow:none;
-    cursor:pointer;
-    transition:0.5s;
-  }
-
-  .addTabPlus:focus,
-  .addTabPlus:hover {
-      outline:none;
-      color:blue;
-      font-size:20px;
-  }
-
   .navBtns {
       text-align:center;
       width:180px;
-      margin:6px 5px;
+      margin:6px 20px 6px 0px;
       font-size:15px;
       border:none;
-      border-bottom:0px solid white;
+      border-bottom:0px solid;
+      text-shadow:1px 1px 2px gray;
       background-color:transparent;
       font-family:'Noto Sans JP', sans-serif;
       overflow:hidden;
       text-overflow:ellipsis;
       cursor:pointer;
-      transition:0.3s;
+      transition:0.1s;
   }
 
-  .navBtns:active,
-  .navBtns:focus,
-  .navBtns:hover {
-      outline:none;
-      border-bottom:2px solid black;
+  .navBtnBottom {
+    height:2px;
+    margin-left:10%;
+    width:0%;
+    transition:0.5s;
+    box-shadow: 0px 0px 1px gray;
+  }
+  .navBtns:hover .navBtnBottom,
+  .navBtns.active .navBtnBottom {
+    width:80%;
   }
 
   .signIn {
@@ -151,13 +181,12 @@
   }
 
   .signIn:after {
-    content:"Sign In To Google";
     margin-left:30px;
   }
 
   .grid {
-    display: flex;
-    align-items: center;
+    display:inline-flex;
+    text-align:center;
     justify-content: center;
     flex-wrap: wrap;
 
@@ -196,13 +225,17 @@
 
   .addContainer {
     position:relative;
+    display:inline-flex;
     width:200px;
     height:35px;
+    margin-top:10px;
     cursor:pointer;
+    text-align:left;
   }
 
   .addLink {
       position:absolute;
+      text-align:center;
       width:200px;
       height:35px;
       box-shadow:3px 3px 5px rgb(195, 195, 195);
@@ -252,6 +285,8 @@
   }
 
   footer {
+    position:absolute;
+    bottom:0;
     width: 100%;
     height: 50px;
     border-top: 1px solid #eaeaea;
@@ -273,6 +308,45 @@
 
   .logo {
     height: 1em;
+  }
+
+  @keyframes titleSlide {
+    0% {
+      padding-top:24rem;
+    }
+    50% {
+      padding-top:24rem;
+    }
+    100% {
+      padding-top:12rem;
+    }
+  }
+
+  @keyframes bodyFade {
+    0% {
+      opacity:0;
+      pointer-events:none;
+    }
+    50% {
+      opacity:0;
+      pointer-events:none;
+    }
+    100% {
+      opacity:1;
+      pointer-events:all;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      filter:blur(100px);
+      margin-right:40px;
+    } to {
+      opacity: 1;
+      filter:blur(0px);
+      margin-right:4px;
+    }
   }
 
   @media (max-width:790px) {
