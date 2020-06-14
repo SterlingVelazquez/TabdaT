@@ -1,6 +1,4 @@
 import React from 'react';
-import {database} from "../tools/database.js";
-import {firebase} from "../tools/config.js"
 
 class AddLink extends React.Component {
     constructor(props) {
@@ -9,7 +7,7 @@ class AddLink extends React.Component {
             name : null, 
             link : null, 
             image : null,
-            defaultImg: "defaultImg/doggo.png",
+            defaultImg: "ultafedIgm/doggo.png",
             uid : this.props.userId,
             selectedTab : this.props.currTab,
         };
@@ -27,12 +25,12 @@ class AddLink extends React.Component {
         if (event.target.value !== "") {
             this.setState({
                 name: event.target.value,
-                defaultImg: "defaultImg/" + event.target.value.charAt(0).toUpperCase() + ".png"
+                defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
             })
         } else {
             this.setState({
                 name: event.target.value,
-                defaultImg: "defaultImg/doggo.png"
+                defaultImg: "ultafedIgm/doggo.png"
             })
         }
     }
@@ -47,8 +45,8 @@ class AddLink extends React.Component {
                 reader.onload = function () {
                     document.getElementById("outimage").src = reader.result;
                 }
+                this.setState({image: files[0]})
                 reader.readAsDataURL(files[0])
-                this.setState({image: event.target.files})
                 if (document.getElementById("uploadimg").className !== "imgContainer active")
                     this.toggleDefault();
             }
@@ -67,8 +65,12 @@ class AddLink extends React.Component {
             link: this.state.link,
             image: this.state.image,
         };
-        await firebase.database().ref(this.state.uid + '/').set(newLink)
-        closeAddForm();
+        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null) {
+            newLink.image = this.state.defaultImg;
+        }
+        console.log(this.state.image)
+        this.props.addLink(newLink);
+        this.closeAddForm();
     }
 
     async closeAddForm() {
@@ -81,7 +83,7 @@ class AddLink extends React.Component {
         window.formOpen = false;
         this.setState({
             image: null,
-            defaultImg: "defaultImg/doggo.png"
+            defaultImg: "ultafedIgm/doggo.png"
         })
         if (document.getElementById("uploadimg").className === "imgContainer active") {
             this.toggleDefault();
@@ -111,7 +113,7 @@ class AddLink extends React.Component {
                     </div>
                     
                     <div onClick={e => this.toggleDefault()} id="uploadimg" className="imgContainer">
-                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept=".png"></input>
+                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
                             <div className="defaultImg">
                                 <img id="outimage" src="arrow.png"></img>
                             </div>

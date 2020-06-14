@@ -11,7 +11,7 @@
   }
 .addTabDiv.active {
   max-width:180px;
-  margin:11px 0px 11px 10px;
+  margin:11px 0px 11px 20px;
 }
 
 .addTabPlus {  
@@ -53,6 +53,7 @@
   opacity:0;
   pointer-events:none;
   transition:margin-top 0.5s, opacity 0.5s;
+  box-sizing: content-box;
 }
 .tabInput.active {
   pointer-events:all;

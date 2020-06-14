@@ -6,6 +6,7 @@
     font-size: 100%;
     vertical-align: baseline;
     background: transparent;
+    box-sizing: border-box;
   }
 
   .container {
@@ -41,7 +42,7 @@
 
   .title {
     position:relative;
-    padding-top:8rem;
+    padding-top:14vh;
     padding-bottom:3rem;
     margin: 0;
     width:auto;
@@ -70,32 +71,33 @@
 
   .profilePic {
     position:fixed;
-    text-align:left;
+    text-align:right;
     z-index:8;
     height:35px;
-    width:100px;
+    width:150px;
     padding:10px;
     border:none;
     background-color:rgb(249, 251, 253);
     border-radius:20px;
     box-shadow:0px 0px 15px rgb(249, 251, 253);
-    top:1.2rem;
-    right:1.8rem;
+    top:20px;
+    right:15px;
     cursor:pointer;
   }
 
   .profilePic img {
-    position:absolute;
+    position:relative;
     border-radius:30px;
     box-shadow:none;
-    width:35px;
+    width:45px;
     height:auto;
     margin:0;
   }
 
   .profilePic p {
+    position:relative;
     display:inline;
-    margin:5px 0 0 0;
+    bottom:20px;
     padding-right:15px;
     font-size:16px;
     transition:0.5s;
@@ -104,6 +106,65 @@
   .profilePic:hover p {
     font-size:17px;
     box-shadow:0px 0px 100px rgb(249, 251, 253);
+  }
+
+  .modBox {
+    position:fixed;
+    text-align:center;
+    top:90px;
+    right:22px;
+    width:50px;
+    height:50px;
+  }
+  .modBtn {
+    position:relative;
+    display:inline-block;
+    width: 100%;
+    height:100%;
+    border-radius:100px;
+    background:rgb(249, 251, 253);
+    box-shadow:3px 3px 5px rgb(156, 156, 156);
+    transition:0.3s;
+    cursor:pointer;
+  }
+  .modBox:nth-child(2):hover .modBtn {
+    background:rgb(216, 236, 255);
+    height:105%;
+    width:105%;
+  }
+  .modBox:nth-child(3):hover .modBtn {
+    background:rgb(255, 239, 239);
+    height:105%;
+    width:105%;
+  }
+  .modImg {
+    position:relative;
+    width:26px;
+    height:auto;
+    margin:auto;
+    top:2px;
+    box-shadow:none;
+  }
+  .modText {
+    position:absolute;
+    display:none;
+    padding:10px;
+    width:auto;
+    height:auto;
+    margin:0;
+    right:50px;
+    top:5px;
+    transition:0.5s;
+  }
+  .modText:hover {
+    font-size:16px;
+    color:rgb(30, 91, 235);
+  }
+  .modBox.active .modText {
+    display:block;
+  }
+  .modBox.focus .modText {
+    display:block;
   }
 
   .searchBar {
@@ -139,27 +200,31 @@
   }
 
   .buttonNav {
+    position:relative;
     display:inline-flex;
-    height:45px;
     margin-top: 2.5rem;
-    margin-bottom:10px;
     text-align:center;
   }
 
   .navBtns {
-      text-align:center;
-      width:180px;
-      margin:6px 20px 6px 0px;
-      font-size:15px;
-      border:none;
-      border-bottom:0px solid;
-      text-shadow:1px 1px 2px gray;
-      background-color:transparent;
-      font-family:'Noto Sans JP', sans-serif;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      cursor:pointer;
-      transition:0.1s;
+    position:relative;
+    text-align:center;
+    width:180px;
+    margin:6px 10px 0px 10px;
+    font-size:15px;
+    border:none;
+    border-bottom:0px solid;
+    text-shadow:1px 1px 2px gray;
+    background-color:transparent;
+    font-family:'Noto Sans JP', sans-serif;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    cursor:pointer;
+    transition:0.1s;
+  }
+
+  .navBtnText {
+    display:inline;
   }
 
   .navBtnBottom {
@@ -189,25 +254,107 @@
     text-align:center;
     justify-content: center;
     flex-wrap: wrap;
+    pointer-events:all;
 
     max-width: 800px;
     margin-top: 2rem;
   }
+  .grid.active,
+  .grid.focus {
+    pointer-events:none;
+  }
 
-  a:hover img {
+  .linkBox {
+    position:relative;
+  }
+
+  .linkBox:hover img {
     box-shadow:3px 3px 10px rgb(49, 168, 248);
+  }
+
+  .linkCheckBox {
+    position:absolute;
+    width:0px;
+    right:0px;
+    opacity:0;
+    zoom:1.4;
+    pointer-events:none;
+    transition:1s ease-out;
+    transform:rotateZ(0deg);
+  }
+  .grid.active .linkCheckBox {
+    width:13px;
+    opacity:1;
+    cursor:pointer;
+    pointer-events:all;
+    transform:rotateZ(720deg);
+  }
+  .grid.active .linkBox:hover img {
+    box-shadow:3px 3px 10px rgb(255, 203, 203);
+  }
+  .openTabEdit {
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    pointer-events:none;
+  }
+  .navBtns .trashTab {
+    position:absolute;
+    top:0px;
+    right:10px;
+    margin:0;
+    padding:0;
+    width:0;
+    height:0;
+    opacity:0;
+    background:rgb(251, 251, 251);
+    box-shadow:1px 1px 1px gray;
+    border-radius:100px;
+    pointer-events:none;
+    transition:1s;
+    z-index:10;
+  }
+  .trashTab:hover {
+    background:lightgray;
+  }
+  .buttonNav.active .trashTab {
+    width:25px;
+    height:25px;
+    padding:5px;
+    opacity:1;
+    pointer-events:all;
+    transform:rotateZ(720deg);
+  }
+  .buttonNav.focus .navBtns {
+    animation: pulseFont 1s infinite;
+  }
+  .buttonNav.focus .openTabEdit {
+    pointer-events:all;
+  }
+
+  .editDiv {
+    pointer-events:none;
+  }
+  .grid.active .editDiv {
+    pointer-events:none;
+  }
+  .grid.focus .editDiv {
+    pointer-events:auto;
   }
 
   img {
       width:90px;
       height:90px;
-      margin:30px;
-      margin-bottom:0px;
-      margin-top:0px;
+      margin:auto;
       box-shadow:3px 3px 10px gray;
       cursor:pointer;
       transition:0.5s;
       border-radius:10px;
+  }
+  .grid.focus img {
+    animation: pulse 2s infinite linear;
   }
 
   p {
@@ -312,13 +459,13 @@
 
   @keyframes titleSlide {
     0% {
-      padding-top:24rem;
+      padding-top:40vh;
     }
     50% {
-      padding-top:24rem;
+      padding-top:40vh;
     }
     100% {
-      padding-top:8rem;
+      padding-top:14vh;
     }
   }
 
@@ -346,6 +493,58 @@
       opacity: 1;
       filter:blur(0px);
       margin-right:4px;
+    }
+  }
+
+  @keyframes linkBox {
+    0% {
+      opacity: 0;
+      transform:rotateY(180deg);
+      filter:blur(20px);
+    }
+    20% {
+      opacity: 0;
+      filter:blur(10px);
+    }
+    100% {
+      opacity: 1;
+      transform:rotateY(0deg);
+      filter:blur(0px);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform:rotateY(0deg);
+      box-shadow:3px 3px 10px gray;
+    }
+    25% {
+      transform:rotateY(30deg);
+      box-shadow:5px 5px 15px rgb(162, 211, 243);
+      }
+    50% {
+      transform:rotateY(0deg);
+      box-shadow:3px 3px 10px gray;
+    }
+    75% {
+      transform:rotateY(-30deg);
+      box-shadow:5px 5px 15px rgb(162, 211, 243);
+    }
+    100% {
+      transform:rotateY(0deg);
+      box-shadow:3px 3px 10px gray;
+    }
+  }
+
+  @keyframes pulseFont {
+    0% {
+      text-shadow: 0px 0px 1px gray;
+    }
+    50% {
+      text-shadow: 0px 0px 5px rgb(0, 0, 0);
+      }
+    100% {
+      text-shadow: 0px 0px 1px gray;
     }
   }
 
