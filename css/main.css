@@ -168,22 +168,26 @@
   }
 
   .searchBar {
-      position:relative;
-      width:80%;
-      max-width:800px;
-      min-width:200px;
-      padding: 6px 18px;
-      font-size: 16px;
-      font-family:'Noto Sans JP', sans-serif;
-      border: none;
-      border-radius:30px;
-      box-shadow:3px 3px 6px rgb(215, 219, 228);
-      transition:0.5s;
+    position:relative;
+    width:80%;
+    max-width:800px;
+    min-width:200px;
+    padding: 6px 18px;
+    font-size: 16px;
+    font-family:'Noto Sans JP', sans-serif;
+    border: none;
+    border-radius:30px;
+    box-shadow:3px 3px 6px rgb(215, 219, 228);
+    transition:0.5s;
   }
 
   .searchBar:focus {
-      outline:none;
-      box-shadow:3px 3px 10px rgb(152, 185, 255);
+    outline:none;
+    box-shadow:3px 3px 10px rgb(152, 185, 255);
+  }
+
+  .searchBar:focus .buttonNav {
+    background-color:black;
   }
 
   ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -320,9 +324,9 @@
     background:lightgray;
   }
   .buttonNav.active .trashTab {
-    width:25px;
-    height:25px;
-    padding:5px;
+    width:23px;
+    height:23px;
+    padding:4px;
     opacity:1;
     pointer-events:all;
     transform:rotateZ(720deg);

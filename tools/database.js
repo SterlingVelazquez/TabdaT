@@ -40,6 +40,74 @@ class Database {
         return links;
     }
 
+    async getAllLinks(user, tab) {
+        var isEmpty = true;
+        await firebase.database().ref(user).once('value', function(snapshot) {
+            if (snapshot.hasChild('Links')) {
+                isEmpty = false;
+            }
+        })
+        var links = [];
+        if (!isEmpty) {
+            await firebase.database().ref(user + '/Links').once('value').then(async function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    links.push({
+                        name: childSnapshot.val()["name"],
+                        link: childSnapshot.val()["link"],
+                        image: childSnapshot.val()["image"],
+                        ref: childSnapshot.val()["ref"],
+                    })
+                })
+            })
+        }
+        return links;
+    }
+
+    stringSearch(input, links) {
+        var result = links;
+
+        for (var i = 0; i < links.length; i++) {
+            var name = links[i].name;
+            links[i].dist = this.editDistance(input.toUpperCase(), name.toUpperCase());
+
+            if (name.toUpperCase().includes(input.toUpperCase())) {
+                links[i].dist = 0.0;
+            }
+        }
+
+        result = links.filter(function (a) { return a.dist < .75});
+        links.sort(function (a, b) {
+            return a.dist - b.dist
+        })
+        return result;
+    }
+
+    editDistance(str1, str2) {
+        var T =  Array(str1.length + 1).fill(0).map(x => Array(str1.length + 1).fill(0));
+
+        for (var i=0; i <= str1.length; i++) {
+            T[0][i] = i;
+        }
+    
+        for (i=0; i <= str1.length; i++) {
+            T[i][0] = i;
+        }
+    
+       var m = str1.length;
+       var n = str1.length;
+       for (i = 1; i <= m; i++) {
+           for (var j = 1; j <= n; j++) {
+               if (str1.charAt(i-1)===str2.charAt(j-1)) {
+                   T[i][j] = T[i-1][j-1];
+               } else {
+                   T[i][j] = 1 + Math.min(T[i][j-1], Math.min(T[i-1][j], T[i-1][j-1]));
+               }
+            }
+       }
+    
+       return T[str1.length][str1.length] / str1.length;
+    }
+
     async addTab(tab, uid) {
         await firebase.database().ref(uid + '/Tabs' + '/' + tab.name).set(tab);
     }

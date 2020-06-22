@@ -24,7 +24,9 @@ class Home extends React.Component {
           color : '',
         },
         selectedTab : [],
+        inputText : '',
         links : [],
+        allLinks : [],
         selectedLink : {
           name: '',
           image:'',
@@ -59,6 +61,7 @@ class Home extends React.Component {
           if (this.state.tabs.length !== 0)
             this.setState({selectedTab : this.state.tabs[0].name})
           this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+          this.setState({allLinks: await database.getAllLinks(this.state.uid)})
           this.getImages();
         })
       } else {
@@ -87,7 +90,7 @@ class Home extends React.Component {
           <div onClick={e => this.signIn()} className="profilePic">
             <p>Sign In</p>
             <img src="black-male-user-symbol.png"></img>
-          </div>
+          </div>,
       })
     } else {
       this.setState({
@@ -96,7 +99,8 @@ class Home extends React.Component {
               <p>Sign Out</p>
               <img src={this.state.user.additionalUserInfo.profile.picture}></img>
           </div>,
-        uid : this.state.user.user.uid
+        uid : this.state.user.user.uid,
+        allLinks : await database.getAllLinks(this.state.uid)
       })
       this.get();
     }
@@ -120,6 +124,18 @@ class Home extends React.Component {
     await firebase.auth().signOut();
     this.get();
     console.log(document.getElementById("editbox"))
+  }
+
+  async setInputText(event) {
+    this.setState({inputText: event.target.value}, async function() {
+      if (this.state.inputText !== '') {
+        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks)});
+        this.getImages();
+      } else {
+        this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+        this.getImages();
+      }
+    });
   }
 
   async getImages() {
@@ -154,6 +170,7 @@ class Home extends React.Component {
     link.tab = this.state.selectedTab;
     await database.addLink(link, this.state.uid);
     this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
     this.getImages();
   }
 
@@ -174,6 +191,7 @@ class Home extends React.Component {
     link.tab = this.state.selectedTab;
     await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
     this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
     this.getImages();
   }
 
@@ -212,6 +230,7 @@ class Home extends React.Component {
     if (toErase.length !== 0) 
       await database.eraseLinks(this.state.uid, toErase);
     this.get();
+    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
     this.eraseActive();
   }
 
@@ -260,7 +279,7 @@ class Home extends React.Component {
                 </button>
               </div>
 
-              <input className="searchBar" placeholder="Still in development..."></input>
+              <input className="searchBar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
               <br/>
               <div className = "buttonNav" id="buttonnav">
                 {
@@ -278,8 +297,8 @@ class Home extends React.Component {
               <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} numTabs={this.state.tabs.length}/>
               <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab}/>
               <br/>
-              <div className="grid" id="grid">
 
+              <div className="grid" id="grid">
               {
                 this.state.links.map( (each) =>
                   <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
@@ -292,6 +311,7 @@ class Home extends React.Component {
                 )
               }
               </div>
+              
               <br/>
               <div className="addContainer" style={this.state.user === "default" || this.state.tabs.length === 0 ? 
                 {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
