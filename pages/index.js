@@ -242,9 +242,14 @@ class Home extends React.Component {
     this.get();
   }
 
+  toggleNightMode() {
+    document.getElementById("nightmodecontainer").classList.toggle("active");
+    document.getElementById("container").classList.toggle("focus");
+  }
+
   render() {
     return (
-      <div className="container">
+      <div className="container" id="container">
         <Head>
           <title>TabdaT</title>
           <link rel="icon" href="/favicon.ico"/>
@@ -306,7 +311,7 @@ class Home extends React.Component {
                   <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
                     <input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input>
                     <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
-                      <img src={each.image} key={key++}></img>
+                      <img src={each.image} key={key++} className="linkImg"></img>
                       <p className="linkNames">{each.name}</p>
                     </div>
                   </a>
@@ -323,6 +328,13 @@ class Home extends React.Component {
                 <button className="addLink">Add New Link</button>
               </div>
             </div>
+
+            <button className="nightContainer" id="nightmodecontainer">
+              <img src="sun.png" className="nightImg"></img>
+              <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
+              <button onClick={e => this.toggleNightMode()} className="nightSwitch" id="nightswitch"></button>
+            </button>
+
           </main>
 
           <div className="shadow" id="shadow"></div>

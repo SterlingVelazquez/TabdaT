@@ -1,0 +1,164 @@
+  .container.focus {
+    background-color:rgb(10, 10, 10);
+  }
+
+  .container.focus .letter {
+    color:rgb(219, 219, 219);
+    text-shadow:0px 0px 3px rgb(219, 219, 219);
+  }
+
+  .container.focus .profilePic {
+    background-color:rgb(10, 10, 10);
+    box-shadow:0px 0px 15px rgb(10, 10, 10);
+  }
+
+  .container.focus .profilePic p {
+    color:whitesmoke;
+  }
+
+  .container.focus .profilePic:hover p {
+    font-size:17px;
+    text-shadow:0px 0px 10px rgb(249, 251, 253);
+  }
+  .container.focus .modBtn {
+    background:rgb(219, 219, 219);
+    box-shadow:0px 0px 10px rgb(219, 219, 219);
+  }
+  .container.focus .modBox:nth-child(2):hover .modBtn {
+    background:rgb(216, 236, 255);
+  }
+  .container.focus .modBox:nth-child(3):hover .modBtn {
+    background:rgb(255, 239, 239);
+  }
+  .container.focus .modText {
+    color:rgb(219, 219, 219);
+  }
+  .container.focus .modText:hover {
+    font-size:16px;
+    color:rgb(148, 174, 235);
+  }
+  .container.focus .modBox.active .modText {
+    display:block;
+  }
+  .container.focus .modBox.focus .modText {
+    display:block;
+  }
+
+  .container.focus .searchBar {
+    background-color:rgb(219, 219, 219);
+    box-shadow:2px 2px 10px rgb(219, 219, 219);
+  }
+
+  .container.focus .searchBar:focus {
+    outline:none;
+    box-shadow:3px 3px 20px rgb(152, 185, 255);
+  }
+
+  .container.focus .searchBar:focus .buttonNav {
+    background-color:black;
+  }
+
+  .container.focus ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(107, 107, 107);
+    opacity: 1; /* Firefox */
+  }
+  
+  .container.focus :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(107, 107, 107);
+  }
+
+  .container.focus ::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(107, 107, 107);
+  }
+
+  .container.focus .navBtns {
+    text-shadow:none;
+  }
+
+  .container.focus .navBtnBottom {
+    box-shadow: 0px -6px 15px rgb(255, 255, 255);
+  }
+
+  .container.focus img {
+    box-shadow:none;
+  }
+
+  .container.focus .linkBox:hover img {
+    box-shadow:3px 3px 10px rgb(49, 168, 248);
+  }
+
+  .container.focus p {
+    color:rgb(199, 199, 199);
+  }
+
+  .container.focus .addContainer {
+    color:rgb(199, 199, 199);
+  }
+
+  .container.focus .addLink {
+    box-shadow:3px 3px 5px rgb(195, 195, 195);
+    color:rgb(39, 39, 39);
+    background:rgb(199, 199, 199);
+  }
+
+  .container.focus .addSlider {
+    box-shadow:3px 3px 5px rgb(236, 236, 236);
+    background: rgb(255, 255, 255);
+  }
+
+  .container.focus .addSlider img {
+    box-shadow:none;
+    color:white;
+  }
+
+  .container.focus .addContainer:hover .addSlider {
+    background:rgb(236, 236, 236);
+  }
+
+  .container.focus .addForm {
+    background-color: rgb(34, 34, 34);
+}
+
+  .container.focus .addForm h1 {
+    color:rgba(248, 248, 248, 0.781);
+  }
+
+  .container.focus .addForm input[type=text] {
+    border-bottom:1px solid rgba(248, 248, 248, 0.781);
+    color:rgba(248, 248, 248, 0.781);
+  }
+
+  .container.focus .addForm label {
+    color:rgba(248, 248, 248, 0.781);
+  }
+
+  .container.focus .imgContainer .imgLabel {
+    color:rgba(248, 248, 248, 0.781);
+  }
+
+  .container.focus .imgContainer.active .imgLabel {
+    color:rgba(87, 125, 190, 0.8);
+    border-bottom:thin solid rgba(87, 125, 190, 0.8);
+  }
+
+  .container.focus .addForm button.submit {
+    background: rgba(248, 248, 248, 0.781);
+    color: rgb(68, 75, 87);
+    box-shadow:3px 3px 5px rgba(179, 183, 189, 0.8);
+  }
+
+  .container.focus .addForm button.submit:hover {
+    color: rgb(26, 51, 122);
+  }
+
+  .container.focus .addForm img {
+    box-shadow:none;
+  }
+
+  .container.focus .addTabPlus {
+    box-shadow:none;
+  }
+  .container.focus .addTabPlus:focus,
+  .container.focus .addTabPlus:hover {
+    font-size:20px;
+  }
