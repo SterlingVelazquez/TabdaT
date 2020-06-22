@@ -69,6 +69,7 @@ class Home extends React.Component {
         if (this.state.tabs.length !== 0)
           this.setState({selectedTab : this.state.tabs[0].name})
         this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
         this.getImages();
       }
     }.bind(this))
@@ -123,6 +124,7 @@ class Home extends React.Component {
     })
     await firebase.auth().signOut();
     this.get();
+    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
     console.log(document.getElementById("editbox"))
   }
 
