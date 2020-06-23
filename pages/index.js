@@ -26,6 +26,7 @@ class Home extends React.Component {
         selectedTab : [],
         inputText : '',
         links : [],
+        linkIndex : 0,
         allLinks : [],
         selectedLink : {
           name: '',
@@ -246,6 +247,18 @@ class Home extends React.Component {
     this.get();
   }
 
+  async changeLinks(num) {
+    var max = Math.ceil(this.state.links.length / 10) - 1;
+    var result = this.state.linkIndex + num;
+    if (result > max) {
+      this.setState({linkIndex : 0})
+    } else if (result < 0) {
+      this.setState({linkIndex : max})
+    } else {
+      this.setState({linkIndex : result})
+    }
+  }
+
   toggleNightMode() {
     document.getElementById("nightmodecontainer").classList.toggle("active");
     document.getElementById("container").classList.toggle("focus");
@@ -319,8 +332,10 @@ class Home extends React.Component {
               <br/>
 
               <div className="grid" id="grid">
+              <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
+                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
               {
-                this.state.links.map( (each) =>
+                this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
                   <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
                     <input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input>
                     <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
@@ -330,6 +345,8 @@ class Home extends React.Component {
                   </a>
                 )
               }
+              <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
+                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
               </div>
               
               <br/>
