@@ -3,6 +3,18 @@ import 'firebase/storage'
 
 class Database {
 
+    async getPreferences(user) {
+        var preferences = [];
+        await firebase.database().ref(user + '/Preferences/NightMode').once('value').then(async function(snapshot) {
+            if (snapshot.exists()) {
+                preferences.push({
+                    night: snapshot.val()["night"],
+                })
+            }
+        })
+        return preferences;
+    }
+
     async getTabs(user) {
         var tabs = [];
         await firebase.database().ref(user + '/Tabs').orderByChild("pos").once('value').then(async function(snapshot) {

@@ -36,7 +36,7 @@ class Home extends React.Component {
         profilePic :
           <div onClick={e => this.signIn()} className="profilePic">
             <p>Sign In</p>
-            <img src="black-male-user-symbol.png"></img>
+            <img src="black-male.png" id="profilepic"></img>
           </div>
       }; 
     this.tabCallback = this.tabCallback.bind(this);
@@ -48,13 +48,17 @@ class Home extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async function(user) {
       if (user) {
+        var preferences = await database.getPreferences(user.uid);
+        if (preferences.length !== 0) 
+          if (preferences[0].night === 'true' && document.getElementById("container").className === "container") 
+            this.toggleNightMode();
         this.setState({
           user:user,
           uid:user.uid,
           profilePic : 
           <div onClick={e => this.signOut()} className="profilePic">
               <p>Sign Out</p>
-              <img src={user.photoURL}></img>
+              <img src={user.photoURL} id="profilepic"></img>
           </div>,
         }, async function() {
           this.setState({tabs : await database.getTabs(this.state.uid)})
@@ -90,15 +94,15 @@ class Home extends React.Component {
         profilePic : 
           <div onClick={e => this.signIn()} className="profilePic">
             <p>Sign In</p>
-            <img src="black-male-user-symbol.png"></img>
+            <img src={document.getElementById("container").className === "container focus" ? "white-male.png" : "black-male.png"} id="profilepic"></img>
           </div>,
       })
     } else {
       this.setState({
         profilePic : 
           <div onClick={e => this.signOut()} className="profilePic">
-              <p>Sign Out</p>
-              <img src={this.state.user.additionalUserInfo.profile.picture}></img>
+            <p>Sign Out</p>
+            <img src={this.state.user.additionalUserInfo.profile.picture} id="profilepic"></img>
           </div>,
         uid : this.state.user.user.uid,
         allLinks : await database.getAllLinks(this.state.uid)
@@ -119,7 +123,7 @@ class Home extends React.Component {
       profilePic : 
         <div onClick={e => this.signIn()} className="profilePic">
           <p>Sign In</p>
-          <img src="black-male-user-symbol.png"></img>
+          <img src={document.getElementById("container").className === "container focus" ? "white-male.png" : "black-male.png"} id="profilepic"></img>
         </div>
     })
     await firebase.auth().signOut();
@@ -245,6 +249,15 @@ class Home extends React.Component {
   toggleNightMode() {
     document.getElementById("nightmodecontainer").classList.toggle("active");
     document.getElementById("container").classList.toggle("focus");
+    if (document.getElementById("container").className === "container focus") {
+      if (this.state.user === "default")
+        document.getElementById("profilepic").src = "white-male.png"
+      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "true"})
+    } else {
+      if (this.state.user === "default")
+        document.getElementById("profilepic").src = "black-male.png"
+      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "false"})
+    }
   }
 
   render() {
@@ -329,11 +342,13 @@ class Home extends React.Component {
               </div>
             </div>
 
-            <button className="nightContainer" id="nightmodecontainer">
-              <img src="sun.png" className="nightImg"></img>
-              <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
-              <button onClick={e => this.toggleNightMode()} className="nightSwitch" id="nightswitch"></button>
-            </button>
+            <footer>
+              <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} >
+                <img src="sun.png" className="nightImg"></img>
+                <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
+                <div className="nightSwitch" id="nightswitch"></div>
+              </button>
+            </footer>
 
           </main>
 
