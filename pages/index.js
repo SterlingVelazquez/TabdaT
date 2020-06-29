@@ -477,19 +477,6 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
               <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
-                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()} style={{display:"none"}}>
-                  <p className="importText" id="importtext">Import Your Bookmarks</p>
-                  <div className="arrow" id="arrow">
-                    <div className="arrowBody"></div>
-                    <div className="arrowHead"></div>
-                    <div className="arrowHead"></div>
-                  </div>
-                  <div className="arrowBox">
-                    <div className="boxBottom"></div>
-                    <div className="boxSide"></div>
-                    <div className="boxSide"></div>
-                  </div>
-                </div>
                 <div className="sideContainer" id="sideContainer">
                   <p className="sideLabel" id="sidelabel">Night Mode</p>
                   <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} style={{pointerEvents: this.state.user === "default" ? "none" : "all"}}>
