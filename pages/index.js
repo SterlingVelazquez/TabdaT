@@ -12,7 +12,6 @@ import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
-
 const fs = require("fs");
 const path = require("path");
 
@@ -40,7 +39,6 @@ class Home extends React.Component {
         link: "",
         image: "",
       },
-      bookmarks : [],
       profilePic :
         <div onClick={e => this.signIn()} className="profilePic">
           <p>Sign In</p>
@@ -105,6 +103,48 @@ class Home extends React.Component {
       }
     }.bind(this))
     this.getKeyPresses();
+  }
+
+  static async getInitialProps() {
+    var bookmarkPath;
+    if (process.platform === "win32") {
+      bookmarkPath = path.join(process.env.HOME + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
+    } else if (process.platform === "darwin") {
+      bookmarkPath = path.join(process.env.HOME + "/Library/Application Support/Google/Chrome/Default/Bookmarks")
+    } else if (process.platform === "linux") {
+      bookmarkPath = path.join(process.env.HOME + "/.config/google-chrome/Default/Bookmarks") 
+    } else {
+      bookmarkPath = null;
+    }
+    if (bookmarkPath !== null) {
+      const json = JSON.parse(fs.readFileSync(bookmarkPath)),
+      items = json.roots.bookmark_bar.children;
+
+      const outputFile = "testoutput.json"; // define output filename here
+      var output = [];
+
+      if (fs.existsSync(outputFile)) {
+        const existingItems = JSON.parse(fs.readFileSync(outputFile));
+
+        // do not include items which have been deleted from bookmarks
+        existingItems.forEach(existingItem => {
+          const match = items.find(el => el.name === existingItem.name);
+          if (match) output.push(existingItem);
+        });
+
+        // add new items which have been added to bookmarks
+        items.forEach(item => {
+          const match = output.find(el => el.name === item.name);
+          if (!match) output.push([item.name, item.url]);
+        });
+      } else {
+        items.forEach(item => output.push([item.name, item.url]));
+      }
+      return { output };
+    } else {
+      var output = null;
+      return { output }
+    }
   }
 
   async get() {
@@ -480,7 +520,7 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
               <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
-                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
+                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()} style={{display:this.props.output !== null ? "auto" : "none"}}>
                   <p className="importText" id="importtext">Import Your Bookmarks</p>
                   <div className="arrow" id="arrow">
                     <div className="arrowBody"></div>
@@ -597,7 +637,7 @@ class Home extends React.Component {
 
       <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab}/>
       <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink}/>
-      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} bookmarks={this.state.bookmarks} tabs={this.state.tabs}/>
+      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} bookmarks={this.props.output !== null ? this.props.output : []} tabs={this.state.tabs}/>
 
     </div>
     )

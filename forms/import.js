@@ -8,7 +8,7 @@ class Import extends React.Component {
         super(props);
         this.state = {
             tabs : this.props.tabs,
-            bookmarks : this.props.bookmarks,
+            bookmarks : this.props.bookmarks !== null ? this.props.bookmarks : [],
         }
         this.submitForm = this.submitForm.bind(this);
     }
