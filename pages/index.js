@@ -53,6 +53,7 @@ class Home extends React.Component {
   }
 
   async componentDidMount() {
+    console.log(os.platform())
     firebase.auth().onAuthStateChanged(async function(user) {
       if (user) {
         if (!(document.getElementById("sidesignin").className.includes("active")))
