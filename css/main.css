@@ -130,12 +130,12 @@
     transition:0.3s;
     cursor:pointer;
   }
-  .modBox:nth-child(4):hover .modBtn {
+  .modBox:nth-child(3):hover .modBtn {
     background:rgb(216, 236, 255);
     height:105%;
     width:105%;
   }
-  .modBox:nth-child(5):hover .modBtn {
+  .modBox:nth-child(4):hover .modBtn {
     background:rgb(255, 239, 239);
     height:105%;
     width:105%;
