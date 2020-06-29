@@ -110,6 +110,10 @@ class Home extends React.Component {
     var bookmarkPath;
     if (process.platform === "win32") {
       bookmarkPath = path.join(process.env.HOME, "AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
+    } else if (process.platform === "darwin") {
+      bookmarkPath = path.join(process.env.HOME, "Library/Application Support/Google/Chrome/Default/Bookmarks")
+    } else if (process.platform === "linux") {
+      bookmarkPath = path.join(process.env.HOME, ".config/google-chrome/Default/Bookmarks") 
     } else {
       bookmarkPath = null;
     }
@@ -518,7 +522,7 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
               <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
-                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()} style={{display: this.props.output !== null ? "block" : "none"}}>
+                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
                   <p className="importText" id="importtext">Import Your Bookmarks</p>
                   <div className="arrow" id="arrow">
                     <div className="arrowBody"></div>
