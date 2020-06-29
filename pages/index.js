@@ -118,7 +118,26 @@ class Home extends React.Component {
       const json = JSON.parse(fs.readFileSync(bookmarkPath)),
       items = json.roots.bookmark_bar.children;
 
-      var output = null;
+      const outputFile = "testoutput.json"; // define output filename here
+      var output = [];
+
+      if (fs.existsSync(outputFile)) {
+        const existingItems = JSON.parse(fs.readFileSync(outputFile));
+
+        // do not include items which have been deleted from bookmarks
+        existingItems.forEach(existingItem => {
+          const match = items.find(el => el.name === existingItem.name);
+          if (match) output.push(existingItem);
+        });
+
+        // add new items which have been added to bookmarks
+        items.forEach(item => {
+          const match = output.find(el => el.name === item.name);
+          if (!match) output.push([item.name, item.url]);
+        });
+      } else {
+        items.forEach(item => output.push([item.name, item.url]));
+      }
       return { output };
     } else {
       var output = null;
