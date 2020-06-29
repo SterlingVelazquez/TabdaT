@@ -482,7 +482,7 @@ class Home extends React.Component {
   }
 
   render() {
-    console.log(process.platform)
+    console.log(process.env.HOME)
     return (
       <div className="container" id="container">
         <Head>
