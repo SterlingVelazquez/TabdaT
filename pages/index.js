@@ -106,45 +106,8 @@ class Home extends React.Component {
   }
 
   static async getInitialProps() {
-    var bookmarkPath;
-    if (process.platform === "win32") {
-      bookmarkPath = path.join(process.env.HOME + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
-    } else if (process.platform === "darwin") {
-      bookmarkPath = path.join(process.env.HOME + "/Library/Application Support/Google/Chrome/Default/Bookmarks")
-    } else if (process.platform === "linux") {
-      bookmarkPath = path.join(process.env.HOME + "/.config/google-chrome/Default/Bookmarks") 
-    } else {
-      bookmarkPath = null;
-    }
-    if (bookmarkPath !== null) {
-      const json = JSON.parse(fs.readFileSync(bookmarkPath)),
-      items = json.roots.bookmark_bar.children;
-
-      const outputFile = "testoutput.json"; // define output filename here
-      var output = [];
-
-      if (fs.existsSync(outputFile)) {
-        const existingItems = JSON.parse(fs.readFileSync(outputFile));
-
-        // do not include items which have been deleted from bookmarks
-        existingItems.forEach(existingItem => {
-          const match = items.find(el => el.name === existingItem.name);
-          if (match) output.push(existingItem);
-        });
-
-        // add new items which have been added to bookmarks
-        items.forEach(item => {
-          const match = output.find(el => el.name === item.name);
-          if (!match) output.push([item.name, item.url]);
-        });
-      } else {
-        items.forEach(item => output.push([item.name, item.url]));
-      }
-      return { output };
-    } else {
-      var output = null;
-      return { output }
-    }
+    var output = null;
+    return { output }
   }
 
   async get() {
