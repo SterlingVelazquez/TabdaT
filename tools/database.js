@@ -22,7 +22,8 @@ class Database {
                 tabs.push({
                     name: childSnapshot.val()["name"],
                     color: childSnapshot.val()["color"],
-                    pos: childSnapshot.val()["color"]
+                    pos: childSnapshot.val()["color"],
+                    pos: childSnapshot.val()["pos"]
                 })
             })
         })
@@ -45,6 +46,7 @@ class Database {
                         link: childSnapshot.val()["link"],
                         image: childSnapshot.val()["image"],
                         ref: childSnapshot.val()["ref"],
+                        pos: childSnapshot.val()["pos"]
                     })
                 })
             })
@@ -68,6 +70,7 @@ class Database {
                         link: childSnapshot.val()["link"],
                         image: childSnapshot.val()["image"],
                         ref: childSnapshot.val()["ref"],
+                        pos: childSnapshot.val()["pos"]
                     })
                 })
             })
@@ -133,6 +136,12 @@ class Database {
             })
         } else {
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
+        }
+    }
+
+    async addLinks(links, uid) {
+        for (var i = 0; i < links.length; i++) {
+            await firebase.database().ref(uid + '/Links/' + links[i].name).set(links[i]);
         }
     }
 

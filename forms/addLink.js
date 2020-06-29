@@ -22,7 +22,7 @@ class AddLink extends React.Component {
     }
 
     setName(event) {
-        if (event.target.value !== "") {
+        if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i)) {
             this.setState({
                 name: event.target.value,
                 defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
@@ -32,6 +32,12 @@ class AddLink extends React.Component {
                 name: event.target.value,
                 defaultImg: "ultafedIgm/doggo.png"
             })
+        }
+        if (event.target.value.includes('/') || event.target.value.includes('.') || event.target.value.includes('#') || event.target.value.includes('$')
+            || event.target.value.includes('[') || event.target.value.includes(']')) {
+            document.getElementById("errmsg").style.display = "block";
+        } else {
+            document.getElementById("errmsg").style.display = "none";
         }
     }
     setLink(event) {
@@ -65,12 +71,17 @@ class AddLink extends React.Component {
             link: this.state.link,
             image: this.state.image,
         };
-        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null) {
+        if (!(this.state.link.includes("https://")) && !(this.state.link.includes("http://")))
+            newLink.link = "https://" + newLink.link;
+        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null)
             newLink.image = this.state.defaultImg;
+        if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
+            || newLink.name.includes('[') || newLink.name.includes(']')) {
+            document.getElementById("errmsg").style.display = "block";
+        } else {
+            this.props.addLink(newLink);
+            this.closeAddForm();
         }
-        console.log(this.state.image)
-        this.props.addLink(newLink);
-        this.closeAddForm();
     }
 
     async closeAddForm() {
@@ -82,6 +93,8 @@ class AddLink extends React.Component {
         document.getElementById("addFormDiv").reset();
         window.formOpen = false;
         this.setState({
+            name:null,
+            link:null,
             image: null,
             defaultImg: "ultafedIgm/doggo.png"
         })
@@ -89,6 +102,7 @@ class AddLink extends React.Component {
             this.toggleDefault();
         }
         document.getElementById("outimage").src = "arrow.png";
+        document.getElementById("errmsg").style.display = "none";
     }
 
     render () {
@@ -97,17 +111,18 @@ class AddLink extends React.Component {
                 <form id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" onChange={e =>this.setName(e)} required/>
+                    <input type="text" name="linkName" onChange={e =>this.setName(e)} spellCheck="false" required/>
+                    <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" onChange={e => this.setLink(e)} required/>
+                    <input type="text" name="link" onChange={e => this.setLink(e)} spellCheck="false" required/>
 
                     <label style={{float:"none"}}><b>Image</b></label>
                     <br/>
 
                     <div id="defaultimg" onClick={e => this.toggleDefault()} className="imgContainer active">
                         <div className="defaultImg">
-                            <img src={this.state.defaultImg}></img>
+                            <img src={this.state.defaultImg} className="linkImgForm"></img>
                         </div>
                         <p className="imgLabel">Default</p>
                     </div>
@@ -115,13 +130,13 @@ class AddLink extends React.Component {
                     <div onClick={e => this.toggleDefault()} id="uploadimg" className="imgContainer">
                         <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
                             <div className="defaultImg">
-                                <img id="outimage" src="arrow.png"></img>
+                                <img id="outimage" src="arrow.png" className="linkImgForm"></img>
                             </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
-                    <img type="button" src="cancel.png" className="submit" onClick={e => this.closeAddForm()}></img>
+                    <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>
                 </form>
             </div>
         );

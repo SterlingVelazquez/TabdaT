@@ -2,46 +2,53 @@ import React from 'react';
 import Head from 'next/head';
 import {database} from "../tools/database.js";
 import {firebase} from "../tools/config.js"
+import {sorting} from "../tools/sorting.js"
 import AddLink from "../forms/addLink.js"
 import AddTab from "../forms/addTab.js"
 import EditLink from "../forms/editLink.js"
 import EditTab from "../forms/editTab.js"
+import Import from "../forms/import.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
+
+const fs = require("fs");
+const path = require("path");
 
 class Home extends React.Component {
 
   constructor (props) {
     super(props);
     this.state = {
-        user: "default",
-        uid: "default",
-        tabs : [],
-        currTab : {
-          name: '',
-          color : '',
-        },
-        selectedTab : [],
-        inputText : '',
-        links : [],
-        linkIndex : 0,
-        allLinks : [],
-        selectedLink : {
-          name: '',
-          image:'',
-          link:'',
-          ref:'',
-        },
-        profilePic :
-          <div onClick={e => this.signIn()} className="profilePic">
-            <p>Sign In</p>
-            <img src="black-male.png" id="profilepic"></img>
-          </div>
-      }; 
+      user: "default",
+      uid: "default",
+      output: [],
+      tabs : [],
+      currTab : {
+        name: '',
+        color : '',
+      },
+      selectedTab : "",
+      inputText : '',
+      links : [],
+      linkIndex : 0,
+      tabIndex : 0,
+      allLinks : [],
+      selectedLink : { 
+        name: "",
+        link: "",
+        image: "",
+      },
+      profilePic :
+        <div onClick={e => this.signIn()} className="profilePic">
+          <p>Sign In</p>
+          <img src="black-male.png" id="profilepic"></img>
+        </div>
+    }; 
     this.tabCallback = this.tabCallback.bind(this);
     this.linkCallback = this.linkCallback.bind(this);
+    this.multipleLinkCallback = this.multipleLinkCallback.bind(this);
     this.editLinkCallback = this.editLinkCallback.bind(this);
     this.editTabCallback = this.editTabCallback.bind(this);
   }
@@ -49,6 +56,8 @@ class Home extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async function(user) {
       if (user) {
+        if (!(document.getElementById("sidesignin").className.includes("active")))
+          document.getElementById("sidesignin").classList.toggle("active");
         var preferences = await database.getPreferences(user.uid);
         if (preferences.length !== 0) 
           if (preferences[0].night === 'true' && document.getElementById("container").className === "container") 
@@ -63,28 +72,101 @@ class Home extends React.Component {
           </div>,
         }, async function() {
           this.setState({tabs : await database.getTabs(this.state.uid)})
-          if (this.state.tabs.length !== 0)
-            this.setState({selectedTab : this.state.tabs[0].name})
-          this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
-          this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+          if (this.state.tabs.length !== 0) {
+            this.setState({
+              selectedTab : this.state.tabs[0].name,
+              links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
+              allLinks: await database.getAllLinks(this.state.uid)
+            })
+          } else {
+            this.setState({
+              links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
+              allLinks: await database.getAllLinks(this.state.uid)
+            })
+          }
           this.getImages();
         })
       } else {
         this.setState({tabs : await database.getTabs(this.state.uid)})
-        if (this.state.tabs.length !== 0)
-          this.setState({selectedTab : this.state.tabs[0].name})
-        this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
-        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+        if (this.state.tabs.length !== 0) {
+          this.setState({
+            selectedTab : this.state.tabs[0].name,
+            links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
+            allLinks: await database.getAllLinks(this.state.uid)
+          })
+        } else {
+          this.setState({
+            links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
+            allLinks: await database.getAllLinks(this.state.uid)
+          })
+        }
         this.getImages();
       }
     }.bind(this))
+    this.getKeyPresses();
+  }
+
+  static async getInitialProps() {
+    var bookmarkPath;
+    if (process.platform === "win32") {
+      bookmarkPath = path.join(process.env.HOME, "AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
+    } else if (process.platform === "darwin") {
+      bookmarkPath = path.join(process.env.HOME, "Library/Application Support/Google/Chrome/Default/Bookmarks")
+    } else if (process.platform === "linux") {
+      bookmarkPath = path.join(process.env.HOME, ".config/google-chrome/Default/Bookmarks") 
+    } else {
+      bookmarkPath = null;
+    }
+    if (bookmarkPath !== null) {
+      const json = JSON.parse(fs.readFileSync(bookmarkPath)),
+      items = json.roots.bookmark_bar.children;
+
+      const outputFile = "testoutput.json"; // define output filename here
+      var output = [];
+
+      if (fs.existsSync(outputFile)) {
+        const existingItems = JSON.parse(fs.readFileSync(outputFile));
+
+        // do not include items which have been deleted from bookmarks
+        existingItems.forEach(existingItem => {
+          const match = items.find(el => el.name === existingItem.name);
+          if (match) output.push(existingItem);
+        });
+
+        // add new items which have been added to bookmarks
+        items.forEach(item => {
+          const match = output.find(el => el.name === item.name);
+          if (!match) output.push([item.name, item.url]);
+        });
+      } else {
+        items.forEach(item => output.push([item.name, item.url]));
+      }
+
+      return { output };
+    } else {
+      var output = null;
+      return { output }
+    }
   }
 
   async get() {
     this.setState({tabs : await database.getTabs(this.state.uid)})
-    if (this.state.tabs.length !== 0) 
-      this.setState({selectedTab : this.state.tabs[0].name})
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+    if (this.state.tabs.length !== 0) {
+      this.setState({
+        selectedTab : this.state.tabs[0].name,
+        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
+        allLinks: await database.getAllLinks(this.state.uid),
+        linkIndex: 0,
+        tabIndex: 0
+      })
+    } else {
+      this.setState({
+        links : await sorting.quickSort(await database.getLinks(this.state.uid, "")),
+        allLinks: await database.getAllLinks(this.state.uid),
+        linkIndex: 0,
+        tabIndex: 0
+      })
+    }
     this.getImages();
   }
 
@@ -99,6 +181,8 @@ class Home extends React.Component {
           </div>,
       })
     } else {
+      if (!(document.getElementById("sidesignin").className.includes("active")))
+        document.getElementById("sidesignin").classList.toggle("active");
       this.setState({
         profilePic : 
           <div onClick={e => this.signOut()} className="profilePic">
@@ -106,7 +190,7 @@ class Home extends React.Component {
             <img src={this.state.user.additionalUserInfo.profile.picture} id="profilepic"></img>
           </div>,
         uid : this.state.user.user.uid,
-        allLinks : await database.getAllLinks(this.state.uid)
+        allLinks : await database.getAllLinks(this.state.uid),
       })
       this.get();
     }
@@ -118,6 +202,9 @@ class Home extends React.Component {
     } else if (document.getElementById("editbox").className === "modBox focus") {
       this.editActive();
     }
+    if (document.getElementById("edittabdiv").className === "addTabDiv active")
+      this.openTabEdit(this.state.currTab);
+    document.getElementById("sidesignin").classList.toggle("active");
     this.setState({
       user: "default",
       uid: "default",
@@ -129,8 +216,9 @@ class Home extends React.Component {
     })
     await firebase.auth().signOut();
     this.get();
-    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
-    console.log(document.getElementById("editbox"))
+    this.setState({
+      allLinks: await database.getAllLinks(this.state.uid),
+    })
   }
 
   async setInputText(event) {
@@ -139,7 +227,7 @@ class Home extends React.Component {
         this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks)});
         this.getImages();
       } else {
-        this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+        this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
         this.getImages();
       }
     });
@@ -147,43 +235,84 @@ class Home extends React.Component {
 
   async getImages() {
     var list = this.state.links;
+    var count = 0;
+    length = document.getElementsByClassName("loader").length;
+    if (length > 0)
+      for (var i = 0; i < length; i++) {
+        document.getElementsByClassName("loader")[i].style.display = "grid"
+      }
     for (var i = 0; i < list.length; i++) {
       if (typeof list[i].ref !== "undefined") {
+        count++;
         await firebase.storage().ref(list[i].ref).getDownloadURL().then((res) => {
           list[i].image = res;
         })
       }
     }
-    this.setState({links: this.state.links})
+    if (length > 0)
+      for (var i = 0; i < length; i++) {
+        document.getElementsByClassName("loader")[i].style.display = "none"
+      }
+    if (count !== 0)
+      this.setState({links: this.state.links})
   }
 
   async updateTabs(each) {
-    this.setState({selectedTab : await each.name})
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+    this.setState({
+      selectedTab : await each.name,
+      links : await sorting.quickSort(await database.getLinks(this.state.uid, each.name)),
+      linkIndex: 0,
+    });
     this.getImages();
   }
 
   tabCallback = async (tab) => {
-    tab.pos = this.state.tabs.length;
+    if (this.state.tabs.length === 0) {
+      tab.pos = 0;
+    } else {
+      tab.pos = this.state.tabs[this.state.tabs.length - 1].pos + 1;
+    }
     await database.addTab(tab, this.state.uid);
-    this.setState({tabs : await database.getTabs(this.state.uid)})
-    this.setState({selectedTab : tab.name})
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
+    this.setState({
+      tabs : await database.getTabs(this.state.uid),
+      selectedTab : tab.name,
+      links : await sorting.quickSort(await database.getLinks(this.state.uid, tab.name))
+    })
     this.getImages();
   }
 
   linkCallback = async (link) => {
-    link.pos = this.state.links.length;
+    if (this.state.links.length !== 0) {
+      link.pos = this.state.links[this.state.links.length - 1].pos + 1;
+    } else {
+      link.pos = 0;
+    }
     link.tab = this.state.selectedTab;
     await database.addLink(link, this.state.uid);
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
-    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+    this.setState({
+      links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
+      allLinks: await database.getAllLinks(this.state.uid)
+    })
+    if (this.state.links.length > 10 && this.state.links.length % 10 === 1)
+      this.changeLinks(1)
     this.getImages();
+  }
+
+  multipleLinkCallback = async (links) => {
+    await database.addLinks(links, this.state.uid);
+    this.setState({
+      selectedTab: "My Bookmarks",
+      links : await sorting.quickSort(await database.getLinks(this.state.uid, "My Bookmarks")),
+      allLinks: await database.getAllLinks(this.state.uid),
+      linkIndex: 0
+    })
   }
 
   editActive() {
     if (document.getElementById("trashimg").src.includes("cancel"))
       this.eraseActive();
+    if (document.getElementById("edittabdiv").className === "addTabDiv active")
+      this.openTabEdit(this.state.currTab);
     document.getElementById("editbox").classList.toggle("focus");
     document.getElementById("grid").classList.toggle("focus");
     document.getElementById("buttonnav").classList.toggle("focus");
@@ -194,21 +323,40 @@ class Home extends React.Component {
     }
   }
 
-  editLinkCallback = async (link) => {
-    link.tab = this.state.selectedTab;
-    await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
-    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
-    this.getImages();
+  editLinkCallback = async (link, close) => {
+    if (close) {
+      this.setState({selectedLink: { 
+        name: "",
+        link: "",
+        image: "",
+      }})
+    } else {
+      link.tab = this.state.selectedTab;
+      link.pos = this.state.selectedLink.pos;
+      await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
+      this.setState({
+        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
+        allLinks: await database.getAllLinks(this.state.uid)
+      })
+      this.getImages();
+    }
   }
 
-  editTabCallback = async (tab) => {
-    tab.pos = this.state.currTab.pos;
-    await database.editTab(tab, this.state.uid, this.state.currTab.name);
-    this.setState({tabs : await database.getTabs(this.state.uid)})
-    this.setState({selectedTab : tab.name})
-    this.setState({links : await database.getLinks(this.state.uid, this.state.selectedTab)})
-    this.getImages();
+  editTabCallback = async (tab, close) => {
+    if (close) {
+      this.setState({currTab: {
+        name: "",
+        color: ""
+      }})
+    } else {
+      tab.pos = this.state.currTab.pos;
+      await database.editTab(tab, this.state.uid, this.state.currTab.name);
+      this.setState({
+        tabs : await database.getTabs(this.state.uid),
+        selectedTab : tab.name,
+        links : await sorting.quickSort(await database.getLinks(this.state.uid, tab.name))})
+      this.getImages();
+    }
   }
 
   eraseActive() {
@@ -236,15 +384,28 @@ class Home extends React.Component {
     }
     if (toErase.length !== 0) 
       await database.eraseLinks(this.state.uid, toErase);
-    this.get();
+    this.setState({
+      tabs : await database.getTabs(this.state.uid),
+      links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))
+    })
+    if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
+      this.changeLinks(-1);
+    this.getImages();
     this.setState({allLinks: await database.getAllLinks(this.state.uid)})
-    this.eraseActive();
   }
 
   async eraseTab(e, tab) {
     e.stopPropagation();
     await database.eraseTab(this.state.uid, tab);
-    this.get();
+    if (tab === this.state.selectedTab) {
+      this.get();
+    } else {
+      this.setState({
+        tabs : await database.getTabs(this.state.uid),
+        allLinks: await database.getAllLinks(this.state.uid)
+      })
+    }
+    this.getImages();
   }
 
   async changeLinks(num) {
@@ -257,6 +418,48 @@ class Home extends React.Component {
     } else {
       this.setState({linkIndex : result})
     }
+  }
+
+  async changeTabs(num) {
+    var max = Math.floor(this.state.tabs.length / 4);
+    var result;
+    if (this.state.tabIndex + num === -1) {
+      result = max;
+    } else {
+      result = Math.abs((this.state.tabIndex + num) % (max + 1));
+    }
+    if (result === 0) {
+      this.setState({
+        tabIndex : 0,
+        selectedTab: this.state.tabs[0].name,
+        links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name))
+      })
+    } else if (result === max) {
+      if (this.state.tabs.length % 4 === 0) {
+        this.setState({
+          tabIndex : max,
+          selectedTab: "",
+          links: await sorting.quickSort(await database.getLinks(this.state.uid, ""))
+        })
+      } else {
+        this.setState({
+          tabIndex : max,
+          selectedTab: this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name,
+          links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name))
+        })
+      }
+    } else {
+      this.setState({
+        tabIndex : result,
+        selectedTab: this.state.tabs[result * 4].name,
+        links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[result * 4].name))
+      })
+    }
+  }
+
+  toggleSideMenu() {
+    document.getElementById("navbar").classList.toggle("active");
+    document.getElementById("sidemenubtn").classList.toggle("active");
   }
 
   toggleNightMode() {
@@ -273,6 +476,14 @@ class Home extends React.Component {
     }
   }
 
+  getKeyPresses() {
+    document.addEventListener("keypress", function(e) {
+      if (document.getElementById("shadow").style.height !== "100%" && document.getElementsByClassName("addTabDiv active").length === 0)
+        document.getElementById("searchbar").focus();
+      }
+    )
+  }
+
   render() {
     return (
       <div className="container" id="container">
@@ -282,99 +493,155 @@ class Home extends React.Component {
 
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"></link>
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
-          <script src="https://kit.fontawesome.com/3499f6733d.js" crossorigin="anonymous"></script>
         </Head>
 
         <main>
-            <p style={{color:"black"}} className="title">
-              <span className="letter">T</span>
-              <span className="letter">ɑ</span>
-              <span className="letter">b</span>
-              <span className="letter">d</span>
-              <span className="letter">ɒ</span>
-              <span className="letter">T</span>
-            </p>
+          <p style={{color:"black"}} className="title">
+            <span className="letter">T</span>
+            <span className="letter">ɑ</span>
+            <span className="letter">b</span>
+            <span className="letter">d</span>
+            <span className="letter">ɒ</span>
+            <span className="letter">T</span>
+          </p>
 
-            <div className="bodyBox">
-              {this.state.profilePic}
+          <div className="bodyBox">
 
-              <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "block"}}>
-                <button className="modBtn">
-                  <img className="modImg" id="editimg" src="edit.png"></img>
-                  <p className="modText">Choose A Tab/Link</p>
-                </button>
-              </div>
-
-              <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "block", top:"155px"}}>
-                <button className="modBtn">
-                  <img className="modImg" id="trashimg" src="trash.png"></img>
-                  <p className="modText" onClick={e => this.confirmErase(e)}>Confirm</p>
-                </button>
-              </div>
-
-              <input className="searchBar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
-              <br/>
-              <div className = "buttonNav" id="buttonnav">
-                {
-                  this.state.tabs.slice(0,4).map( (each) => 
-                    <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" 
-                      style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)}>
-                      <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
-                      <img className="trashTab" id="trashtab" onClick={e => this.eraseTab(e, each.name)} src="trash.png"></img>
-                      <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
-                      <div className="navBtnBottom" style={{background:each.color}}></div>
-                    </button>
-                  )
-                }
-              </div>
-              <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} numTabs={this.state.tabs.length}/>
-              <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab}/>
-              <br/>
-
-              <div className="grid" id="grid">
-              <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
-                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
-              {
-                this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
-                  <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
-                    <input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input>
-                    <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
-                      <img src={each.image} key={key++} className="linkImg"></img>
-                      <p className="linkNames">{each.name}</p>
-                    </div>
-                  </a>
-                )
-              }
-              <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
-                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
-              </div>
-              
-              <br/>
-              <div className="addContainer" style={this.state.user === "default" || this.state.tabs.length === 0 ? 
-                {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
-                <div className="addSlider">
-                  <img src="plus.png"></img>
+            <div className="navBar" id="navbar">
+              <p className="navTitle" id="navtitle">Options</p>
+              <div className="sideSignIn" id="sidesignin" onClick={e => this.signIn()}>
+                <div className="rocketContainer">
+                  <img src="rocket.png" className="rocket" id="rocket"></img>
+                  <img src="flame.png" className="flame" id="flame"></img>
                 </div>
-                <button className="addLink">Add New Link</button>
+                <p className="baseSignIn" id="basesignin"><b>Sign In</b> To Google To Unlock All Features</p>
+              </div>
+              <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
+                <div className="cancelBar"></div>
+                <div className="cancelBar"></div>
+                <div className="cancelBar"></div>
+              </div>
+              <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
+                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
+                  <p className="importText" id="importtext">Import Your Bookmarks</p>
+                  <div className="arrow" id="arrow">
+                    <div className="arrowBody"></div>
+                    <div className="arrowHead"></div>
+                    <div className="arrowHead"></div>
+                  </div>
+                  <div className="arrowBox">
+                    <div className="boxBottom"></div>
+                    <div className="boxSide"></div>
+                    <div className="boxSide"></div>
+                  </div>
+                </div>
+                <div className="sideContainer" id="sideContainer">
+                  <p className="sideLabel" id="sidelabel">Night Mode</p>
+                  <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} style={{pointerEvents: this.state.user === "default" ? "none" : "all"}}>
+                    <img src="sun.png" className="nightImg"></img>
+                    <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
+                    <div className="nightSwitch" id="nightswitch"></div>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <footer>
-              <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} >
-                <img src="sun.png" className="nightImg"></img>
-                <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
-                <div className="nightSwitch" id="nightswitch"></div>
+            {this.state.profilePic}
+
+            <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "block"}}>
+              <button className="modBtn">
+                <img className="modImg" id="editimg" src="edit.png"></img>
+                <p className="modText">Choose A Tab/Link</p>
               </button>
-            </footer>
+            </div>
 
-          </main>
+            <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "block", top:"155px"}}>
+              <button className="modBtn">
+                <img className="modImg" id="trashimg" src="trash.png"></img>
+                <p className="modText" onClick={e => this.confirmErase(e)}>Confirm</p>
+              </button>
+            </div>
 
-          <div className="shadow" id="shadow"></div>
+            <div type="text" className="keyPress" id="keypress" onKeyDown={e => this.keypress(e)}></div>
+            <input className="searchBar" id="searchbar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
+            <br/>
+            
+            <div className = "buttonNav" id="buttonnav">
+              <img className="leftTabArrow" id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
+                style={{
+                  display: this.state.tabs.length > 3 ? "block" : "none",
+                  left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-2.4rem",
+                  top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem",
+                }}></img>
+              {
+                this.state.tabs.slice(this.state.tabIndex * 4, this.state.tabIndex * 4 + 4).map( (each) => 
+                  <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" 
+                    style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)}>
+                    <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
+                    <img className="trashTab" id="trashtab" onClick={e => this.eraseTab(e, each.name)} src="trash.png"></img>
+                    <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
+                    <div className="navBtnBottom" style={{background:each.color}}></div>
+                  </button>
+                )
+              }
+              <img className="rightTabArrow" id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
+                style={{
+                  display: this.state.tabs.length > 3 ? "block" : "none",
+                  right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-2.4rem",
+                  top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
+                }}></img>
+            </div>
 
-          <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab}/>
-          <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink}/>
+            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} numTabs={this.state.tabs.length} tabIndex={this.state.tabIndex}/>
+            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab}/>
+            <br/>
 
-        </div>
+            <div className="grid" id="grid">
+            <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
+              style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
+            {
+              this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
+                <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
+                  <input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input>
+                  <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
+                    <img src={each.image} key={key++} className="linkImg"></img>
+                    <p className="linkNames">{each.name}</p>
+                    <div className="loaderDiv" id="loaderdiv">
+                      <div className="loader" id="loader">
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              )
+            }
+            <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
+              style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
+            </div>
+
+            <br/>
+            <div className="addContainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
+              (this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0) ? 
+                {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
+              <div className="addSlider">
+                <img src="plus.png"></img>
+              </div>
+              <button className="addLink">Add New Link</button>
+            </div>
+          </div>
+
+        </main>
+
+      <div className="shadow" id="shadow"></div>
+
+      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab}/>
+      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink}/>
+      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} bookmarks={this.props.output} tabs={this.state.tabs}/>
+
+    </div>
     )
   }
 
@@ -403,11 +670,21 @@ class Home extends React.Component {
     document.getElementById("tabinput2").value = each.name;
     document.getElementById("buttonnav").classList.toggle("focus");
     document.getElementById("edittabdiv").classList.toggle("active");
-    document.getElementById("addtabplus").classList.toggle("active");
     document.getElementById("tabinput2").classList.toggle("active");
     document.getElementById("colorpicker2").classList.toggle("active");
     document.getElementById("tabcancel2").classList.toggle("active");
     document.getElementById("tabsubmit2").classList.toggle("active");
+    if (!(document.getElementById("addtabdiv").className.includes("active"))) {
+      document.getElementById("addtabplus").classList.toggle("active");
+      document.getElementById("lefttabarrow").classList.toggle("active");
+      document.getElementById("righttabarrow").classList.toggle("active");
+    }
+  }
+
+  openImportLinks() {
+    document.getElementById("bookmarkbox").classList.toggle("active");
+    document.getElementById("shadow").style.opacity = "0.4";
+    document.getElementById("shadow").style.height = "100%";
   }
 }
 

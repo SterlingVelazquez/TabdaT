@@ -74,9 +74,9 @@
   .profilePic {
     position:fixed;
     text-align:right;
-    z-index:8;
+    z-index:5;
     height:62px;
-    width:150px;
+    width:160px;
     padding:10px;
     border:none;
     background-color:rgb(249, 251, 253);
@@ -117,6 +117,7 @@
     right:22px;
     width:50px;
     height:50px;
+    z-index:3;
   }
   .modBtn {
     position:relative;
@@ -129,12 +130,12 @@
     transition:0.3s;
     cursor:pointer;
   }
-  .modBox:nth-child(2):hover .modBtn {
+  .modBox:nth-child(4):hover .modBtn {
     background:rgb(216, 236, 255);
     height:105%;
     width:105%;
   }
-  .modBox:nth-child(3):hover .modBtn {
+  .modBox:nth-child(5):hover .modBtn {
     background:rgb(255, 239, 239);
     height:105%;
     width:105%;
@@ -256,6 +257,34 @@
     margin-left:30px;
   }
 
+  .leftTabArrow {
+    position:absolute;
+    top:-0.4rem;
+    left:-2.4rem;
+    padding:1rem;
+    height:44px;
+    width:40px;
+    box-shadow:none;
+    opacity:1;
+    pointer-events:all;
+  }
+  .rightTabArrow {
+    position:absolute;
+    top:-0.4rem;
+    right:-2.4rem;
+    padding:1rem;
+    height:44px;
+    width:40px;
+    box-shadow:none;
+    transform:rotateZ(180deg);
+    pointer-events:all;
+  }
+  .leftTabArrow.active,
+  .rightTabArrow.active {
+    opacity:0;
+    pointer-events:none;
+  }
+
   .leftLinkArrow {
     position:absolute;
     top:5rem;
@@ -266,7 +295,6 @@
     box-shadow:none;
     pointer-events:all;
   }
-
   .rightLinkArrow {
     position:absolute;
     top:5rem;
@@ -297,6 +325,7 @@
 
   .linkBox {
     position:relative;
+    z-index:1;
   }
 
   .linkBox:hover img {
@@ -345,7 +374,7 @@
     border-radius:100px;
     pointer-events:none;
     transition:1s;
-    z-index:10;
+    z-index:4;
   }
   .trashTab:hover {
     background:lightgray;
@@ -394,11 +423,21 @@
     text-align:center;
     margin-top:6px;
     width:150px;
+    padding:0 6px;
     height:50px;
     font-size:14px;
     overflow:hidden;
     text-overflow:ellipsis;
     color:rgb(75, 75, 75);
+  }
+
+  .linkNames {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;  /* Number of lines displayed before it truncate */
+    height:40px;
+    margin-bottom:20px;
+    overflow: hidden;
   }
 
   .addContainer {
@@ -463,56 +502,35 @@
     border-bottom:none;
   }
 
+  .loader {
+    position:absolute;
+    display:none;
+    top:21.5%;
+    left:41%;
+    width:40px;
+    height:40px;
+    transform-origin:33% 33%;
+    grid-template-columns:1fr 1fr;
+    animation: loader 2s infinite;
+    z-index:-1;
+  }
+  .dot {
+    height:30%;
+    width:30%;
+    animation:dotloader 4s infinite;
+  }
+  .dot:nth-child(1) { background-color:green}
+  .dot:nth-child(2) { background-color:yellow}
+  .dot:nth-child(3) { background-color:blue}
+  .dot:nth-child(4) { background-color:red}
+
+
   footer {
     position:relative;
     width:100%;
     top:5rem;
     margin-bottom:1.5rem;
     pointer-events:none;
-  }
-
-  .nightContainer {
-    position:relative;
-    text-align:center;
-    vertical-align:bottom;
-    max-height:35px;
-    opacity:1;
-    background:lightblue;
-    border-radius:50px;
-    padding:14px 6px 14px 16px;
-    box-shadow:0px 0px 10px lightblue;
-    pointer-events:all;
-    cursor:pointer;
-    transition:0.5s;
-    animation:nightSwitch 3s ease-out;
-  }
-
-  .nightContainer .nightSwitch {
-    position:absolute;
-    bottom:7%;
-    left:58%;
-    background-color:white;
-    border-radius:100%;
-    width:30px;
-    height:30px;
-    cursor:pointer;
-    transition:0.5s;
-  }
-
-  .nightContainer .nightImg {
-    box-shadow:none;
-    width:25px;
-    height:25px;
-    margin-top:-9px;
-    margin-left:-10px;
-  }
-
-  .nightContainer.active {
-    background:gray;
-  }
-
-  .nightContainer.active .nightSwitch {
-    left:6%;
   }
 
   @keyframes titleSlide {
@@ -531,14 +549,21 @@
     0% {
       opacity:0;
       pointer-events:none;
+      position:fixed;
     }
     50% {
       opacity:0;
       pointer-events:none;
+      position:fixed;
+    }
+    52% {
+      opacity:0;
+      position:relative;
     }
     100% {
       opacity:1;
       pointer-events:all;
+      position:relative;
     }
   }
 
@@ -611,6 +636,27 @@
       opacity: 0;
     } to {
       opacity: 1;
+    }
+  }
+
+  @keyframes loader {
+    0% {
+      transform:rotateZ(0);
+    }
+    100% {
+      transform:rotateZ(1080deg);
+    }
+  }
+
+  @keyframes dotloader {
+    0% {
+      border-radius:0%;
+    }
+    50% {
+      border-radius:100%;
+    }
+    100% {
+      border-radius:0%;
     }
   }
 

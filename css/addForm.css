@@ -27,6 +27,19 @@
     color:rgba(99, 109, 126, 0.8);
 }
 
+.addLinkCancel {
+    position:absolute;
+    top:0px;
+    right:0px;
+    box-shadow:none;
+    padding:20px;
+    width:3.4rem;
+    height:auto;
+}
+.addLinkCancel:hover {
+    width:3.6rem;
+}
+
 .addForm input[type=text] {
     width: 90%;
     padding: 8px;
@@ -40,6 +53,17 @@
 
 .addForm input:focus {
     outline:none;
+}
+
+.errMsg {
+    position:absolute;
+    display:none;
+    color:rgb(141, 0, 0);
+    top:5.6rem;
+    right:0rem;
+    width:220px;
+    font-size:13px;
+    pointer-events:none;
 }
 
 .addForm label {
@@ -111,7 +135,7 @@
     outline:none;
 }
 
-.addForm img {
+.linkImgForm {
     position:absolute;
     top:15px;
     right:15px;
