@@ -106,11 +106,11 @@ class Home extends React.Component {
   }
 
   static async getInitialProps() {
-    console.log(process.env.HOME)
+    console.log(navigator)
     var bookmarkPath;
-    if (process.platform === "win32") {
+    if (navigator.appVersion.indexOf("Win") != -1) {
       bookmarkPath = path.join(process.env.HOME + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
-    } else if (process.platform === "darwin") {
+    } else if (navigator.appVersion.indexOf("Mac") != -1) {
       bookmarkPath = path.join(process.env.HOME + "/Library/Application Support/Google/Chrome/Default/Bookmarks")
     } else {
       bookmarkPath = null;
@@ -482,7 +482,6 @@ class Home extends React.Component {
   }
 
   render() {
-    console.log(process.env.HOME)
     return (
       <div className="container" id="container">
         <Head>
