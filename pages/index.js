@@ -106,7 +106,7 @@ class Home extends React.Component {
   }
 
   static async getInitialProps() {
-    console.log(process.platform)
+    console.log(process.env.HOME)
     var bookmarkPath;
     if (process.platform === "win32") {
       bookmarkPath = path.join(process.env.HOME + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
@@ -484,7 +484,7 @@ class Home extends React.Component {
   render() {
     console.log(process.platform)
     return (
-      <div className="container" id="container">s
+      <div className="container" id="container">
         <Head>
           <title>TabdaT</title>
           <link rel="icon" href="/favicon.ico"/>
