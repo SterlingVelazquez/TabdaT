@@ -116,8 +116,16 @@ class Home extends React.Component {
     } else {
       bookmarkPath = null;
     }
-    var output = null;
-    return { output };
+    if (bookmarkPath !== null) {
+      const json = JSON.parse(fs.readFileSync(bookmarkPath)),
+      items = json.roots.bookmark_bar.children;
+
+      var output = null;
+      return { output };
+    } else {
+      var output = null;
+      return { output }
+    }
   }
 
   async get() {
