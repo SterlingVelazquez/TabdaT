@@ -108,10 +108,9 @@ class Home extends React.Component {
 
   static async getInitialProps() {
     var bookmarkPath;
-    console.log(process)
-    if (process.platform === "win32") {
+    if (os.platform() === "win32") {
       bookmarkPath = os.homedir() + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks";
-    } else if (process.platform === "darwin") {
+    } else if (os.platform() === "darwin") {
       bookmarkPath = os.homedir() + "/Library/Application Support/Google/Chrome/Default/Bookmarks";
     } else {
       bookmarkPath = null;
