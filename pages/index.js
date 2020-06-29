@@ -13,8 +13,7 @@ import "./_app.js"
 var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
 const fs = require("fs");
-const path = require("path");
-const os = require("os")
+const os = require("os");
 
 class Home extends React.Component {
 
@@ -107,7 +106,7 @@ class Home extends React.Component {
   }
 
   static async getInitialProps() {
-    console.log(os.platform())
+    console.log(os.homedir())
     var bookmarkPath;
     if (os.platform() === "win32") {
       bookmarkPath = os.homedir() + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks";
