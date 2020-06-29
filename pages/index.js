@@ -111,8 +111,6 @@ class Home extends React.Component {
       bookmarkPath = path.join(process.env.HOME + "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks")
     } else if (process.platform === "darwin") {
       bookmarkPath = path.join(process.env.HOME + "/Library/Application Support/Google/Chrome/Default/Bookmarks")
-    } else if (process.platform === "linux") {
-      bookmarkPath = path.join(process.env.HOME + "/.config/google-chrome/Default/Bookmarks") 
     } else {
       bookmarkPath = null;
     }
