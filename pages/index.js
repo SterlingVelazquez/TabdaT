@@ -477,6 +477,19 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
               <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
+                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
+                  <p className="importText" id="importtext">Import Your Bookmarks</p>
+                  <div className="arrow" id="arrow">
+                    <div className="arrowBody"></div>
+                    <div className="arrowHead"></div>
+                    <div className="arrowHead"></div>
+                  </div>
+                  <div className="arrowBox">
+                    <div className="boxBottom"></div>
+                    <div className="boxSide"></div>
+                    <div className="boxSide"></div>
+                  </div>
+                </div>
                 <div className="sideContainer" id="sideContainer">
                   <p className="sideLabel" id="sidelabel">Night Mode</p>
                   <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} style={{pointerEvents: this.state.user === "default" ? "none" : "all"}}>
@@ -581,7 +594,7 @@ class Home extends React.Component {
 
       <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab}/>
       <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink}/>
-      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} bookmarks={[]}/>
+      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs}/>
 
     </div>
     )
@@ -624,7 +637,7 @@ class Home extends React.Component {
   }
 
   openImportLinks() {
-    document.getElementById("bookmarkbox").classList.toggle("active");
+    document.getElementById("bookmarkbox").classList.toggle("focus");
     document.getElementById("shadow").style.opacity = "0.4";
     document.getElementById("shadow").style.height = "100%";
   }

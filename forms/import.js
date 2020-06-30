@@ -8,7 +8,7 @@ class Import extends React.Component {
         super(props);
         this.state = {
             tabs : this.props.tabs,
-            bookmarks : this.props.bookmarks !== null ? this.props.bookmarks : [],
+            bookmarks : [],
         }
         this.submitForm = this.submitForm.bind(this);
     }
@@ -16,8 +16,32 @@ class Import extends React.Component {
     static getDerivedStateFromProps(props) {
         return {
             tabs : props.tabs,
-            bookmarks : props.bookmarks
         }
+    }
+
+    openSteps() {
+        document.getElementById("openfile").addEventListener('change', async (event) => {
+            if (event.target.files.length !== 0) {
+                var files = event.target.files,
+                reader = new FileReader();
+                var info = document.getElementById("info");
+                var bookmarks = [];
+                reader.readAsText(files[0])
+                reader.onload = function () {
+                    info.innerHTML = reader.result;
+                    var items = info.getElementsByTagName("dt");
+                    for (var i = 1; i < items.length; i++)
+                        bookmarks.push({
+                            name: items[i].textContent.trim(),
+                            link: items[i].innerHTML.substring(9, (items[i].innerHTML.indexOf("add_date=") - 2)),
+                        })
+                    this.setState({bookmarks: bookmarks});
+                    document.getElementById("bookmarkbox").classList.toggle("focus");
+                    document.getElementById("bookmarkbox").classList.toggle("active");
+                }.bind(this)
+            }
+            event.target.value = null;
+        })
     }
 
     selectAll() {
@@ -35,7 +59,7 @@ class Import extends React.Component {
         var completeLinks = [];
         for (var i = 0; i < selectedLinks.length; i++) {
           if (selectedLinks[i].checked)
-            toAdd.push(this.props.bookmarks[i])
+            toAdd.push(this.state.bookmarks[i])
         }
         if (toAdd.length === 0) {
             this.closeImport();
@@ -52,13 +76,13 @@ class Import extends React.Component {
                 this.props.addTab(tab, false)
             }
             for (var j = 0; j < toAdd.length; j++) {
-                if (toAdd[j][0].includes('/') || toAdd[j][0].includes('$') || toAdd[j][0].includes('.') || toAdd[j][0].includes('[') || 
-                    toAdd[j][0].includes(']') || toAdd[j][0].includes('#'))
-                    toAdd[j][0] = toAdd[j][0].replace(/[\[\]\/\.#\$]/g, " ")
+                if (toAdd[j].name.includes('/') || toAdd[j].name.includes('$') || toAdd[j].name.includes('.') || toAdd[j].name.includes('[') || 
+                    toAdd[j].name.includes(']') || toAdd[j].name.includes('#'))
+                    toAdd[j].name = toAdd[j].name.replace(/[\[\]\/\.#\$]/g, " ")
                 completeLinks.push({
-                    name: toAdd[j][0],
-                    link: toAdd[j][1],
-                    image: toAdd[j][0].charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + toAdd[j][0].charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
+                    name: toAdd[j].name,
+                    link: toAdd[j].link,
+                    image: toAdd[j].name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + toAdd[j].name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     pos: pos++,
                     tab: "My Bookmarks"
                 })
@@ -74,23 +98,47 @@ class Import extends React.Component {
         document.getElementById("shadow").style.height = "0";
     }
 
+    closeTeach() {
+        document.getElementById("bookmarkbox").classList.toggle("focus");
+        document.getElementById("shadow").style.opacity = "0";
+        document.getElementById("shadow").style.height = "0";
+    }
+
     render() {
         return (
             <div className="bookmarkBox" id="bookmarkbox">
-                <h1 className="bookmarkHead" id="bookmarkhead">Choose which bookmarks to import</h1>
-                <button className="selectAll" id="selectall" onClick={e => this.selectAll()}>Select All</button>
-                <button className="confirmBookmark" id="confirmbookmark" onClick={e => this.submitForm()}>Confirm</button>
-                <ul className="bookmarkList" id="bookmarklist">
-                    {
-                        this.state.bookmarks.map( (each) => 
-                            <div className="itemContainer" id="itemcontainer" key={key++}>
-                                <label className="bookmarkItem">{each[0]}
-                                <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
-                            </div>
-                        )
-                    }
-                </ul>
-                <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeImport()}></img>
+                <div className="importTeacher" id="importteacher">
+                    <h1 className="teachHeader">How To Get Your Bookmarks</h1>
+                    <div className="teachHeaderLine"></div>
+                    <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeTeach()}></img>
+                    <ol className="teachSteps" id="teachsteps">
+                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon (located at the top-right of your browser) 
+                            and go to <b>Bookmarks {' > '} Bookmark Manager</b></li>
+                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located at the top-right of the page) 
+                            and click on <b>Export Bookmarks</b></li>
+                        <li className="step">Save your file somewhere you can easily access it again</li>
+                        <li className="step">Click the button below and locate the file you saved in the previous step</li>
+                    </ol>
+                    <input className="openFile" id="openfile" onClick={e => this.openSteps()} type="file" accept=".html"></input>
+                    <button className="openFileButton">Upload Your Bookmark File</button>
+                </div>
+                <div className="submitImportContainer" id="submitimportcontainer">
+                    <div className="info" id="info" style={{display:"none"}}></div>
+                    <h1 className="bookmarkHead" id="bookmarkhead">Choose which bookmarks to import</h1>
+                    <button className="selectAll" id="selectall" onClick={e => this.selectAll()}>Select All</button>
+                    <button className="confirmBookmark" id="confirmbookmark" onClick={e => this.submitForm()}>Confirm</button>
+                    <ul className="bookmarkList" id="bookmarklist">
+                        {
+                            this.state.bookmarks.map( (each) => 
+                                <div className="itemContainer" id="itemcontainer" key={key++}>
+                                    <label className="bookmarkItem">{each.name}
+                                    <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
+                                </div>
+                            )
+                        }
+                    </ul>
+                    <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeImport()}></img>
+                </div>
             </div>
         )
     }

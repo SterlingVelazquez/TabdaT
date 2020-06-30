@@ -266,7 +266,7 @@
 
   .container.focus .bookmarkBox {
     background-color: rgb(34, 34, 34);
-    box-shadow:3px 3px 5px rgba(179, 183, 189, 0.8);
+    box-shadow:0px 0px 20px rgba(179, 183, 189, 0.8);
   }
   .container.focus .bookmarkHead {
     color:rgba(248, 248, 248, 0.781);
@@ -292,6 +292,26 @@
     color:rgba(143, 174, 224, 0.8);
   }
 
-  .container.focus .bookmarkBox::-webkit-scrollbar-track {
-    background:rgb(206, 206, 206);
+  .container.focus .bookmarkBox::-webkit-scrollbar-thumb {
+    background:rgba(200, 207, 221, 0.8);
+    border-radius:20px;
   }
+  .container.focus .bookmarkBox::-webkit-scrollbar-track {
+    background:rgb(105, 105, 105);
+  }
+
+  .container.focus .teachHeader {
+    color:rgba(248, 248, 248, 0.781);
+  }
+  .container.focus .teachHeaderLine {
+    background-color:rgba(248, 248, 248, 0.781);
+  }
+  .container.focus .teachSteps {
+    color: rgba(248, 248, 248, 0.781);
+  }
+  .container.focus .openFileButton {
+    color: rgba(248, 248, 248, 0.781);
+  }
+
+
+
