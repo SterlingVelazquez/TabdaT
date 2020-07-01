@@ -114,7 +114,7 @@ class Import extends React.Component {
                     <ol className="teachSteps" id="teachsteps">
                         <li className="step">Select the <img className="dots" src="dots.png"></img> icon (located at the top-right of your browser) 
                             and go to <b>Bookmarks {' > '} Bookmark Manager</b></li>
-                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located at the top-right of the page) 
+                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located below the previous icon) 
                             and click on <b>Export Bookmarks</b></li>
                         <li className="step">Save your file somewhere you can easily access it again</li>
                         <li className="step">Click the button below and locate the file you saved in the previous step</li>

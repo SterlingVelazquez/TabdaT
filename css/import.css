@@ -4,7 +4,7 @@
     left:0;
     opacity:0;
     width:350px;
-    height:520px;
+    height:517px;
     padding:0.8rem 1.6rem;
     background-color: rgb(246, 247, 253);
     box-shadow: 0px 0px 0px rgb(246, 247, 253);
@@ -198,8 +198,6 @@
     background:rgba(99, 109, 126, 0.8);
     border-radius:20px;
 }
-
-
 
 @keyframes stepSlide {
     0% {

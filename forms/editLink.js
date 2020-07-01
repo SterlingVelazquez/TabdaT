@@ -9,6 +9,7 @@ class EditLink extends React.Component {
                 link : this.props.currLink.link, 
                 image : this.props.currLink.image,
                 defaultImg: "ultafedIgm/doggo.png",
+                imageAddress: "",
             };
         } else {
             this.state = {
@@ -16,6 +17,7 @@ class EditLink extends React.Component {
                 link : "", 
                 image : "",
                 defaultImg: "ultafedIgm/doggo.png",
+                imageAddress: "",
             }
         }
         this.submitForm = this.submitForm.bind(this);
@@ -29,14 +31,23 @@ class EditLink extends React.Component {
                     link: props.currLink.link,
                     image: "arrow.png",
                     defaultImg: props.currLink.image,
+                    imageAddress: "",
+                }
+            } else if (typeof props.currLink.ref !== "undefined") {
+                return {
+                    name: props.currLink.name,
+                    link: props.currLink.link,
+                    image: props.currLink.image,
+                    defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
+                    imageAddress: "",
                 }
             } else {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
-                    image: props.currLink.image,
-                    defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" :
-                        "ultafedIgm/doggo.png",
+                    image: "arrow.png",
+                    defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
+                    imageAddress: props.currLink.image,
                 }
             }
         }
@@ -76,21 +87,50 @@ class EditLink extends React.Component {
                 this.setState({image: files[0]})
                 reader.readAsDataURL(files[0])
                 if (document.getElementById("uploadimg2").className !== "imgContainer active")
-                    this.toggleDefault();
+                    this.toggleDefault(false);
             }
         })
     }
+    setImageAddress(event) {
+        this.setState({imageAddress: event.target.value})
+        this.toggleURL();
+    }
 
-    toggleDefault() {
-        document.getElementById("defaultimg2").classList.toggle("active");
-        document.getElementById("uploadimg2").classList.toggle("active");
+    toggleDefault(isDefault) {
+        if (document.getElementById("imageaddress2").className === "imageAddress active")
+            document.getElementById("imageaddress2").classList.toggle("active")
+        if (isDefault) {
+            if (document.getElementById("defaultimg2").className !== "imgContainer active")
+                document.getElementById("defaultimg2").classList.toggle("active")
+            if (document.getElementById("uploadimg2").className === "imgContainer active")
+                document.getElementById("uploadimg2").classList.toggle("active")
+        } else {
+            if (document.getElementById("defaultimg2").className === "imgContainer active")
+                document.getElementById("defaultimg2").classList.toggle("active")
+            if (document.getElementById("uploadimg2").className !== "imgContainer active")
+                document.getElementById("uploadimg2").classList.toggle("active")
+        }
+    }
+    toggleURL() {
+        if (document.getElementById("imageaddress2").className !== "imageAddress active")
+            document.getElementById("imageaddress2").classList.toggle("active")
+        if (document.getElementById("defaultimg2").className === "imgContainer active")
+            document.getElementById("defaultimg2").classList.toggle("active")
+        if (document.getElementById("uploadimg2").className === "imgContainer active")
+            document.getElementById("uploadimg2").classList.toggle("active")
+    }
+    clearImg() {
+        document.getElementById("imageaddressinput2").value = "";
+        this.setState({imageAddress: ""});
+        this.toggleDefault(true);
     }
 
     async submitForm(event) {
         event.preventDefault();
         if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && 
             ((document.getElementById("defaultimg2").className === "imgContainer active" && this.state.defaultImg === this.props.currLink.image) ||
-                (document.getElementById("uploadimg2").className === "imgContainer active" && this.state.image === this.props.currLink.image))) {
+                (document.getElementById("uploadimg2").className === "imgContainer active" && this.state.image === this.props.currLink.image) || 
+                    (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress === this.props.currLink.image))) {
             this.closeEditForm();
         } else {
             var newLink = {
@@ -100,8 +140,12 @@ class EditLink extends React.Component {
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
                 newLink.link = "https://" + newLink.link;
-            if (newLink.image === "arrow.png")
+            if (newLink.image === "arrow.png") {
                 newLink.image = this.state.defaultImg;
+            }
+            if (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress !== "") {
+                newLink.image = this.state.imageAddress;
+            }
             if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
                 || newLink.name.includes('[') || newLink.name.includes(']')) {
                 document.getElementById("errmsg2").style.display = "block";
@@ -115,7 +159,7 @@ class EditLink extends React.Component {
     async closeEditForm() {
         this.props.editLink("", true)
         document.getElementById("EditFormDiv").style.opacity = "0";
-        document.getElementById("EditFormDiv").style.top = "-500px";
+        document.getElementById("EditFormDiv").style.top = "-600px";
         document.getElementById("EditFormDiv").style.boxShadow = "0 0 0 rgb(246, 247, 253)";
         document.getElementById("shadow").style.opacity = "0";
         document.getElementById("shadow").style.height = "0";
@@ -142,23 +186,31 @@ class EditLink extends React.Component {
                     <label><b>URL</b></label>
                     <input type="text" name="link" defaultValue={this.state.link} onChange={e => this.setLink(e)} spellCheck="false" required/>
 
-                    <label style={{float:"none"}}><b>Image</b></label>
-                    <br/>
-
-                    <div id="defaultimg2" onClick={e => this.toggleDefault()} className={this.state.defaultImg === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
+                    <div id="defaultimg2" onClick={e => this.toggleDefault(true)} className={this.state.defaultImg === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">
                             <img id="defaultimgedit" src={this.state.defaultImg} className="linkImgForm"></img>
                         </div>
                         <p className="imgLabel">Default</p>
                     </div>
 
-                    <div onClick={e => this.toggleDefault()} id="uploadimg2" className={this.state.defaultImg === this.props.currLink.image ? "imgContainer" : "imgContainer active"}>
+                    <div onClick={e => this.toggleDefault(false)} id="uploadimg2" className={this.state.image === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
                             <div className="defaultImg">
                                 <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
                             </div>
                         <p className="imgLabel">Upload</p>
                     </div>
+
+                    <br/>
+                    <label style={{float:"none"}}><b>OR</b></label>
+                    <br/>
+                    <label className={this.state.image !== this.props.currLink.image && this.state.defaultImg !== this.props.currLink.image ? "imageAddress active" : "imageAddress"} id="imageaddress2" onClick={e => this.toggleURL()}><b>Image URL</b></label>
+                    <input type="text" className="imgAddressInput" id="imageaddressinput2" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
+
+                    <div className="previewBox">
+                        <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
+                    </div>
+                    <button className="clearImg" id="clearimg2" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput2" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeEditForm()}></img>

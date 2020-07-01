@@ -7,6 +7,7 @@ class AddLink extends React.Component {
             name : null, 
             link : null, 
             image : null,
+            imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
             uid : this.props.userId,
             selectedTab : this.props.currTab,
@@ -58,10 +59,38 @@ class AddLink extends React.Component {
             }
         })
     }
+    setImageAddress(event) {
+        this.setState({imageAddress: event.target.value})
+        this.toggleURL();
+    }
 
-    toggleDefault() {
-        document.getElementById("defaultimg").classList.toggle("active");
-        document.getElementById("uploadimg").classList.toggle("active");
+    toggleDefault(isDefault) {
+        if (document.getElementById("imageaddress").className === "imageAddress active")
+            document.getElementById("imageaddress").classList.toggle("active")
+        if (isDefault) {
+            if (document.getElementById("defaultimg").className !== "imgContainer active")
+                document.getElementById("defaultimg").classList.toggle("active")
+            if (document.getElementById("uploadimg").className === "imgContainer active")
+                document.getElementById("uploadimg").classList.toggle("active")
+        } else {
+            if (document.getElementById("defaultimg").className === "imgContainer active")
+                document.getElementById("defaultimg").classList.toggle("active")
+            if (document.getElementById("uploadimg").className !== "imgContainer active")
+                document.getElementById("uploadimg").classList.toggle("active")
+        }
+    }
+    toggleURL() {
+        if (document.getElementById("imageaddress").className !== "imageAddress active")
+            document.getElementById("imageaddress").classList.toggle("active")
+        if (document.getElementById("defaultimg").className === "imgContainer active")
+            document.getElementById("defaultimg").classList.toggle("active")
+        if (document.getElementById("uploadimg").className === "imgContainer active")
+            document.getElementById("uploadimg").classList.toggle("active")
+    }
+    clearImg() {
+        document.getElementById("imageaddressinput").value = "";
+        this.setState({imageAddress: ""});
+        this.toggleDefault(true);
     }
 
     async submitForm(event) {
@@ -73,8 +102,12 @@ class AddLink extends React.Component {
         };
         if (!(this.state.link.includes("https://")) && !(this.state.link.includes("http://")))
             newLink.link = "https://" + newLink.link;
-        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null)
+        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null) {
             newLink.image = this.state.defaultImg;
+        }
+        if (document.getElementById("imageaddress").className === "imageAddress active" && this.state.imageAddress !== "") {
+            newLink.image = this.state.imageAddress;
+        }
         if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
             || newLink.name.includes('[') || newLink.name.includes(']')) {
             document.getElementById("errmsg").style.display = "block";
@@ -86,7 +119,7 @@ class AddLink extends React.Component {
 
     async closeAddForm() {
         document.getElementById("AddFormDiv").style.opacity = "0";
-        document.getElementById("AddFormDiv").style.top = "-500px";
+        document.getElementById("AddFormDiv").style.top = "-600px";
         document.getElementById("AddFormDiv").style.boxShadow = "0 0 0 rgb(246, 247, 253)";
         document.getElementById("shadow").style.opacity = "0";
         document.getElementById("shadow").style.height = "0";
@@ -96,11 +129,10 @@ class AddLink extends React.Component {
             name:null,
             link:null,
             image: null,
-            defaultImg: "ultafedIgm/doggo.png"
+            defaultImg: "ultafedIgm/doggo.png",
+            imageAddress: ""
         })
-        if (document.getElementById("uploadimg").className === "imgContainer active") {
-            this.toggleDefault();
-        }
+        this.toggleDefault(true);
         document.getElementById("outimage").src = "arrow.png";
         document.getElementById("errmsg").style.display = "none";
     }
@@ -117,23 +149,31 @@ class AddLink extends React.Component {
                     <label><b>URL</b></label>
                     <input type="text" name="link" onChange={e => this.setLink(e)} spellCheck="false" required/>
 
-                    <label style={{float:"none"}}><b>Image</b></label>
-                    <br/>
-
-                    <div id="defaultimg" onClick={e => this.toggleDefault()} className="imgContainer active">
+                    <div id="defaultimg" onClick={e => this.toggleDefault(true)} className="imgContainer active">
                         <div className="defaultImg">
                             <img src={this.state.defaultImg} className="linkImgForm"></img>
                         </div>
                         <p className="imgLabel">Default</p>
                     </div>
                     
-                    <div onClick={e => this.toggleDefault()} id="uploadimg" className="imgContainer">
+                    <div onClick={e => this.toggleDefault(false)} id="uploadimg" className="imgContainer">
                         <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
                             <div className="defaultImg">
                                 <img id="outimage" src="arrow.png" className="linkImgForm"></img>
                             </div>
                         <p className="imgLabel">Upload</p>
                     </div>
+
+                    <br/>
+                    <label style={{float:"none"}}><b>OR</b></label>
+                    <br/>
+                    <label className="imageAddress" id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
+                    <input type="text" className="imgAddressInput" id="imageaddressinput" name="link" onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
+
+                    <div className="previewBox">
+                        <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
+                    </div>
+                    <button className="clearImg" id="clearimg" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>

@@ -131,7 +131,6 @@ class Database {
         if (typeof link.image === "object") {
             await firebase.storage().ref(uid).child(link.name).put(link.image).then(async res => {
                 link.ref = uid + '/' + link.name;
-                console.log(link.ref)
                 await firebase.database().ref(uid + '/Links/' + link.name).set(link);
             })
         } else {
@@ -146,14 +145,15 @@ class Database {
     }
 
     async editLink(link, uid, ref, name) {
+        console.log(typeof ref)
         if (typeof link.image === "object") {
             await this.eraseLinks(uid, name);
             await firebase.storage().ref(uid).child(link.name).put(link.image).then(async res => {
                 link.ref = uid + '/' + link.name;
                 await firebase.database().ref(uid + '/Links/' + link.name).set(link);
             })
-        } else if (!(link.image.includes('ultafedIgm/'))) {
-            link.ref = ref;
+        } else if (typeof ref === "string") {
+            await firebase.storage().ref(uid).child(link.name).delete();
             await firebase.database().ref(uid + '/Links/' + name).remove();
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
         } else {
@@ -189,15 +189,18 @@ class Database {
             snapshot.forEach(function(childSnapshot) {
                 links.push({
                     name: childSnapshot.val()["name"],
+                    ref: childSnapshot.val()["ref"]
                 })
             })
         })
         for (var i = 0; i < links.length; i++) {
-            await firebase.storage().ref(uid + '/' + links[i].name).delete().then((res) => {
-                //Success
-            }).catch(function () {
-                console.log("Deleted File")
-            })
+            if (typeof links[i].ref !== "undefined") {
+                await firebase.storage().ref(uid + '/' + links[i].name).delete().then((res) => {
+                    //Success
+                }).catch(function () {
+                    console.log("Deleted File")
+                })
+            }
             await firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }
         await firebase.database().ref(uid + '/Tabs/' + tab).remove();

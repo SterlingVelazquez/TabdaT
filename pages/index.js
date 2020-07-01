@@ -125,6 +125,30 @@ class Home extends React.Component {
     this.getImages();
   }
 
+  async getImages() {
+    var list = this.state.links;
+    var count = 0;
+    length = document.getElementsByClassName("loader").length;
+    if (length > 0)
+      for (var i = 0; i < length; i++) {
+        document.getElementsByClassName("loader")[i].style.display = "grid"
+      }
+    for (var i = 0; i < list.length; i++) {
+      if (typeof list[i].ref !== "undefined") {
+        count++;
+        await firebase.storage().ref(list[i].ref).getDownloadURL().then((res) => {
+          list[i].image = res;
+        })
+      }
+    }
+    if (length > 0)
+      for (var i = 0; i < length; i++) {
+        document.getElementsByClassName("loader")[i].style.display = "none"
+      }
+    if (count !== 0)
+      this.setState({links: this.state.links})
+  }
+
   async signIn() {
     this.setState({user : await firebase.auth().signInWithPopup(provider)});
     if (this.state.user === "default") {
@@ -186,30 +210,6 @@ class Home extends React.Component {
         this.getImages();
       }
     });
-  }
-
-  async getImages() {
-    var list = this.state.links;
-    var count = 0;
-    length = document.getElementsByClassName("loader").length;
-    if (length > 0)
-      for (var i = 0; i < length; i++) {
-        document.getElementsByClassName("loader")[i].style.display = "grid"
-      }
-    for (var i = 0; i < list.length; i++) {
-      if (typeof list[i].ref !== "undefined") {
-        count++;
-        await firebase.storage().ref(list[i].ref).getDownloadURL().then((res) => {
-          list[i].image = res;
-        })
-      }
-    }
-    if (length > 0)
-      for (var i = 0; i < length; i++) {
-        document.getElementsByClassName("loader")[i].style.display = "none"
-      }
-    if (count !== 0)
-      this.setState({links: this.state.links})
   }
 
   async updateTabs(each) {
