@@ -1,13 +1,13 @@
 import React from 'react';
 import Head from 'next/head';
-import {database} from "../tools/database.js";
-import {firebase} from "../tools/config.js"
-import {sorting} from "../tools/sorting.js"
-import AddLink from "../forms/addLink.js"
-import AddTab from "../forms/addTab.js"
-import EditLink from "../forms/editLink.js"
-import EditTab from "../forms/editTab.js"
-import Import from "../forms/import.js"
+import { database } from "../tools/database.js";
+import { firebase } from "../tools/config.js"
+import { sorting } from "../tools/sorting.js"
+import { AddLink } from "../forms/addLink.js"
+import { AddTab } from "../forms/addTab.js"
+import { EditLink } from "../forms/editLink.js"
+import { EditTab } from "../forms/editTab.js"
+import { Import } from "../forms/import.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
@@ -43,7 +43,7 @@ class Home extends React.Component {
           <p>Sign In</p>
           <img src="black-male.png" id="profilepic"></img>
         </div>
-    }; 
+    };
     this.tabCallback = this.tabCallback.bind(this);
     this.linkCallback = this.linkCallback.bind(this);
     this.multipleLinkCallback = this.multipleLinkCallback.bind(this);
@@ -274,7 +274,13 @@ class Home extends React.Component {
     if (document.getElementById("editimg").src.includes("edit")) {
       document.getElementById("editimg").src = "cancel.png"
     } else {
-      document.getElementById("editimg").src = "edit.png"
+      if (document.getElementById("container").className === "container focus") {
+        document.getElementById("editimg").src = "editNight.png"
+        document.getElementById("trashimg").src = "trashNight.png"
+      } else {
+        document.getElementById("editimg").src = "edit.png"
+        document.getElementById("trashimg").src = "trash.png"
+      }
     }
   }
 
@@ -320,33 +326,41 @@ class Home extends React.Component {
     if (document.getElementById("edittabdiv").className === "addTabDiv active")
       this.openTabEdit(this.state.currTab);
     document.getElementById("erasebox").classList.toggle("active");
+    document.getElementById("confirmerase").classList.toggle("active");
     document.getElementById("grid").classList.toggle("active");
     document.getElementById("buttonnav").classList.toggle("active");
     if (document.getElementById("trashimg").src.includes("trash")) {
       document.getElementById("trashimg").src = "cancel.png"
     } else {
-      document.getElementById("trashimg").src = "trash.png"
+      if (document.getElementById("container").className === "container focus") {
+        document.getElementById("trashimg").src = "trashNight.png"
+        document.getElementById("editimg").src = "editNight.png"
+      } else {
+        document.getElementById("trashimg").src = "trash.png"
+        document.getElementById("editimg").src = "edit.png"
+      }
     }
   }
 
-  async confirmErase(e) {
-    e.stopPropagation();
+  async confirmErase() {
     var toErase = [];
     var selectedLinks = document.getElementsByClassName("linkCheckBox");
     for (var i = 0; i < selectedLinks.length; i++) {
       if (selectedLinks[i].checked)
         toErase.push(selectedLinks[i].value)
     }
-    if (toErase.length !== 0) 
-      await database.eraseLinks(this.state.uid, toErase);
-    this.setState({
-      tabs : await database.getTabs(this.state.uid),
-      links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))
-    })
-    if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
-      this.changeLinks(-1);
-    this.getImages();
-    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+    if (toErase.length !== 0) { 
+        await database.eraseLinks(this.state.uid, toErase);
+      this.setState({
+        tabs : await database.getTabs(this.state.uid),
+        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))
+      })
+      if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
+        this.changeLinks(-1);
+      this.getImages();
+      this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+    }
+    this.eraseActive();
   }
 
   async eraseTab(e, tab) {
@@ -421,22 +435,18 @@ class Home extends React.Component {
     document.getElementById("nightmodecontainer").classList.toggle("active");
     document.getElementById("container").classList.toggle("focus");
     if (document.getElementById("container").className === "container focus") {
-      if (this.state.user === "default")
-        document.getElementById("profilepic").src = "white-male.png"
+      if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
+        document.getElementById("trashimg").src = "trashNight.png";
+        document.getElementById("editimg").src = "editNight.png";
+      }
       firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "true"})
     } else {
-      if (this.state.user === "default")
-        document.getElementById("profilepic").src = "black-male.png"
+      if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
+        document.getElementById("trashimg").src = "trash.png";
+        document.getElementById("editimg").src = "edit.png";
+      }
       firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "false"})
     }
-  }
-
-  getKeyPresses() {
-    document.addEventListener("keypress", function(e) {
-      if (document.getElementById("shadow").style.height !== "100%" && document.getElementsByClassName("addTabDiv active").length === 0)
-        document.getElementById("searchbar").focus();
-      }
-    )
   }
 
   render() {
@@ -503,21 +513,6 @@ class Home extends React.Component {
 
             {this.state.profilePic}
 
-            <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "block"}}>
-              <button className="modBtn">
-                <img className="modImg" id="editimg" src="edit.png"></img>
-                <p className="modText">Choose A Tab/Link</p>
-              </button>
-            </div>
-
-            <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "block", top:"155px"}}>
-              <button className="modBtn">
-                <img className="modImg" id="trashimg" src="trash.png"></img>
-                <p className="modText" onClick={e => this.confirmErase(e)}>Confirm</p>
-              </button>
-            </div>
-
-            <div type="text" className="keyPress" id="keypress" onKeyDown={e => this.keypress(e)}></div>
             <input className="searchBar" id="searchbar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
             <br/>
             
@@ -557,7 +552,7 @@ class Home extends React.Component {
             {
               this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
                 <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
-                  <input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input>
+                  <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input></label>
                   <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
                     <img src={each.image} key={key++} className="linkImg"></img>
                     <p className="linkNames">{each.name}</p>
@@ -584,7 +579,30 @@ class Home extends React.Component {
               <div className="addSlider">
                 <img src="plus.png"></img>
               </div>
-              <button className="addLink">Add New Link</button>
+              <button className="addLink"><b>Add New Link</b></button>
+            </div>
+            <br/>
+
+            <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+              <button className="modBtn">
+                <img className="modImg" id="editimg" src="edit.png"></img>
+              </button>
+              <p className="modText">Choose A Tab/Link</p>
+              <p className="modTextClose" onClick={e => this.editActive()}>Close</p>
+            </div>
+
+            <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+              <button className="modBtn">
+                <img className="modImg" id="trashimg" src="trash.png"></img>
+              </button>
+              <p className="modTextClose" onClick={e => this.eraseActive()}>Close</p>
+            </div>
+
+            <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+              <button className="modBtnConfirm" id="modbtnconfirm">
+                <div className="modImgConfirm" id="modimgconfirm"></div>
+              </button>
+              <p className="modTextConfirm" onClick={e => this.confirmErase()}>Confirm</p>
             </div>
           </div>
 
@@ -601,21 +619,15 @@ class Home extends React.Component {
   }
 
   openAddLink() {
-    document.getElementById("AddFormDiv").style.top = "calc(50% - 230px)";
-    document.getElementById("AddFormDiv").style.opacity = "1";
-    document.getElementById("AddFormDiv").style.boxShadow = "0 0 20px rgb(246, 247, 253)";
-    document.getElementById("shadow").style.opacity = "0.4";
-    document.getElementById("shadow").style.height = "100%";
+    document.getElementById("AddFormDiv").classList.toggle("active");
+    document.getElementById("shadow").classList.toggle("active");
   }
 
   openEditForm(e, link) {
     e.preventDefault();
     this.setState({selectedLink: link});
-    document.getElementById("EditFormDiv").style.top = "calc(50% - 230px)";
-    document.getElementById("EditFormDiv").style.opacity = "1";
-    document.getElementById("EditFormDiv").style.boxShadow = "0 0 20px rgb(246, 247, 253)";
-    document.getElementById("shadow").style.opacity = "0.4";
-    document.getElementById("shadow").style.height = "100%";
+    document.getElementById("EditFormDiv").classList.toggle("active");
+    document.getElementById("shadow").classList.toggle("active");
   }
 
   openTabEdit(each) {
@@ -625,10 +637,6 @@ class Home extends React.Component {
     document.getElementById("tabinput2").value = each.name;
     document.getElementById("buttonnav").classList.toggle("focus");
     document.getElementById("edittabdiv").classList.toggle("active");
-    document.getElementById("tabinput2").classList.toggle("active");
-    document.getElementById("colorpicker2").classList.toggle("active");
-    document.getElementById("tabcancel2").classList.toggle("active");
-    document.getElementById("tabsubmit2").classList.toggle("active");
     if (!(document.getElementById("addtabdiv").className.includes("active"))) {
       document.getElementById("addtabplus").classList.toggle("active");
       document.getElementById("lefttabarrow").classList.toggle("active");
@@ -638,8 +646,100 @@ class Home extends React.Component {
 
   openImportLinks() {
     document.getElementById("bookmarkbox").classList.toggle("focus");
-    document.getElementById("shadow").style.opacity = "0.4";
-    document.getElementById("shadow").style.height = "100%";
+    document.getElementById("shadow").classList.toggle("active");
+  }
+
+  getKeyPresses() {
+    document.addEventListener("keydown", async function(e) {
+      console.log(e.keyCode)
+      if (this.state.user !== "default" && document.activeElement.id === "" && e.keyCode === 78) // N
+        this.toggleNightMode();
+      if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0) {
+        switch(e.keyCode) {
+          case 9: // tab
+            e.preventDefault();
+            break;
+          case 27: // esc
+            if (document.getElementById("searchbar").value !== "") {
+              document.getElementById("searchbar").value="";
+              document.getElementById("searchbar").blur();
+              this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+              this.getImages();
+            }
+            break;
+          case 32: // space
+            if (document.activeElement.id !== "searchbar") {
+              e.preventDefault();
+              document.getElementById("searchbar").focus();
+            }
+            break;
+          case 76: // L
+            if (this.state.user !== "default" && document.activeElement.id === "")
+              this.openAddLink();
+            break;
+          case 77: // M
+            if (document.activeElement.id === "")
+              this.toggleSideMenu();
+            break;
+          case 79: // O
+            if (document.activeElement.id === "")
+              this.toggleSideMenu();
+            break;
+          default:
+            //Invalid Key
+        }
+      } else if (document.getElementById("AddFormDiv").className === "addForm active") {
+        switch(e.keyCode) {
+          case 9: // tab
+            e.preventDefault();
+            if (document.activeElement.id === "") {
+              document.getElementById("addtitle").focus();
+            } else if (document.activeElement.id === "addtitle") {
+              document.getElementById("addurl").focus();
+            } else {
+              document.getElementById("addurl").blur();
+            }
+            break;
+          case 27: {
+            if (document.activeElement.id === "addtitle") {
+              document.getElementById("addtitle").blur();
+            } else if (document.activeElement.id === "addurl") {
+              document.getElementById("addurl").blur();
+            }
+            this.openAddLink();
+            break;
+          }
+          case 76: // L
+            if (document.activeElement.id === "")
+              this.openAddLink();
+            break;
+        }
+      } else if (document.getElementById("EditFormDiv").className === "addForm active") {
+        switch(e.keyCode) {
+          case 9: // tab
+            e.preventDefault();
+            if (document.activeElement.id === "") {
+              document.getElementById("edittitle").focus();
+            } else if (document.activeElement.id === "edittitle") {
+              document.getElementById("editurl").focus();
+            } else {
+              document.getElementById("editurl").blur();
+            }
+            break;
+        }
+      } else if (document.getElementById("addtabdiv").className === "addTabDiv active") {
+        switch(e.keyCode) {
+          case 9: // tab
+            e.preventDefault();
+            if (document.activeElement.id === "") {
+              document.getElementById("tabinput").focus();
+            } else {
+              document.getElementById("tabinput").blur();
+            }
+            break;
+        }
+      }
+    }.bind(this))
   }
 }
 

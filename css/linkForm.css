@@ -16,16 +16,22 @@
     box-shadow: 0 0 0 rgb(246, 247, 253);
     z-index: 11;
     border-radius: 10px;
-    transition:box-shadow 0.8s ease-in 0.3s, top 0.5s, opacity 0.5s;
+    transition:box-shadow 0.8s ease-in 0.3s, top 0.5s, opacity 0.5s, background-color 1s;
     opacity:0;
     font-family:'Noto Sans JP', sans-serif;
+}
+.addForm.active {
+    top: calc(50% - 265px);
+    opacity: 1;
+    box-shadow: 0 0 20px rgb(246, 247, 253);
 }
 
 .addForm h1 {
     padding-top:20px;
     margin-bottom:25px;
     font-size:30px;
-    color:rgba(99, 109, 126, 0.8);
+    color:rgb(141, 152, 172);
+    letter-spacing:0.5px;
 }
 
 .addLinkCancel {
@@ -68,9 +74,11 @@
 }
 
 .addForm label {
-    color:rgba(99, 109, 126, 0.8);
+    color:rgb(141, 152, 172);
     margin-left: 2%;
     float:left;
+    transition:1s;
+    letter-spacing:0.5px;
 }
 
 .imgContainer {
@@ -103,7 +111,7 @@
     text-align:center;
     display:inline;
     top:2px;
-    color:rgba(99, 109, 126, 0.8);
+    color:rgb(141, 152, 172);
     pointer-events:none;
 }
 

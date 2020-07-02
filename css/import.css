@@ -42,12 +42,13 @@
     letter-spacing:1px;
     margin-top:0.5rem;
     padding-bottom:0.2rem;
+    color: rgb(111, 120, 136);
 }
 .teachHeaderLine {
     height:1px;
     width:18.7rem;
     margin-bottom:1.3rem;
-    background-color:rgb(99, 109, 126);
+    background-color:rgb(141, 152, 172);
     text-align:center;
     animation: headerBottom 2s;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class EditTab extends React.Component {
+export class EditTab extends React.Component {
     constructor(props) {
         super(props);
         if (this.props.currTab.name !== "") {
@@ -63,10 +63,6 @@ class EditTab extends React.Component {
         this.props.editTab("", true);
         document.getElementById("buttonnav").classList.toggle("focus");
         document.getElementById("edittabdiv").classList.toggle("active");
-        document.getElementById("tabinput2").classList.toggle("active");
-        document.getElementById("colorpicker2").classList.toggle("active");
-        document.getElementById("tabcancel2").classList.toggle("active");
-        document.getElementById("tabsubmit2").classList.toggle("active");
         document.getElementById("taberrmsg2").style.display = "none";
         if (!(document.getElementById("addtabdiv").className.includes("active"))) {
             document.getElementById("addtabplus").classList.toggle("active");
@@ -94,5 +90,3 @@ class EditTab extends React.Component {
         );
     }
 }
-
-export default EditTab;

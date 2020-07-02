@@ -1,6 +1,6 @@
 import React from 'react';
 
-class EditLink extends React.Component {
+export class EditLink extends React.Component {
     constructor(props) {
         super(props);
         if (this.props.currLink.name !== "") {
@@ -158,11 +158,8 @@ class EditLink extends React.Component {
 
     async closeEditForm() {
         this.props.editLink("", true)
-        document.getElementById("EditFormDiv").style.opacity = "0";
-        document.getElementById("EditFormDiv").style.top = "-600px";
-        document.getElementById("EditFormDiv").style.boxShadow = "0 0 0 rgb(246, 247, 253)";
-        document.getElementById("shadow").style.opacity = "0";
-        document.getElementById("shadow").style.height = "0";
+        document.getElementById("EditFormDiv").classList.toggle("active");
+        document.getElementById("shadow").classList.toggle("active");
         document.getElementById("editFormDiv").reset();
         window.formOpen = false;
         this.setState({
@@ -180,11 +177,11 @@ class EditLink extends React.Component {
                 <form id="editFormDiv" onSubmit={this.submitForm}>
                     <h1> EDIT LINK </h1>
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" id="linkname" defaultValue={this.state.name} onChange={e =>this.setName(e)} spellCheck="false" required/>
+                    <input type="text" name="linkName" id="edittitle" defaultValue={this.state.name} onChange={e =>this.setName(e)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg2">Can't contain: . [ ] # $ /</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" defaultValue={this.state.link} onChange={e => this.setLink(e)} spellCheck="false" required/>
+                    <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e)} spellCheck="false" required/>
 
                     <div id="defaultimg2" onClick={e => this.toggleDefault(true)} className={this.state.defaultImg === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">
@@ -219,5 +216,3 @@ class EditLink extends React.Component {
         );
     }
 }
-
-export default EditLink;

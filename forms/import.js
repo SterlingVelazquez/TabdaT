@@ -2,7 +2,7 @@ import React from 'react';
 
 var key=0;
 
-class Import extends React.Component {
+export class Import extends React.Component {
 
     constructor (props) {
         super(props);
@@ -94,14 +94,12 @@ class Import extends React.Component {
 
     closeImport() {
         document.getElementById("bookmarkbox").classList.toggle("active");
-        document.getElementById("shadow").style.opacity = "0";
-        document.getElementById("shadow").style.height = "0";
+        document.getElementById("shadow").classList.toggle("active");
     }
 
     closeTeach() {
         document.getElementById("bookmarkbox").classList.toggle("focus");
-        document.getElementById("shadow").style.opacity = "0";
-        document.getElementById("shadow").style.height = "0";
+        document.getElementById("shadow").classList.toggle("active");
     }
 
     render() {
@@ -143,5 +141,3 @@ class Import extends React.Component {
         )
     }
 }
-
-export default Import;

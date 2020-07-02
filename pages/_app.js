@@ -1,6 +1,6 @@
 import '../css/main.css'
-import '../css/addForm.css'
-import '../css/addTab.css'
+import '../css/linkForm.css'
+import '../css/tabForm.css'
 import '../css/nightMode.css'
 import '../css/navBar.css'
 import '../css/import.css'

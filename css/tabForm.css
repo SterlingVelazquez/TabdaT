@@ -57,7 +57,7 @@
   transition:margin-top 0.5s, opacity 0.5s;
   box-sizing: content-box;
 }
-.tabInput.active {
+.addTabDiv.active .tabInput {
   pointer-events:all;
   margin-top:3px;
   opacity:1;
@@ -73,7 +73,7 @@
   pointer-events:none;
   transition:top 0.5s linear 0.2s, opacity 0.5s linear 0.2s;
 }
-.colorPicker.active {
+.addTabDiv.active .colorPicker {
   pointer-events:all;
   top:0;
   opacity:1;
@@ -95,7 +95,7 @@
   color:rgb(115, 153, 235);
   letter-spacing:0px;
 }
-.tabCancel.active {
+.addTabDiv.active .tabCancel {
   pointer-events:all;
   top:25px;
   opacity:1;
@@ -117,7 +117,7 @@
   color:rgb(115, 153, 235);
   letter-spacing:0px;
 }
-.tabSubmit.active {
+.addTabDiv.active .tabSubmit {
   pointer-events:all;
   top:25px;
   opacity:1;

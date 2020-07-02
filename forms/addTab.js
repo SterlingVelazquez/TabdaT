@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AddTab extends React.Component {
+export class AddTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
@@ -51,10 +51,6 @@ class AddTab extends React.Component {
 
     viewTab() {
         document.getElementById("addtabdiv").classList.toggle("active");
-        document.getElementById("tabinput").classList.toggle("active");
-        document.getElementById("colorpicker").classList.toggle("active");
-        document.getElementById("tabcancel").classList.toggle("active");
-        document.getElementById("tabsubmit").classList.toggle("active");
         document.getElementById("taberrmsg").style.display = "none";
         document.getElementById("addtabform").reset();
         if (!(document.getElementById("edittabdiv").className.includes("active"))) {
@@ -86,5 +82,3 @@ class AddTab extends React.Component {
         );
     }
 }
-
-export default AddTab;

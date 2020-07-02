@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AddLink extends React.Component {
+export class AddLink extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
@@ -118,11 +118,8 @@ class AddLink extends React.Component {
     }
 
     async closeAddForm() {
-        document.getElementById("AddFormDiv").style.opacity = "0";
-        document.getElementById("AddFormDiv").style.top = "-600px";
-        document.getElementById("AddFormDiv").style.boxShadow = "0 0 0 rgb(246, 247, 253)";
-        document.getElementById("shadow").style.opacity = "0";
-        document.getElementById("shadow").style.height = "0";
+        document.getElementById("AddFormDiv").classList.toggle("active");
+        document.getElementById("shadow").classList.toggle("active");
         document.getElementById("addFormDiv").reset();
         window.formOpen = false;
         this.setState({
@@ -143,11 +140,11 @@ class AddLink extends React.Component {
                 <form id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" onChange={e =>this.setName(e)} spellCheck="false" required/>
+                    <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" onChange={e => this.setLink(e)} spellCheck="false" required/>
+                    <input type="text" name="link" id="addurl" onChange={e => this.setLink(e)} spellCheck="false" required/>
 
                     <div id="defaultimg" onClick={e => this.toggleDefault(true)} className="imgContainer active">
                         <div className="defaultImg">
@@ -182,5 +179,3 @@ class AddLink extends React.Component {
         );
     }
 }
-
-export default AddLink;
