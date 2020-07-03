@@ -81,6 +81,45 @@
     letter-spacing:0.5px;
 }
 
+.suggestionList {
+    position:absolute;
+    background-color: rgb(246, 247, 253);
+    left:105%;
+    top:35%;
+    width:80%;
+    border-radius:10px;
+    z-index:1;
+    transition:1s;
+}
+.suggestionLink {
+    text-align:left;
+    vertical-align:middle;
+    line-height:40px;
+    color:rgb(89, 96, 109);
+    border-bottom: thin solid rgba(141, 152, 172, 0.328);
+    padding: 0.4rem 0;
+    width:90%;
+    transition:0.5s;
+    cursor:pointer;
+}
+.suggestionLink:focus,
+.suggestionLink:hover {
+    color:rgb(85, 114, 168);
+    font-size:18px;
+}
+.suggestionImg {
+    float:right;
+    box-shadow:none;
+    width:30px;
+    height:30px;
+    margin-top:5px;
+}
+.suggestionLink:focus .suggestionImg,
+.suggestionLink:hover .suggestionImg {
+    width:35px;
+    height:35px;
+}
+
 .imgContainer {
     display:inline-block;
     text-align:center;

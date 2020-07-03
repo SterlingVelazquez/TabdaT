@@ -78,7 +78,7 @@ class Database {
         return links;
     }
 
-    stringSearch(input, links) {
+    stringSearch(input, links, distance) {
         var result = links;
 
         for (var i = 0; i < links.length; i++) {
@@ -90,7 +90,7 @@ class Database {
             }
         }
 
-        result = links.filter(function (a) { return a.dist < .75});
+        result = links.filter(function (a) { return a.dist < distance});
         links.sort(function (a, b) {
             return a.dist - b.dist
         })
@@ -145,7 +145,6 @@ class Database {
     }
 
     async editLink(link, uid, ref, name) {
-        console.log(typeof ref)
         if (typeof link.image === "object") {
             await this.eraseLinks(uid, name);
             await firebase.storage().ref(uid).child(link.name).put(link.image).then(async res => {
@@ -153,8 +152,8 @@ class Database {
                 await firebase.database().ref(uid + '/Links/' + link.name).set(link);
             })
         } else if (typeof ref === "string") {
-            await firebase.storage().ref(uid).child(link.name).delete();
-            await firebase.database().ref(uid + '/Links/' + name).remove();
+            await firebase.storage().ref(uid).child(name[0]).delete();
+            await firebase.database().ref(uid + '/Links/' + name[0]).remove();
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
         } else {
             await this.eraseLinks(uid, name);

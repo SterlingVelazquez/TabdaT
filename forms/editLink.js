@@ -1,4 +1,8 @@
 import React from 'react';
+import { database } from "../tools/database.js";
+import { suggestions } from "../tools/suggestions.js"
+
+var key=0;
 
 export class EditLink extends React.Component {
     constructor(props) {
@@ -10,6 +14,7 @@ export class EditLink extends React.Component {
                 image : this.props.currLink.image,
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestedLinks: [],
             };
         } else {
             this.state = {
@@ -18,6 +23,7 @@ export class EditLink extends React.Component {
                 image : "",
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestedLinks: [],
             }
         }
         this.submitForm = this.submitForm.bind(this);
@@ -73,8 +79,22 @@ export class EditLink extends React.Component {
             document.getElementById("errmsg2").style.display = "none";
         }
     }
-    setLink(event) {
-        this.setState({link: event.target.value});
+    async setLink(event, isDefault) {
+        if (!isDefault) {
+            this.setState({
+                link: event.target.value,
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65) : [],
+            })
+        } else {
+            document.getElementById("editurl").value = isDefault.name;
+            this.setState({
+                link: isDefault.name,
+                defaultImg: isDefault.image,
+                suggestedLinks: [],
+            })
+            document.getElementById("editurl").focus();
+            this.toggleDefault(true)
+        }
     }
     setImage(event) {
         event.stopPropagation();
@@ -124,6 +144,9 @@ export class EditLink extends React.Component {
         this.setState({imageAddress: ""});
         this.toggleDefault(true);
     }
+    closeSuggestions() {
+        this.setState({suggestedLinks: []})
+    }
 
     async submitForm(event) {
         event.preventDefault();
@@ -139,7 +162,7 @@ export class EditLink extends React.Component {
                 image: document.getElementById("defaultimg2").className === "imgContainer active" ? this.state.defaultImg : this.state.image,
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
-                newLink.link = "https://" + newLink.link;
+                newLink.link = "http://" + newLink.link;
             if (newLink.image === "arrow.png") {
                 newLink.image = this.state.defaultImg;
             }
@@ -161,12 +184,20 @@ export class EditLink extends React.Component {
         document.getElementById("EditFormDiv").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
         document.getElementById("editFormDiv").reset();
+        if (document.activeElement.id === "edittitle") {
+            document.getElementById("edittitle").blur();
+        } else if (document.activeElement.id === "editurl") {
+            document.getElementById("editurl").blur();
+        } else if (document.activeElement.id === "imageaddressinput2") {
+            document.getElementById("imageaddressinput2").blur();
+        }
         window.formOpen = false;
         this.setState({
             name: "",
             link: "",
             image: "",
-            defaultImg: "ultafedIgm/doggo.png"
+            defaultImg: "ultafedIgm/doggo.png",
+            suggestedLinks: []
         })
         document.getElementById("errmsg2").style.display = "none";
     }
@@ -181,7 +212,17 @@ export class EditLink extends React.Component {
                     <p className="errMsg" id="errmsg2">Can't contain: . [ ] # $ /</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e)} spellCheck="false" required/>
+                    <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e, false)} spellCheck="false" required/>
+                    
+                    <ul className="suggestionList" id="suggestionlist2">
+                        {
+                            this.state.suggestedLinks.slice(0, 5).map( (each) => 
+                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.name}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
 
                     <div id="defaultimg2" onClick={e => this.toggleDefault(true)} className={this.state.defaultImg === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">

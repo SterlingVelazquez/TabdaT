@@ -1,4 +1,8 @@
 import React from 'react';
+import { database } from "../tools/database.js";
+import { suggestions } from "../tools/suggestions.js"
+
+var key=0;
 
 export class AddLink extends React.Component {
     constructor(props) {
@@ -9,6 +13,7 @@ export class AddLink extends React.Component {
             image : null,
             imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
+            suggestedLinks: [],
             uid : this.props.userId,
             selectedTab : this.props.currTab,
         };
@@ -41,8 +46,22 @@ export class AddLink extends React.Component {
             document.getElementById("errmsg").style.display = "none";
         }
     }
-    setLink(event) {
-        this.setState({link: event.target.value});
+    async setLink(event, isDefault) {
+        if (!isDefault) {
+            this.setState({
+                link: event.target.value,
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65) : [],
+            })
+        } else {
+            document.getElementById("addurl").value = isDefault.name;
+            this.setState({
+                link: isDefault.name,
+                defaultImg: isDefault.image,
+                suggestedLinks: [],
+            })
+            document.getElementById("addurl").focus();
+            this.toggleDefault(true)
+        }
     }
     setImage(event) {
         event.stopPropagation();
@@ -92,6 +111,9 @@ export class AddLink extends React.Component {
         this.setState({imageAddress: ""});
         this.toggleDefault(true);
     }
+    closeSuggestions() {
+        this.setState({suggestedLinks: []})
+    }
 
     async submitForm(event) {
         event.preventDefault();
@@ -101,7 +123,7 @@ export class AddLink extends React.Component {
             image: this.state.image,
         };
         if (!(this.state.link.includes("https://")) && !(this.state.link.includes("http://")))
-            newLink.link = "https://" + newLink.link;
+            newLink.link = "http://" + newLink.link;
         if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null) {
             newLink.image = this.state.defaultImg;
         }
@@ -121,13 +143,21 @@ export class AddLink extends React.Component {
         document.getElementById("AddFormDiv").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
         document.getElementById("addFormDiv").reset();
+        if (document.activeElement.id === "addtitle") {
+            document.getElementById("addtitle").blur();
+        } else if (document.activeElement.id === "addurl") {
+            document.getElementById("addurl").blur();
+        } else if (document.activeElement.id === "imageaddressinput") {
+            document.getElementById("imageaddressinput").blur();
+        }
         window.formOpen = false;
         this.setState({
             name:null,
             link:null,
             image: null,
             defaultImg: "ultafedIgm/doggo.png",
-            imageAddress: ""
+            imageAddress: "",
+            suggestedLinks: []
         })
         this.toggleDefault(true);
         document.getElementById("outimage").src = "arrow.png";
@@ -136,7 +166,7 @@ export class AddLink extends React.Component {
 
     render () {
         return (
-            <div className="addForm" id="AddFormDiv">
+            <div className="addForm" id="AddFormDiv" onClick={e => this.closeSuggestions()}>
                 <form id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
                     <label><b>Title</b></label>
@@ -144,7 +174,17 @@ export class AddLink extends React.Component {
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" id="addurl" onChange={e => this.setLink(e)} spellCheck="false" required/>
+                    <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required/>
+                    
+                    <ul className="suggestionList" id="suggestionlist">
+                        {
+                            this.state.suggestedLinks.slice(0, 5).map( (each) => 
+                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.name}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
 
                     <div id="defaultimg" onClick={e => this.toggleDefault(true)} className="imgContainer active">
                         <div className="defaultImg">

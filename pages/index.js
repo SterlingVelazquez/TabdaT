@@ -31,6 +31,7 @@ class Home extends React.Component {
       links : [],
       linkIndex : 0,
       tabIndex : 0,
+      suggestedIndex: -1,
       allLinks : [],
       bookmarks: [],
       selectedLink : { 
@@ -203,7 +204,7 @@ class Home extends React.Component {
   async setInputText(event) {
     this.setState({inputText: event.target.value}, async function() {
       if (this.state.inputText !== '') {
-        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks)});
+        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks, 0.75)});
         this.getImages();
       } else {
         this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
@@ -426,6 +427,22 @@ class Home extends React.Component {
     }
   }
 
+  changeSuggestion(num, isAdd) {
+    var suggestions = document.getElementsByClassName("suggestionLink");
+    var length = suggestions.length;
+    var result = (this.state.suggestedIndex + num) % length;
+    if (this.state.suggestedIndex + num === length || this.state.suggestedIndex + num < 0) {
+      this.setState({suggestedIndex: -1})
+      if (isAdd)
+        document.getElementById("addurl").focus();
+      else
+        document.getElementById("editurl").focus();
+    } else {
+      this.setState({suggestedIndex: result})
+      suggestions[result].focus();
+    }
+  }
+
   toggleSideMenu() {
     document.getElementById("navbar").classList.toggle("active");
     document.getElementById("sidemenubtn").classList.toggle("active");
@@ -553,7 +570,7 @@ class Home extends React.Component {
               this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
                 <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
                   <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input></label>
-                  <div className="editDiv" id="editdiv" onClick={e => this.openEditForm(e, each)}>
+                  <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                     <img src={each.image} key={key++} className="linkImg"></img>
                     <p className="linkNames">{each.name}</p>
                     <div className="loaderDiv" id="loaderdiv">
@@ -654,88 +671,241 @@ class Home extends React.Component {
       console.log(e.keyCode)
       if (this.state.user !== "default" && document.activeElement.id === "" && e.keyCode === 78) // N
         this.toggleNightMode();
-      if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0) {
-        switch(e.keyCode) {
-          case 9: // tab
-            e.preventDefault();
-            break;
-          case 27: // esc
-            if (document.getElementById("searchbar").value !== "") {
-              document.getElementById("searchbar").value="";
-              document.getElementById("searchbar").blur();
-              this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
-              this.getImages();
-            }
-            break;
-          case 32: // space
-            if (document.activeElement.id !== "searchbar") {
+      if (!e.shiftKey) {
+        if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
+          document.getElementsByClassName("modBox active").length === 0) {
+          switch(e.keyCode) {
+            case 9: // tab
               e.preventDefault();
-              document.getElementById("searchbar").focus();
-            }
-            break;
-          case 76: // L
-            if (this.state.user !== "default" && document.activeElement.id === "")
-              this.openAddLink();
-            break;
-          case 77: // M
-            if (document.activeElement.id === "")
-              this.toggleSideMenu();
-            break;
-          case 79: // O
-            if (document.activeElement.id === "")
-              this.toggleSideMenu();
-            break;
-          default:
-            //Invalid Key
-        }
-      } else if (document.getElementById("AddFormDiv").className === "addForm active") {
-        switch(e.keyCode) {
-          case 9: // tab
-            e.preventDefault();
-            if (document.activeElement.id === "") {
-              document.getElementById("addtitle").focus();
-            } else if (document.activeElement.id === "addtitle") {
-              document.getElementById("addurl").focus();
-            } else {
-              document.getElementById("addurl").blur();
-            }
-            break;
-          case 27: {
-            if (document.activeElement.id === "addtitle") {
-              document.getElementById("addtitle").blur();
-            } else if (document.activeElement.id === "addurl") {
-              document.getElementById("addurl").blur();
-            }
-            this.openAddLink();
-            break;
+              break;
+            case 27: // esc
+              if (document.getElementById("searchbar").value !== "") {
+                document.getElementById("searchbar").value="";
+                this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+                this.getImages();
+              }
+              document.getElementById("searchbar").blur();
+              break;
+            case 32: // space
+              if (document.activeElement.id !== "searchbar") {
+                e.preventDefault();
+                document.getElementById("searchbar").focus();
+              }
+              break;
+            case 37: // left arrow
+              if (document.activeElement.id !== "searchbar" && this.state.links.length > 10) {
+                this.changeLinks(-1)
+              }
+              break;
+            case 39: // right arrow
+              if (document.activeElement.id !== "searchbar" && this.state.links.length > 10) {
+                this.changeLinks(1)
+              }
+              break;
+            case 69: //lmao E
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default")
+                this.editActive();
+              break;
+            case 82: // R
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default")
+                this.eraseActive();
+              break;
+            case 76: // L
+              if (this.state.user !== "default" && document.activeElement.id === "")
+                this.openAddLink();
+              break;
+            case 77: // M
+              if (document.activeElement.id === "")
+                this.toggleSideMenu();
+              break;
+            case 79: // O
+              if (document.activeElement.id === "")
+                this.toggleSideMenu();
+              break;
           }
-          case 76: // L
-            if (document.activeElement.id === "")
+        } else if (document.getElementById("AddFormDiv").className === "addForm active") {
+          switch(e.keyCode) {
+            case 9: // tab
+              e.preventDefault();
+              if (document.activeElement.id === "") {
+                document.getElementById("addtitle").focus();
+              } else if (document.activeElement.id === "addtitle") {
+                document.getElementById("addurl").focus();
+              } else {
+                document.getElementById("addurl").blur();
+              }
+              break;
+            case 27: // esc
+              if (document.activeElement.id === "addtitle") {
+                document.getElementById("addtitle").blur();
+              } else if (document.activeElement.id === "addurl") {
+                document.getElementById("addurl").blur();
+              }
               this.openAddLink();
-            break;
+              break;
+            case 38: // up arrow
+              if ((document.activeElement.id === "addurl" || document.activeElement.className === "suggestionLink") && document.getElementById("addurl").value !== "")
+                this.changeSuggestion(-1, true);
+              break;
+            case 40: //down arrow
+              if ((document.activeElement.id === "addurl" || document.activeElement.className === "suggestionLink") && document.getElementById("addurl").value !== "")
+                this.changeSuggestion(1, true);
+              break;
+            case 76: // L
+              if (document.activeElement.id === "")
+                this.openAddLink();
+              break;
+          }
+        } else if (document.getElementById("EditFormDiv").className === "addForm active") {
+          switch(e.keyCode) {
+            case 9: // tab
+              e.preventDefault();
+              if (document.activeElement.id === "") {
+                document.getElementById("edittitle").focus();
+              } else if (document.activeElement.id === "edittitle") {
+                document.getElementById("editurl").focus();
+              } else {
+                document.getElementById("editurl").blur();
+              }
+              break;
+            case 27: // esc
+              if (document.activeElement.id === "edittitle") {
+                document.getElementById("edittitle").blur();
+              } else if (document.activeElement.id === "editurl") {
+                document.getElementById("editurl").blur();
+              }
+              this.openEditForm(e, this.selectedLink);
+              break;
+            case 38: // up arrow
+              if ((document.activeElement.id === "editurl" || document.activeElement.className === "suggestionLink") && document.getElementById("editurl").value !== "")
+                this.changeSuggestion(-1, false);
+              break;
+            case 40: //down arrow
+              if ((document.activeElement.id === "editurl" || document.activeElement.className === "suggestionLink") && document.getElementById("editurl").value !== "")
+                this.changeSuggestion(1, false);
+              break;
+          }
+        } else if (document.getElementById("addtabdiv").className === "addTabDiv active") {
+          switch(e.keyCode) {
+            case 9: // tab
+              e.preventDefault();
+              if (document.activeElement.id === "") {
+                document.getElementById("tabinput").focus();
+              } else {
+                document.getElementById("tabinput").blur();
+              }
+              break;
+          }
+        } else if (document.getElementById("erasebox").className === "modBox active" && document.activeElement.id !== "searchbar") {
+          switch(e.keyCode) {
+            case 8: // backspace
+              this.eraseActive();
+              break;
+            case 9: // tab
+              e.preventDefault();
+              break;
+            case 13: // enter
+              this.confirmErase();
+              break;
+            case 37: // left arrow
+              if (this.state.links.length > 10) {
+                this.changeLinks(-1)
+              }
+              break;
+            case 39: // right arrow
+              if (this.state.links.length > 10) {
+                this.changeLinks(1)
+              }
+              break;
+            case 49: // 1
+              if (document.getElementsByClassName("linkBox").length > 0)
+                document.getElementsByClassName("linkCheckBox")[0].checked = !(document.getElementsByClassName("linkCheckBox")[0].checked);
+              break;
+            case 50: // 2
+              if (document.getElementsByClassName("linkBox").length > 1)
+              document.getElementsByClassName("linkCheckBox")[1].checked = !(document.getElementsByClassName("linkCheckBox")[1].checked);
+              break;
+            case 51: // 3
+              if (document.getElementsByClassName("linkBox").length > 2)
+              document.getElementsByClassName("linkCheckBox")[2].checked = !(document.getElementsByClassName("linkCheckBox")[2].checked);
+              break;
+            case 52: // 4
+              if (document.getElementsByClassName("linkBox").length > 3)
+              document.getElementsByClassName("linkCheckBox")[3].checked = !(document.getElementsByClassName("linkCheckBox")[3].checked);
+              break;
+            case 53: // 5
+              if (document.getElementsByClassName("linkBox").length > 4)
+              document.getElementsByClassName("linkCheckBox")[4].checked = !(document.getElementsByClassName("linkCheckBox")[4].checked);
+              break;
+            case 54: // 6
+              if (document.getElementsByClassName("linkBox").length > 5)
+              document.getElementsByClassName("linkCheckBox")[5].checked = !(document.getElementsByClassName("linkCheckBox")[5].checked);
+              break;
+            case 55: // 7
+              if (document.getElementsByClassName("linkBox").length > 6)
+              document.getElementsByClassName("linkCheckBox")[6].checked = !(document.getElementsByClassName("linkCheckBox")[6].checked);
+              break;
+            case 56: // 8
+              if (document.getElementsByClassName("linkBox").length > 7)
+              document.getElementsByClassName("linkCheckBox")[7].checked = !(document.getElementsByClassName("linkCheckBox")[7].checked);
+              break;
+            case 57: // 9
+              if (document.getElementsByClassName("linkBox").length > 8)
+              document.getElementsByClassName("linkCheckBox")[8].checked = !(document.getElementsByClassName("linkCheckBox")[8].checked);
+              break;
+            case 58: // 0
+              if (document.getElementsByClassName("linkBox").length > 9)
+              document.getElementsByClassName("linkCheckBox")[9].checked = !(document.getElementsByClassName("linkCheckBox")[9].checked);
+              break;
+            case 69: //lmao E
+              this.editActive();
+              break;
+            case 82: // R
+              this.eraseActive();
+              break;
+          }
         }
-      } else if (document.getElementById("EditFormDiv").className === "addForm active") {
+      } else {
         switch(e.keyCode) {
-          case 9: // tab
-            e.preventDefault();
-            if (document.activeElement.id === "") {
-              document.getElementById("edittitle").focus();
-            } else if (document.activeElement.id === "edittitle") {
-              document.getElementById("editurl").focus();
-            } else {
-              document.getElementById("editurl").blur();
-            }
+          case 49: // 1
+            if (document.getElementsByClassName("linkBox").length > 0)
+              document.getElementsByClassName("linkBox")[0].click();
             break;
-        }
-      } else if (document.getElementById("addtabdiv").className === "addTabDiv active") {
-        switch(e.keyCode) {
-          case 9: // tab
-            e.preventDefault();
-            if (document.activeElement.id === "") {
-              document.getElementById("tabinput").focus();
-            } else {
-              document.getElementById("tabinput").blur();
-            }
+          case 50: // 2
+            if (document.getElementsByClassName("linkBox").length > 1)
+              document.getElementsByClassName("linkBox")[1].click();
+            break;
+          case 51: // 3
+            if (document.getElementsByClassName("linkBox").length > 2)
+              document.getElementsByClassName("linkBox")[2].click();
+            break;
+          case 52: // 4
+            if (document.getElementsByClassName("linkBox").length > 3)
+              document.getElementsByClassName("linkBox")[3].click();
+            break;
+          case 53: // 5
+            if (document.getElementsByClassName("linkBox").length > 4)
+              document.getElementsByClassName("linkBox")[4].click();
+            break;
+          case 54: // 6
+            if (document.getElementsByClassName("linkBox").length > 5)
+              document.getElementsByClassName("linkBox")[5].click();
+            break;
+          case 55: // 7
+            if (document.getElementsByClassName("linkBox").length > 6)
+              document.getElementsByClassName("linkBox")[6].click();
+            break;
+          case 56: // 8
+            if (document.getElementsByClassName("linkBox").length > 7)
+              document.getElementsByClassName("linkBox")[7].click();
+            break;
+          case 57: // 9
+            if (document.getElementsByClassName("linkBox").length > 8)
+              document.getElementsByClassName("linkBox")[8].click();
+            break;
+          case 58: // 0
+            if (document.getElementsByClassName("linkBox").length > 9)
+              document.getElementsByClassName("linkBox")[9].click();
             break;
         }
       }
