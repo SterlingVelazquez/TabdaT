@@ -16,6 +16,7 @@ export class AddLink extends React.Component {
             suggestedLinks: [],
             uid : this.props.userId,
             selectedTab : this.props.currTab,
+            allLinks : this.props.allLinks
         };
         this.submitForm = this.submitForm.bind(this);
     }
@@ -23,11 +24,13 @@ export class AddLink extends React.Component {
     static getDerivedStateFromProps(props) {
         return {
             uid : props.userId,
-            selectedTab : props.currTab
+            selectedTab : props.currTab,
+            allLinks : props.allLinks
         }
     }
 
     setName(event) {
+        var count = 0;
         if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i)) {
             this.setState({
                 name: event.target.value,
@@ -38,6 +41,15 @@ export class AddLink extends React.Component {
                 name: event.target.value,
                 defaultImg: "ultafedIgm/doggo.png"
             })
+        }
+        for (var i = 0; i < this.state.allLinks.length; i++) {
+            if (event.target.value === this.state.allLinks[i].name)
+                count++;
+        }
+        if (count !== 0) {
+            document.getElementById("titleerrmsg").style.display = "block"
+        } else {
+            document.getElementById("titleerrmsg").style.display = "none"
         }
         if (event.target.value.includes('/') || event.target.value.includes('.') || event.target.value.includes('#') || event.target.value.includes('$')
             || event.target.value.includes('[') || event.target.value.includes(']')) {
@@ -134,8 +146,17 @@ export class AddLink extends React.Component {
             || newLink.name.includes('[') || newLink.name.includes(']')) {
             document.getElementById("errmsg").style.display = "block";
         } else {
-            this.props.addLink(newLink);
-            this.closeAddForm();
+            var count = 0;
+            for (var i = 0; i < this.state.allLinks.length; i++) {
+                if (newLink.name === this.state.allLinks[i].name)
+                    ++count;
+            }
+            if (count !== 0) {
+                document.getElementById("titleerrmsg").style.display = "block"
+            } else {
+                this.props.addLink(newLink);
+                this.closeAddForm();
+            }
         }
     }
 
@@ -162,6 +183,7 @@ export class AddLink extends React.Component {
         this.toggleDefault(true);
         document.getElementById("outimage").src = "arrow.png";
         document.getElementById("errmsg").style.display = "none";
+        document.getElementById("titleerrmsg").style.display = "none";
     }
 
     render () {
@@ -172,6 +194,7 @@ export class AddLink extends React.Component {
                     <label><b>Title</b></label>
                     <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
+                    <p className="errMsg" id="titleerrmsg" style={{right:"1rem"}}>You've already used that name</p>
 
                     <label><b>URL</b></label>
                     <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required/>

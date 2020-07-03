@@ -15,15 +15,17 @@ export class EditLink extends React.Component {
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
                 suggestedLinks: [],
+                allLinks : this.props.allLinks
             };
         } else {
             this.state = {
-                name : "", 
-                link : "", 
+                name : "",
+                link : "",
                 image : "",
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
                 suggestedLinks: [],
+                allLinks : this.props.allLinks
             }
         }
         this.submitForm = this.submitForm.bind(this);
@@ -38,6 +40,7 @@ export class EditLink extends React.Component {
                     image: "arrow.png",
                     defaultImg: props.currLink.image,
                     imageAddress: "",
+                    allLinks : props.allLinks,
                 }
             } else if (typeof props.currLink.ref !== "undefined") {
                 return {
@@ -46,6 +49,7 @@ export class EditLink extends React.Component {
                     image: props.currLink.image,
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
+                    allLinks : props.allLinks,
                 }
             } else {
                 return {
@@ -54,6 +58,7 @@ export class EditLink extends React.Component {
                     image: "arrow.png",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: props.currLink.image,
+                    allLinks : props.allLinks,
                 }
             }
         }
@@ -61,6 +66,7 @@ export class EditLink extends React.Component {
     }
 
     setName(event) {
+        var count = 0;
         if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i)) {
             this.setState({
                 name: event.target.value,
@@ -71,6 +77,15 @@ export class EditLink extends React.Component {
                 name: event.target.value,
                 defaultImg: "ultafedIgm/doggo.png"
             })
+        }
+        for (var i = 0; i < this.state.allLinks.length; i++) {
+            if (event.target.value === this.state.allLinks[i].name && event.target.value !== this.props.currLink.name)
+                count++;
+        }
+        if (count !== 0) {
+            document.getElementById("titleerrmsg2").style.display = "block"
+        } else {
+            document.getElementById("titleerrmsg2").style.display = "none"
         }
         if (event.target.value.includes('/') || event.target.value.includes('.') || event.target.value.includes('#') || event.target.value.includes('$')
             || event.target.value.includes('[') || event.target.value.includes(']')) {
@@ -173,8 +188,17 @@ export class EditLink extends React.Component {
                 || newLink.name.includes('[') || newLink.name.includes(']')) {
                 document.getElementById("errmsg2").style.display = "block";
             } else {
-                this.props.editLink(newLink, false);
-                this.closeEditForm();
+                var count = 0;
+                for (var i = 0; i < this.state.allLinks.length; i++) {
+                    if (newLink.name === this.state.allLinks[i].name && newLink.name !== this.props.currLink.name)
+                        ++count;
+                }
+                if (count !== 0) {
+                    document.getElementById("titleerrmsg2").style.display = "block"
+                } else {
+                    this.props.editLink(newLink, false);
+                    this.closeEditForm();
+                }
             }
         }
     }
@@ -200,6 +224,7 @@ export class EditLink extends React.Component {
             suggestedLinks: []
         })
         document.getElementById("errmsg2").style.display = "none";
+        document.getElementById("titleerrmsg2").style.display = "none";
     }
 
     render () {
@@ -210,6 +235,7 @@ export class EditLink extends React.Component {
                     <label><b>Title</b></label>
                     <input type="text" name="linkName" id="edittitle" defaultValue={this.state.name} onChange={e =>this.setName(e)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg2">Can't contain: . [ ] # $ /</p>
+                    <p className="errMsg" id="titleerrmsg2" style={{right:"1rem"}}>You've already used that name</p>
 
                     <label><b>URL</b></label>
                     <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e, false)} spellCheck="false" required/>

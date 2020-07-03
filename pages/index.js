@@ -559,8 +559,8 @@ class Home extends React.Component {
                 }}></img>
             </div>
 
-            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} numTabs={this.state.tabs.length} tabIndex={this.state.tabIndex}/>
-            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab}/>
+            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex}/>
+            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab} tabs={this.state.tabs}/>
             <br/>
 
             <div className="grid" id="grid">
@@ -627,8 +627,8 @@ class Home extends React.Component {
 
       <div className="shadow" id="shadow"></div>
 
-      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab}/>
-      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink}/>
+      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} allLinks={this.state.allLinks}/>
+      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} allLinks={this.state.allLinks}/>
       <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs}/>
 
     </div>
