@@ -1,4 +1,5 @@
 import React from 'react';
+import { suggestions } from "../tools/suggestions.js"
 
 var key=0;
 
@@ -79,10 +80,24 @@ export class Import extends React.Component {
                 if (toAdd[j].name.includes('/') || toAdd[j].name.includes('$') || toAdd[j].name.includes('.') || toAdd[j].name.includes('[') || 
                     toAdd[j].name.includes(']') || toAdd[j].name.includes('#'))
                     toAdd[j].name = toAdd[j].name.replace(/[\[\]\/\.#\$]/g, " ")
+
+                if (toAdd[j].name.charAt(0).match(/[A-Z]/i)) {
+                    toAdd[j].image = "ultafedIgm/" + toAdd[j].name.charAt(0).toUpperCase() + ".png";
+                } else {
+                    toAdd[j].image = "ultafedIgm/doggo.png";
+                }
+                for (var k = 0; k < suggestions.length; k++) {
+                    console.log(k);
+                    if (toAdd[j].link.includes(suggestions[k].url)) {
+                        toAdd[j].image = suggestions[k].image;
+                        k = suggestions.length;
+                    }
+                }
+
                 completeLinks.push({
                     name: toAdd[j].name,
                     link: toAdd[j].link,
-                    image: toAdd[j].name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + toAdd[j].name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
+                    image: toAdd[j].image,
                     pos: pos++,
                     tab: "My Bookmarks"
                 })

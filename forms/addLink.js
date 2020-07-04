@@ -13,6 +13,7 @@ export class AddLink extends React.Component {
             image : null,
             imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
+            suggestedTitle: [],
             suggestedLinks: [],
             uid : this.props.userId,
             selectedTab : this.props.currTab,
@@ -29,45 +30,84 @@ export class AddLink extends React.Component {
         }
     }
 
-    setName(event) {
-        var count = 0;
-        if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i)) {
+    async setName(event, isDefault) {
+        event.persist();
+        if (this.state.suggestedLinks.length > 0) 
+            this.setState({suggestedLinks: []})
+        if (!isDefault) {
+            var count = 0;
+            if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
+                this.setState({
+                    name: event.target.value,
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
+                })
+            } else if (this.state.defaultImg.includes("ultafedIgm/")) {
+                this.setState({
+                    name: event.target.value,
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    defaultImg: "ultafedIgm/doggo.png"
+                })
+            } else {
+                this.setState({
+                    name: event.target.value,
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                })
+            }
+            for (var i = 0; i < this.state.allLinks.length; i++) {
+                if (event.target.value === this.state.allLinks[i].name)
+                    count++;
+            }
+            if (count !== 0) {
+                document.getElementById("titleerrmsg").style.display = "block"
+            } else {
+                document.getElementById("titleerrmsg").style.display = "none"
+            }
+            if (event.target.value.includes('/') || event.target.value.includes('.') || event.target.value.includes('#') || event.target.value.includes('$')
+                || event.target.value.includes('[') || event.target.value.includes(']')) {
+                document.getElementById("errmsg").style.display = "block";
+            } else {
+                document.getElementById("errmsg").style.display = "none";
+            }
+        } else {
+            document.getElementById("addtitle").value = isDefault.name;
+            document.getElementById("addurl").value = isDefault.url;
             this.setState({
-                name: event.target.value,
-                defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
+                name: isDefault.name,
+                link: isDefault.url,
+                defaultImg: isDefault.image,
+                suggestedTitle: [],
             })
-        } else {
-            this.setState({
-                name: event.target.value,
-                defaultImg: "ultafedIgm/doggo.png"
-            })
-        }
-        for (var i = 0; i < this.state.allLinks.length; i++) {
-            if (event.target.value === this.state.allLinks[i].name)
-                count++;
-        }
-        if (count !== 0) {
-            document.getElementById("titleerrmsg").style.display = "block"
-        } else {
-            document.getElementById("titleerrmsg").style.display = "none"
-        }
-        if (event.target.value.includes('/') || event.target.value.includes('.') || event.target.value.includes('#') || event.target.value.includes('$')
-            || event.target.value.includes('[') || event.target.value.includes(']')) {
-            document.getElementById("errmsg").style.display = "block";
-        } else {
-            document.getElementById("errmsg").style.display = "none";
+            document.getElementById("addtitle").focus();
+            this.toggleDefault(true);
         }
     }
     async setLink(event, isDefault) {
+        if (this.state.suggestedTitle.length > 0) 
+            this.setState({suggestedTitle: []})
         if (!isDefault) {
+            var count = 0;
+            for (var i = 0; i < suggestions.length; i++) {
+                if (event.target.value.includes(suggestions[i].url)) {
+                    this.setState({defaultImg: suggestions[i].image})
+                    count++;
+                    i = suggestions.length;
+                }
+            }
+            if (count === 0) {
+                this.setState({
+                    defaultImg: this.state.name !== null && this.state.name.charAt(0).match(/[A-Z]/i) ? 
+                        "ultafedIgm/" + this.state.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
+                })
+            }
             this.setState({
                 link: event.target.value,
-                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65) : [],
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, true) : [],
             })
         } else {
-            document.getElementById("addurl").value = isDefault.name;
+            document.getElementById("addurl").value = isDefault.url;
             this.setState({
-                link: isDefault.name,
+                link: isDefault.url,
                 defaultImg: isDefault.image,
                 suggestedLinks: [],
             })
@@ -124,7 +164,10 @@ export class AddLink extends React.Component {
         this.toggleDefault(true);
     }
     closeSuggestions() {
-        this.setState({suggestedLinks: []})
+        this.setState({
+            suggestedTitle: [],
+            suggestedLinks: []
+        })
     }
 
     async submitForm(event) {
@@ -178,6 +221,7 @@ export class AddLink extends React.Component {
             image: null,
             defaultImg: "ultafedIgm/doggo.png",
             imageAddress: "",
+            suggestedTitle: [],
             suggestedLinks: []
         })
         this.toggleDefault(true);
@@ -192,9 +236,19 @@ export class AddLink extends React.Component {
                 <form id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e)} spellCheck="false" required/>
+                    <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e, false)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
                     <p className="errMsg" id="titleerrmsg" style={{right:"1rem"}}>You've already used that name</p>
+
+                    <ul className="suggestionList" id="suggestiontitlelist" style={{top:"18%"}}>
+                        {
+                            this.state.suggestedTitle.slice(0, 5).map( (each) => 
+                                <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
 
                     <label><b>URL</b></label>
                     <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required/>
@@ -202,7 +256,7 @@ export class AddLink extends React.Component {
                     <ul className="suggestionList" id="suggestionlist">
                         {
                             this.state.suggestedLinks.slice(0, 5).map( (each) => 
-                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.name}
+                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
                                     <img className="suggestionImg" src={each.image}></img>
                                 </button>
                             )

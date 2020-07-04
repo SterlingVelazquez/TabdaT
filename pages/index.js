@@ -31,6 +31,7 @@ class Home extends React.Component {
       links : [],
       linkIndex : 0,
       tabIndex : 0,
+      suggestedTitleIndex: -1,
       suggestedIndex: -1,
       allLinks : [],
       bookmarks: [],
@@ -204,7 +205,7 @@ class Home extends React.Component {
   async setInputText(event) {
     this.setState({inputText: event.target.value}, async function() {
       if (this.state.inputText !== '') {
-        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks, 0.75)});
+        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks, 0.75, false)});
         this.getImages();
       } else {
         this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
@@ -439,6 +440,22 @@ class Home extends React.Component {
         document.getElementById("editurl").focus();
     } else {
       this.setState({suggestedIndex: result})
+      suggestions[result].focus();
+    }
+  }
+
+  changeTitleSuggestion(num, isAdd) {
+    var suggestions = document.getElementsByClassName("suggestionTitle");
+    var length = suggestions.length;
+    var result = (this.state.suggestedTitleIndex + num) % length;
+    if (this.state.suggestedTitleIndex + num === length || this.state.suggestedTitleIndex + num < 0) {
+      this.setState({suggestedTitleIndex: -1})
+      if (isAdd)
+        document.getElementById("addtitle").focus();
+      else
+        document.getElementById("edittitle").focus();
+    } else {
+      this.setState({suggestedTitleIndex: result})
       suggestions[result].focus();
     }
   }
@@ -746,10 +763,14 @@ class Home extends React.Component {
             case 38: // up arrow
               if ((document.activeElement.id === "addurl" || document.activeElement.className === "suggestionLink") && document.getElementById("addurl").value !== "")
                 this.changeSuggestion(-1, true);
+              else if ((document.activeElement.id === "addtitle" || document.activeElement.className === "suggestionTitle") && document.getElementById("addtitle").value !== "")
+                this.changeTitleSuggestion(-1, true);
               break;
             case 40: //down arrow
               if ((document.activeElement.id === "addurl" || document.activeElement.className === "suggestionLink") && document.getElementById("addurl").value !== "")
                 this.changeSuggestion(1, true);
+              else if ((document.activeElement.id === "addtitle" || document.activeElement.className === "suggestionTitle") && document.getElementById("addtitle").value !== "")
+                this.changeTitleSuggestion(1, true);
               break;
             case 76: // L
               if (document.activeElement.id === "")
@@ -779,10 +800,14 @@ class Home extends React.Component {
             case 38: // up arrow
               if ((document.activeElement.id === "editurl" || document.activeElement.className === "suggestionLink") && document.getElementById("editurl").value !== "")
                 this.changeSuggestion(-1, false);
+              else if ((document.activeElement.id === "edittitle" || document.activeElement.className === "suggestionTitle") && document.getElementById("edittitle").value !== "")
+                this.changeTitleSuggestion(-1, false);
               break;
             case 40: //down arrow
               if ((document.activeElement.id === "editurl" || document.activeElement.className === "suggestionLink") && document.getElementById("editurl").value !== "")
                 this.changeSuggestion(1, false);
+              else if ((document.activeElement.id === "edittitle" || document.activeElement.className === "suggestionTitle") && document.getElementById("edittitle").value !== "")
+                this.changeTitleSuggestion(1, false);
               break;
           }
         } else if (document.getElementById("addtabdiv").className === "addTabDiv active") {
@@ -865,7 +890,8 @@ class Home extends React.Component {
               break;
           }
         }
-      } else {
+      } else if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
+        document.getElementsByClassName("modBox active").length === 0) {
         switch(e.keyCode) {
           case 49: // 1
             if (document.getElementsByClassName("linkBox").length > 0)

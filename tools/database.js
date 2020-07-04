@@ -78,11 +78,14 @@ class Database {
         return links;
     }
 
-    stringSearch(input, links, distance) {
+    stringSearch(input, links, distance, isURL) {
         var result = links;
 
         for (var i = 0; i < links.length; i++) {
-            var name = links[i].name;
+            if (isURL)
+                var name = links[i].url;
+            else
+                var name = links[i].name;
             links[i].dist = this.editDistance(input.toUpperCase(), name.toUpperCase());
 
             if (name.toUpperCase().includes(input.toUpperCase())) {
