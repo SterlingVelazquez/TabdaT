@@ -150,7 +150,7 @@ class Database {
 
     async editLink(link, uid, ref, name) {
         if (typeof link.image === "object") {
-            await this.eraseLinks(uid, name);
+            await this.eraseLinks(uid, [{name: name, ref: ref}]);
             await firebase.storage().ref(uid).child(link.name).put(link.image).then(async res => {
                 link.ref = uid + '/' + link.name;
                 await firebase.database().ref(uid + '/Links/' + link.name).set(link);
@@ -160,7 +160,7 @@ class Database {
             await firebase.database().ref(uid + '/Links/' + name[0]).remove();
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
         } else {
-            await this.eraseLinks(uid, name);
+            await this.eraseLinks(uid, [{name: name, ref: ref}]);
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
         }
     }
@@ -177,7 +177,7 @@ class Database {
 
     async eraseLinks(uid, links) {
         for (var i = 0; i < links.length; i++) {
-            if (links[i].ref !== "")
+            if (links[i].ref !== "" && typeof links[i].ref !== "undefined")
                 await firebase.storage().ref(uid + '/' + links[i].name).delete();
             await firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }
