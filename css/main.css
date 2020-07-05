@@ -644,6 +644,68 @@
   .dot:nth-child(3) { background-color:blue}
   .dot:nth-child(4) { background-color:red}
 
+  .tabEraseConfirm {
+    position:fixed;
+    width:250px;
+    height:150px;
+    top:-20%;
+    left:calc(50% - 125px);
+    background-color: rgb(246, 247, 253);
+    box-shadow: 0 0 0 rgb(246, 247, 253);
+    z-index:11;
+    border:2px solid rgb(204, 206, 214);
+    border-radius:20px;
+    transition:0.5s;
+    opacity:0;
+    pointer-events:none;
+  }
+  .tabEraseConfirmText {
+    height:auto;
+    width:80%;
+    margin-left:10%;
+    margin-top:5%;
+    font-size:16px;
+  }
+  .tabEraseConfirmBtn {
+    width:49.8%;
+    height:38.5%;
+    margin-top:3%;
+    vertical-align: bottom;
+    cursor:pointer;
+    transition:0.5s;
+  }
+  .tabEraseConfirmBtn:nth-child(2):hover {
+    background-color:rgb(255, 241, 241);
+  }
+  .tabEraseConfirmBtn:nth-child(3):hover {
+    background-color:rgb(236, 255, 236);
+  }
+  .tabEraseConfirmBtn:nth-child(2) {
+    border-bottom-left-radius:18px;
+  }
+  .tabEraseConfirmBtn:nth-child(3) {
+    border-bottom-right-radius:18px;
+    border-left:thin solid rgb(204, 206, 214);
+  }
+  .tabEraseImg {
+    width:25%;
+    height:50%;
+    box-shadow:none;
+  }
+  .tabEraseCheck {
+    width:17px;
+    height:30px;
+    border-bottom:4.2px solid rgb(141, 152, 172);
+    border-right:4.2px solid rgb(141, 152, 172);
+    transform: rotateZ(40deg);
+    margin:auto;
+    margin-top:-9%;
+  }
+  .tabEraseConfirm.active {
+    opacity:1;
+    pointer-events:all;
+    top:calc(50% - 100px);
+  }
 
   footer {
     position:relative;

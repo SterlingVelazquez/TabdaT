@@ -33,6 +33,7 @@ class Home extends React.Component {
       tabIndex : 0,
       suggestedTitleIndex: -1,
       suggestedIndex: -1,
+      tabToErase: null,
       allLinks : [],
       bookmarks: [],
       selectedLink : { 
@@ -363,10 +364,16 @@ class Home extends React.Component {
     this.eraseActive();
   }
 
-  async eraseTab(e, tab) {
+  async confirmTabBox(e, tab) {
     e.stopPropagation();
-    await database.eraseTab(this.state.uid, tab);
-    if (tab === this.state.selectedTab) {
+    this.setState({tabToErase: tab})
+    document.getElementById("taberaseconfirm").classList.toggle("active");
+    document.getElementById("shadow").classList.toggle("active");
+  }
+
+  async eraseTab(e) {
+    await database.eraseTab(this.state.uid, this.state.tabToErase);
+    if (this.state.tabToErase === this.state.selectedTab) {
       this.get();
     } else {
       this.setState({
@@ -375,13 +382,16 @@ class Home extends React.Component {
       })
     }
     this.getImages();
+    this.confirmTabBox(e, null)
   }
 
   async switchTabs(e, newTab) {
-    if (newTab !== this.state.selectedTab && this.state.user !== "default")
+    if (newTab !== this.state.selectedTab && this.state.user !== "default") {
       await firebase.database().ref(this.state.uid + '/Links/' + e.dataTransfer.getData("text")).update({tab: newTab}).then(
-        this.setState({links: await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
+        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
       )
+      this.setState({links: await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
+    }
   }
 
   async changeLinks(num) {
@@ -625,7 +635,7 @@ class Home extends React.Component {
                     style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)}
                       onDragOver={e => e.preventDefault()}>
                     <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
-                    <img className="trashTab" id="trashtab" onClick={e => this.eraseTab(e, each.name)} src="trash.png"></img>
+                    <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} src="trash.png"></img>
                     <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
                     <div className="navBtnBottom" style={{background:each.color}}></div>
                   </button>
@@ -707,7 +717,12 @@ class Home extends React.Component {
           </div>
 
         </main>
-
+      
+      <div className="tabEraseConfirm" id="taberaseconfirm">
+          <p className="tabEraseConfirmText">Are you sure you want to <span style={{color:"rgb(255, 121, 121)"}}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
+          <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png"></img></button>
+          <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
+      </div>
       <div className="shadow" id="shadow"></div>
 
       <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} allLinks={this.state.allLinks}/>
