@@ -379,6 +379,13 @@ class Home extends React.Component {
     this.getImages();
   }
 
+  async switchTabs(e, newTab) {
+    if (newTab !== this.state.selectedTab && this.state.user !== "default")
+      await firebase.database().ref(this.state.uid + '/Links/' + e.dataTransfer.getData("text")).update({tab: newTab}).then(
+        this.setState({links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+      )
+  }
+
   async changeLinks(num) {
     var max = Math.ceil(this.state.links.length / 10) - 1;
     var result = this.state.linkIndex + num;
@@ -401,6 +408,7 @@ class Home extends React.Component {
     }
     if (result === 0) {
       this.setState({
+        linkIndex : 0,
         tabIndex : 0,
         selectedTab: this.state.tabs[0].name,
         links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name))
@@ -408,12 +416,14 @@ class Home extends React.Component {
     } else if (result === max) {
       if (this.state.tabs.length % 4 === 0) {
         this.setState({
+          linkIndex : 0,
           tabIndex : max,
           selectedTab: "",
           links: await sorting.quickSort(await database.getLinks(this.state.uid, ""))
         })
       } else {
         this.setState({
+          linkIndex : 0,
           tabIndex : max,
           selectedTab: this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name,
           links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name))
@@ -421,10 +431,59 @@ class Home extends React.Component {
       }
     } else {
       this.setState({
+        linkIndex : 0,
         tabIndex : result,
         selectedTab: this.state.tabs[result * 4].name,
         links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[result * 4].name))
       })
+    }
+  }
+
+  async switchToNextTab() {
+    for (var i = 0; i < this.state.tabs.length; i++) {
+      if (this.state.tabs[i].name === this.state.selectedTab) {
+        if (i === this.state.tabs.length - 1) {
+          this.setState({
+            linkIndex : 0,
+            tabIndex : 0,
+            selectedTab: this.state.tabs[0].name,
+            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name))
+          })
+        } else if ((i + 1) % 4 === 0) {
+          this.changeTabs(1)
+        } else {
+          this.setState({
+            linkIndex : 0,
+            selectedTab: this.state.tabs[i + 1].name,
+            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i + 1].name))
+          })
+        }
+        i = this.state.tabs.length;
+      }
+    }
+  }
+
+  async switchToPreviousTab() {
+    for (var i = 0; i < this.state.tabs.length; i++) {
+      if (this.state.tabs[i].name === this.state.selectedTab) {
+        if (i === 0) {
+          this.setState({
+            linkIndex : 0,
+            tabIndex : 0,
+            selectedTab: this.state.tabs[this.state.tabs.length - 1].name,
+            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - 1].name))
+          })
+        } else if ((i + 1) % 4 === 1) {
+          this.changeTabs(-1)
+        } else {
+          this.setState({
+            linkIndex : 0,
+            selectedTab: this.state.tabs[i - 1].name,
+            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i - 1].name))
+          })
+        }
+        i = this.state.tabs.length;
+      }
     }
   }
 
@@ -560,7 +619,8 @@ class Home extends React.Component {
               {
                 this.state.tabs.slice(this.state.tabIndex * 4, this.state.tabIndex * 4 + 4).map( (each) => 
                   <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" 
-                    style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)}>
+                    style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)}
+                      onDragOver={e => e.preventDefault()}>
                     <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
                     <img className="trashTab" id="trashtab" onClick={e => this.eraseTab(e, each.name)} src="trash.png"></img>
                     <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
@@ -585,7 +645,8 @@ class Home extends React.Component {
               style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
             {
               this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
-                <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link}>
+                <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link} 
+                  draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => e.dataTransfer.setData("text", each.name)}>
                   <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input></label>
                   <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                     <img src={each.image} key={key++} className="linkImg"></img>
@@ -620,6 +681,7 @@ class Home extends React.Component {
             <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
               <button className="modBtn">
                 <img className="modImg" id="editimg" src="edit.png"></img>
+                <p className="modTextEdit">Edit</p>
               </button>
               <p className="modText">Choose A Tab/Link</p>
               <p className="modTextClose" onClick={e => this.editActive()}>Close</p>
@@ -628,6 +690,7 @@ class Home extends React.Component {
             <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
               <button className="modBtn">
                 <img className="modImg" id="trashimg" src="trash.png"></img>
+                <p className="modTextErase">Remove</p>
               </button>
               <p className="modTextClose" onClick={e => this.eraseActive()}>Close</p>
             </div>
@@ -694,6 +757,8 @@ class Home extends React.Component {
           switch(e.keyCode) {
             case 9: // tab
               e.preventDefault();
+              if (this.state.tabs.length > 1)
+                this.switchToNextTab();
               break;
             case 27: // esc
               if (document.getElementById("searchbar").value !== "") {
@@ -738,6 +803,10 @@ class Home extends React.Component {
             case 79: // O
               if (document.activeElement.id === "")
                 this.toggleSideMenu();
+              break;
+            case 192: // `
+              if (this.state.tabs.length > 1 && document.activeElement.id !== "searchbar")
+                this.switchToPreviousTab();
               break;
           }
         } else if (document.getElementById("AddFormDiv").className === "addForm active") {
@@ -828,6 +897,8 @@ class Home extends React.Component {
               break;
             case 9: // tab
               e.preventDefault();
+              if (this.state.tabs.length > 1)
+                this.switchToNextTab();
               break;
             case 13: // enter
               this.confirmErase();
@@ -888,11 +959,19 @@ class Home extends React.Component {
             case 82: // R
               this.eraseActive();
               break;
+            case 192: // `
+              if (this.state.tabs.length > 1 && document.activeElement.id !== "searchbar")
+                this.switchToPreviousTab();
+              break;
           }
         }
       } else if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
         document.getElementsByClassName("modBox active").length === 0) {
         switch(e.keyCode) {
+          case 48: // 0
+            if (document.getElementsByClassName("linkBox").length > 9)
+              document.getElementsByClassName("linkBox")[9].click();
+            break;
           case 49: // 1
             if (document.getElementsByClassName("linkBox").length > 0)
               document.getElementsByClassName("linkBox")[0].click();
@@ -928,10 +1007,6 @@ class Home extends React.Component {
           case 57: // 9
             if (document.getElementsByClassName("linkBox").length > 8)
               document.getElementsByClassName("linkBox")[8].click();
-            break;
-          case 58: // 0
-            if (document.getElementsByClassName("linkBox").length > 9)
-              document.getElementsByClassName("linkBox")[9].click();
             break;
         }
       }
