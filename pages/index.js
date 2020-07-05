@@ -346,7 +346,10 @@ class Home extends React.Component {
     var selectedLinks = document.getElementsByClassName("linkCheckBox");
     for (var i = 0; i < selectedLinks.length; i++) {
       if (selectedLinks[i].checked)
-        toErase.push(selectedLinks[i].value)
+        toErase.push({
+          name: selectedLinks[i].value,
+          ref: selectedLinks[i].name,
+        })
     }
     if (toErase.length !== 0) { 
         await database.eraseLinks(this.state.uid, toErase);
@@ -647,7 +650,7 @@ class Home extends React.Component {
               this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
                 <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link} 
                   draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => e.dataTransfer.setData("text", each.name)}>
-                  <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name="link"></input></label>
+                  <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.ref}></input></label>
                   <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                     <img src={each.image} key={key++} className="linkImg"></img>
                     <p className="linkNames">{each.name}</p>

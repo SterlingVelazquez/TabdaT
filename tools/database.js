@@ -177,12 +177,9 @@ class Database {
 
     async eraseLinks(uid, links) {
         for (var i = 0; i < links.length; i++) {
-            await firebase.storage().ref(uid + '/' + links[i]).delete().then((res) => {
-                //Success
-            }).catch(function () {
-                console.log("Deleted File")
-            })
-            await firebase.database().ref(uid + '/Links/' + links[i]).remove();
+            if (links[i].ref !== "")
+                await firebase.storage().ref(uid + '/' + links[i].name).delete();
+            await firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }
     }
 
@@ -197,13 +194,8 @@ class Database {
             })
         })
         for (var i = 0; i < links.length; i++) {
-            if (typeof links[i].ref !== "undefined") {
-                await firebase.storage().ref(uid + '/' + links[i].name).delete().then((res) => {
-                    //Success
-                }).catch(function () {
-                    console.log("Deleted File")
-                })
-            }
+            if (typeof links[i].ref !== "undefined")
+                await firebase.storage().ref(uid + '/' + links[i].name).delete();
             await firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }
         await firebase.database().ref(uid + '/Tabs/' + tab).remove();

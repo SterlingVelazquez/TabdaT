@@ -464,6 +464,7 @@
     background:rgb(249, 251, 253);
     box-shadow:3px 3px 5px rgb(184, 184, 184);
     transition:0.5s;
+    cursor:pointer;
   }
   .modBox:nth-child(13):hover .modBtn {
     background:rgb(216, 236, 255);
