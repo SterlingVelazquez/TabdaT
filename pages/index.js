@@ -469,12 +469,17 @@ class Home extends React.Component {
         if (i === 0) {
           this.setState({
             linkIndex : 0,
-            tabIndex : 0,
+            tabIndex : Math.floor(this.state.tabs.length / 4),
             selectedTab: this.state.tabs[this.state.tabs.length - 1].name,
             links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - 1].name))
           })
         } else if ((i + 1) % 4 === 1) {
-          this.changeTabs(-1)
+          this.setState({
+            linkIndex : 0,
+            tabIndex : this.state.tabIndex - 1,
+            selectedTab: this.state.tabs[i - 1].name,
+            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i - 1].name))
+          })
         } else {
           this.setState({
             linkIndex : 0,
