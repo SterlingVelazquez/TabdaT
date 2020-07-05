@@ -75,14 +75,12 @@ class Home extends React.Component {
           if (this.state.tabs.length !== 0) {
             this.setState({
               selectedTab : this.state.tabs[0].name,
-              links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
-              allLinks: await database.getAllLinks(this.state.uid)
-            })
+              allLinks: await database.getAllLinks(this.state.uid),
+            });
+            this.setState({links : sorting.quickSort(await this.getLinks(this.state.tabs[0].name))});
           } else {
-            this.setState({
-              links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
-              allLinks: await database.getAllLinks(this.state.uid)
-            })
+            this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+            this.setState({links : sorting.quickSort(await this.getLinks([]))});
           }
           this.getImages();
         })
@@ -91,14 +89,12 @@ class Home extends React.Component {
         if (this.state.tabs.length !== 0) {
           this.setState({
             selectedTab : this.state.tabs[0].name,
-            links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
-            allLinks: await database.getAllLinks(this.state.uid)
+            allLinks: await database.getAllLinks(this.state.uid),
           })
+          this.setState({links : sorting.quickSort(await this.getLinks(this.state.tabs[0].name))});
         } else {
-          this.setState({
-            links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
-            allLinks: await database.getAllLinks(this.state.uid)
-          })
+          this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+          this.setState({links : sorting.quickSort(await this.getLinks([]))});
         }
         this.getImages();
       }
@@ -111,20 +107,29 @@ class Home extends React.Component {
     if (this.state.tabs.length !== 0) {
       this.setState({
         selectedTab : this.state.tabs[0].name,
-        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name)),
         allLinks: await database.getAllLinks(this.state.uid),
         linkIndex: 0,
         tabIndex: 0
       })
+      this.setState({links : sorting.quickSort(await this.getLinks(this.state.tabs[0].name))});
     } else {
       this.setState({
-        links : await sorting.quickSort(await database.getLinks(this.state.uid, "")),
         allLinks: await database.getAllLinks(this.state.uid),
         linkIndex: 0,
         tabIndex: 0
       })
+      this.setState({links : sorting.quickSort(await this.getLinks([]))});
     }
     this.getImages();
+  }
+
+  async getLinks(selectedTab) {
+    var links = [];
+    for (var i = 0; i < this.state.allLinks.length; i++) {
+      if (selectedTab === this.state.allLinks[i].tab)
+        links.push(this.state.allLinks[i])
+    }
+    return links;
   }
 
   async getImages() {
@@ -171,7 +176,6 @@ class Home extends React.Component {
             <img src={this.state.user.additionalUserInfo.profile.picture} id="profilepic"></img>
           </div>,
         uid : this.state.user.user.uid,
-        allLinks : await database.getAllLinks(this.state.uid),
       })
       this.get();
     }
@@ -197,9 +201,6 @@ class Home extends React.Component {
     })
     await firebase.auth().signOut();
     this.get();
-    this.setState({
-      allLinks: await database.getAllLinks(this.state.uid),
-    })
   }
 
   async setInputText(event) {
@@ -208,7 +209,7 @@ class Home extends React.Component {
         this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks, 0.75, false)});
         this.getImages();
       } else {
-        this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+        this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
         this.getImages();
       }
     });
@@ -217,7 +218,7 @@ class Home extends React.Component {
   async updateTabs(each) {
     this.setState({
       selectedTab : await each.name,
-      links : await sorting.quickSort(await database.getLinks(this.state.uid, each.name)),
+      links : sorting.quickSort(await this.getLinks(each.name)),
       linkIndex: 0,
     });
     this.getImages();
@@ -233,7 +234,7 @@ class Home extends React.Component {
     this.setState({
       tabs : await database.getTabs(this.state.uid),
       selectedTab : tab.name,
-      links : await sorting.quickSort(await database.getLinks(this.state.uid, tab.name))
+      links : await sorting.quickSort(await this.getLinks(tab.name))
     })
     this.getImages();
   }
@@ -246,10 +247,8 @@ class Home extends React.Component {
     }
     link.tab = this.state.selectedTab;
     await database.addLink(link, this.state.uid);
-    this.setState({
-      links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
-      allLinks: await database.getAllLinks(this.state.uid)
-    })
+    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+    this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
     if (this.state.links.length > 10 && this.state.links.length % 10 === 1)
       this.changeLinks(1)
     this.getImages();
@@ -259,10 +258,10 @@ class Home extends React.Component {
     await database.addLinks(links, this.state.uid);
     this.setState({
       selectedTab: "My Bookmarks",
-      links : await sorting.quickSort(await database.getLinks(this.state.uid, "My Bookmarks")),
       allLinks: await database.getAllLinks(this.state.uid),
       linkIndex: 0
     })
+    this.setState({links : await sorting.quickSort(await this.getLinks("My Bookmarks"))})
   }
 
   editActive() {
@@ -297,10 +296,8 @@ class Home extends React.Component {
       link.tab = this.state.selectedTab;
       link.pos = this.state.selectedLink.pos;
       await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
-      this.setState({
-        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab)),
-        allLinks: await database.getAllLinks(this.state.uid)
-      })
+      this.setState({allLinks: await database.getAllLinks(this.state.uid)});
+      this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))});
       this.getImages();
     }
   }
@@ -317,7 +314,7 @@ class Home extends React.Component {
       this.setState({
         tabs : await database.getTabs(this.state.uid),
         selectedTab : tab.name,
-        links : await sorting.quickSort(await database.getLinks(this.state.uid, tab.name))})
+        links : await sorting.quickSort(await this.getLinks(tab.name))})
       this.getImages();
     }
   }
@@ -353,14 +350,12 @@ class Home extends React.Component {
     }
     if (toErase.length !== 0) { 
         await database.eraseLinks(this.state.uid, toErase);
-      this.setState({
-        tabs : await database.getTabs(this.state.uid),
-        links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))
-      })
+      this.setState({tabs : await database.getTabs(this.state.uid)})
       if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
         this.changeLinks(-1);
-      this.getImages();
       this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+      this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
+      this.getImages();
     }
     this.eraseActive();
   }
@@ -382,7 +377,7 @@ class Home extends React.Component {
   async switchTabs(e, newTab) {
     if (newTab !== this.state.selectedTab && this.state.user !== "default")
       await firebase.database().ref(this.state.uid + '/Links/' + e.dataTransfer.getData("text")).update({tab: newTab}).then(
-        this.setState({links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+        this.setState({links: await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
       )
   }
 
@@ -411,22 +406,22 @@ class Home extends React.Component {
         linkIndex : 0,
         tabIndex : 0,
         selectedTab: this.state.tabs[0].name,
-        links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name))
+        links: await sorting.quickSort(await this.getLinks(this.state.tabs[0].name))
       })
     } else if (result === max) {
       if (this.state.tabs.length % 4 === 0) {
         this.setState({
           linkIndex : 0,
           tabIndex : max,
-          selectedTab: "",
-          links: await sorting.quickSort(await database.getLinks(this.state.uid, ""))
+          selectedTab: [],
+          links: await sorting.quickSort(await this.getLinks([]))
         })
       } else {
         this.setState({
           linkIndex : 0,
           tabIndex : max,
           selectedTab: this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name,
-          links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name))
+          links: await sorting.quickSort(await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name))
         })
       }
     } else {
@@ -434,7 +429,7 @@ class Home extends React.Component {
         linkIndex : 0,
         tabIndex : result,
         selectedTab: this.state.tabs[result * 4].name,
-        links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[result * 4].name))
+        links: await sorting.quickSort(await this.getLinks(this.state.tabs[result * 4].name))
       })
     }
   }
@@ -447,7 +442,7 @@ class Home extends React.Component {
             linkIndex : 0,
             tabIndex : 0,
             selectedTab: this.state.tabs[0].name,
-            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[0].name))
+            links: await sorting.quickSort(await this.getLinks(this.state.tabs[0].name))
           })
         } else if ((i + 1) % 4 === 0) {
           this.changeTabs(1)
@@ -455,7 +450,7 @@ class Home extends React.Component {
           this.setState({
             linkIndex : 0,
             selectedTab: this.state.tabs[i + 1].name,
-            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i + 1].name))
+            links: await sorting.quickSort(await this.getLinks(this.state.tabs[i + 1].name))
           })
         }
         i = this.state.tabs.length;
@@ -471,20 +466,20 @@ class Home extends React.Component {
             linkIndex : 0,
             tabIndex : Math.floor(this.state.tabs.length / 4),
             selectedTab: this.state.tabs[this.state.tabs.length - 1].name,
-            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[this.state.tabs.length - 1].name))
+            links: await sorting.quickSort(await this.getLinks(this.state.tabs[this.state.tabs.length - 1].name))
           })
         } else if ((i + 1) % 4 === 1) {
           this.setState({
             linkIndex : 0,
             tabIndex : this.state.tabIndex - 1,
             selectedTab: this.state.tabs[i - 1].name,
-            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i - 1].name))
+            links: await sorting.quickSort(await this.getLinks(this.state.tabs[i - 1].name))
           })
         } else {
           this.setState({
             linkIndex : 0,
             selectedTab: this.state.tabs[i - 1].name,
-            links: await sorting.quickSort(await database.getLinks(this.state.uid, this.state.tabs[i - 1].name))
+            links: await sorting.quickSort(await this.getLinks(this.state.tabs[i - 1].name))
           })
         }
         i = this.state.tabs.length;
@@ -768,7 +763,7 @@ class Home extends React.Component {
             case 27: // esc
               if (document.getElementById("searchbar").value !== "") {
                 document.getElementById("searchbar").value="";
-                this.setState({links : await sorting.quickSort(await database.getLinks(this.state.uid, this.state.selectedTab))})
+                this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
                 this.getImages();
               }
               document.getElementById("searchbar").blur();

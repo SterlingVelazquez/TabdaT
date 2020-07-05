@@ -69,6 +69,7 @@ class Database {
                         name: childSnapshot.val()["name"],
                         link: childSnapshot.val()["link"],
                         image: childSnapshot.val()["image"],
+                        tab: childSnapshot.val()["tab"],
                         ref: childSnapshot.val()["ref"],
                         pos: childSnapshot.val()["pos"]
                     })
