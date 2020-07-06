@@ -16,6 +16,9 @@ export class EditLink extends React.Component {
                 imageAddress: "",
                 suggestedTitle: [],
                 suggestedLinks: [],
+                tabs: this.props.tabs,
+                currTab: this.props.currTab,
+                newTab: null,
                 allLinks : this.props.allLinks
             };
         } else {
@@ -27,6 +30,9 @@ export class EditLink extends React.Component {
                 imageAddress: "",
                 suggestedTitle: [],
                 suggestedLinks: [],
+                tabs: this.props.tabs,
+                currTab: this.props.currTab,
+                newTab: null,
                 allLinks : this.props.allLinks
             }
         }
@@ -42,6 +48,8 @@ export class EditLink extends React.Component {
                     image: "arrow.png",
                     defaultImg: props.currLink.image,
                     imageAddress: "",
+                    tabs: props.tabs,
+                    currTab: props.currTab,
                     allLinks : props.allLinks,
                 }
             } else if (typeof props.currLink.ref !== "undefined") {
@@ -51,6 +59,8 @@ export class EditLink extends React.Component {
                     image: props.currLink.image,
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
+                    tabs: props.tabs,
+                    currTab: props.currTab,
                     allLinks : props.allLinks,
                 }
             } else {
@@ -60,6 +70,8 @@ export class EditLink extends React.Component {
                     image: "arrow.png",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: props.currLink.image,
+                    tabs: props.tabs,
+                    currTab: props.currTab,
                     allLinks : props.allLinks,
                 }
             }
@@ -171,6 +183,10 @@ export class EditLink extends React.Component {
         this.setState({imageAddress: event.target.value})
         this.toggleURL();
     }
+    setNewTab(tabName) {
+        if (tabName !== this.state.newTab)
+            this.setState({newTab: tabName})
+    }
 
     toggleDefault(isDefault) {
         if (document.getElementById("imageaddress2").className === "imageAddress active")
@@ -195,6 +211,10 @@ export class EditLink extends React.Component {
         if (document.getElementById("uploadimg2").className === "imgContainer active")
             document.getElementById("uploadimg2").classList.toggle("active")
     }
+    toggleTabActive(e) {
+        e.stopPropagation();
+        document.getElementById("selecttab2").classList.toggle("active") 
+    }
     clearImg() {
         document.getElementById("imageaddressinput2").value = "";
         this.setState({imageAddress: ""});
@@ -205,11 +225,13 @@ export class EditLink extends React.Component {
             suggestedTitle: [],
             suggestedLinks: []
         })
+        if (document.getElementById("selecttab2").className === "selectTab active")
+            document.getElementById("selecttab2").classList.toggle("active")
     }
 
     async submitForm(event) {
         event.preventDefault();
-        if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && 
+        if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && this.state.newTab === this.props.currLink.tab &&
             ((document.getElementById("defaultimg2").className === "imgContainer active" && this.state.defaultImg === this.props.currLink.image) ||
                 (document.getElementById("uploadimg2").className === "imgContainer active" && this.state.image === this.props.currLink.image) || 
                     (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress === this.props.currLink.image))) {
@@ -219,6 +241,7 @@ export class EditLink extends React.Component {
                 name: this.state.name,
                 link: this.state.link,
                 image: document.getElementById("defaultimg2").className === "imgContainer active" ? this.state.defaultImg : this.state.image,
+                tab: this.state.newTab !== null ? this.state.newTab : this.state.currTab
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
                 newLink.link = "http://" + newLink.link;
@@ -259,6 +282,8 @@ export class EditLink extends React.Component {
         } else if (document.activeElement.id === "imageaddressinput2") {
             document.getElementById("imageaddressinput2").blur();
         }
+        if (document.getElementById("selecttab2").className === "selectTab active")
+            document.getElementById("selecttab2").classList.toggle("active")
         window.formOpen = false;
         this.setState({
             name: "",
@@ -266,7 +291,8 @@ export class EditLink extends React.Component {
             image: "",
             defaultImg: "ultafedIgm/doggo.png",
             suggestedTitle: [],
-            suggestedLinks: []
+            suggestedLinks: [],
+            newTab: null
         })
         document.getElementById("errmsg2").style.display = "none";
         document.getElementById("titleerrmsg2").style.display = "none";
@@ -277,6 +303,23 @@ export class EditLink extends React.Component {
             <div className="addForm" id="EditFormDiv" onClick={e => this.closeSuggestions()}>
                 <form id="editFormDiv" onSubmit={this.submitForm}>
                     <h1> EDIT LINK </h1>
+
+                    <div className="selectTab" id="selecttab2">
+                        <div className="selectTabChosen" id="selecttabchosen" onClick={e => this.toggleTabActive(e)}>
+                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.currTab}
+                            <div className="selectTabArrow" id="selectTabArrow"></div></div>
+                        </div>
+                        <div className="selectTabDrop" id="selecttabdrop">
+                            <ul className="selectTabList" id="selecttablist">
+                                {
+                                    this.state.tabs.map((each) => 
+                                        <li className="selectTabItem" onClick={e => this.setNewTab(each.name)}>{each.name}</li>
+                                    )
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
                     <label><b>Title</b></label>
                     <input type="text" name="linkName" id="edittitle" defaultValue={this.state.name} onChange={e =>this.setName(e)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg2">Can't contain: . [ ] # $ /</p>

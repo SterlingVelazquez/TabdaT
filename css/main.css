@@ -651,7 +651,7 @@
     top:-20%;
     left:calc(50% - 125px);
     background-color: rgb(246, 247, 253);
-    box-shadow: 0 0 0 rgb(246, 247, 253);
+    box-shadow: 0 0 10px rgb(246, 247, 253);
     z-index:11;
     border:2px solid rgb(204, 206, 214);
     border-radius:20px;

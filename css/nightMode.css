@@ -219,6 +219,21 @@
   .container.focus .dot:nth-child(3) { background-color:rgb(139, 139, 139)}
   .container.focus .dot:nth-child(4) { background-color:rgb(139, 139, 139)}
 
+  .container.focus .tabEraseConfirm {
+    background-color: rgb(41, 41, 41);
+    box-shadow: 0 0 10px rgb(49, 49, 49);
+    border:2px solid rgb(29, 29, 29);
+  }
+  .container.focus .tabEraseConfirmBtn:nth-child(2):hover {
+    background-color:rgb(73, 59, 59);
+  }
+  .container.focus .tabEraseConfirmBtn:nth-child(3):hover {
+    background-color:rgb(44, 54, 44);
+  }
+  .container.focus .tabEraseConfirmBtn:nth-child(3) {
+    border-left:thin solid rgb(67, 69, 73);
+  }
+
   .container.focus .nightContainer {
     box-shadow:0px 0px 5px white;
   }
@@ -229,6 +244,40 @@
 
   .container.focus .addForm h1 {
     color:rgba(248, 248, 248, 0.781);
+  }
+
+  .container.focus .selectTabText {
+      color:rgba(248, 248, 248, 0.781);
+  }
+  .container.focus .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
+  .container.focus .selectTabArrow {
+      border-bottom:2px solid rgba(248, 248, 248, 0.781);
+      border-right:2px solid rgba(248, 248, 248, 0.781);
+  }
+  .container.focus .selectTabChosen:hover .selectTabArrow {
+      border-bottom:2px solid rgb(175, 189, 201);
+      border-right:2px solid rgb(175, 189, 201);
+  }
+  .container.focus .selectTab.active .selectTabChosen:hover .selectTabArrow {
+      border-bottom:2px solid rgb(175, 189, 201);
+      border-right:2px solid rgb(175, 189, 201);
+  }
+  .container.focus .selectTabList {
+      background-color: rgb(51, 51, 51);
+      box-shadow: 0 0 10px rgb(65, 65, 65);
+  }
+  .container.focus .selectTabItem {
+      color:rgba(248, 248, 248, 0.781);
+      border-bottom:thin solid rgb(98, 98, 98);
+  }
+  .container.focus .selectTab.active .selectTabItem:hover {
+      color:rgb(160, 160, 160);
+  }
+  .container.focus .selectTabList::-webkit-scrollbar-track {
+      background:rgb(75, 75, 75);
+  }
+  .container.focus .selectTabList::-webkit-scrollbar-thumb {
+      background:rgb(29, 29, 29);
   }
 
   .container.focus .addForm input[type=text] {
@@ -288,6 +337,14 @@
   }
   .container.focus .suggestionLink:focus,
   .container.focus .suggestionLink:hover {
+      color:rgb(85, 114, 168);
+      font-size:18px;
+  }
+  .container.focus .suggestionTitle {
+    color:rgb(206, 206, 206);
+  }
+  .container.focus .suggestionTitle:focus,
+  .container.focus .suggestionTitle:hover {
       color:rgb(85, 114, 168);
       font-size:18px;
   }

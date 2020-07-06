@@ -22,12 +22,8 @@ class Home extends React.Component {
       uid: "default",
       output: [],
       tabs : [],
-      currTab : {
-        name: '',
-        color : '',
-      },
       selectedTab : "",
-      inputText : '',
+      inputText : "",
       links : [],
       linkIndex : 0,
       tabIndex : 0,
@@ -36,6 +32,10 @@ class Home extends React.Component {
       tabToErase: null,
       allLinks : [],
       bookmarks: [],
+      currTab : {
+        name: "",
+        color : "",
+      },
       selectedLink : { 
         name: "",
         link: "",
@@ -246,7 +246,6 @@ class Home extends React.Component {
     } else {
       link.pos = 0;
     }
-    link.tab = this.state.selectedTab;
     await database.addLink(link, this.state.uid);
     this.setState({allLinks: await database.getAllLinks(this.state.uid)})
     this.setState({links : await sorting.quickSort(await this.getLinks(this.state.selectedTab))})
@@ -294,7 +293,6 @@ class Home extends React.Component {
         image: "",
       }})
     } else {
-      link.tab = this.state.selectedTab;
       link.pos = this.state.selectedLink.pos;
       await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
       this.setState({allLinks: await database.getAllLinks(this.state.uid)});
@@ -725,8 +723,8 @@ class Home extends React.Component {
       </div>
       <div className="shadow" id="shadow"></div>
 
-      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} allLinks={this.state.allLinks}/>
-      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} allLinks={this.state.allLinks}/>
+      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks}/>
+      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks}/>
       <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs}/>
 
     </div>
@@ -811,7 +809,7 @@ class Home extends React.Component {
                 this.eraseActive();
               break;
             case 76: // L
-              if (this.state.user !== "default" && document.activeElement.id === "")
+              if (this.state.user !== "default" && document.activeElement.id === "" && this.state.tabs.length !== 0)
                 this.openAddLink();
               break;
             case 77: // M
@@ -937,39 +935,39 @@ class Home extends React.Component {
               break;
             case 50: // 2
               if (document.getElementsByClassName("linkBox").length > 1)
-              document.getElementsByClassName("linkCheckBox")[1].checked = !(document.getElementsByClassName("linkCheckBox")[1].checked);
+                document.getElementsByClassName("linkCheckBox")[1].checked = !(document.getElementsByClassName("linkCheckBox")[1].checked);
               break;
             case 51: // 3
               if (document.getElementsByClassName("linkBox").length > 2)
-              document.getElementsByClassName("linkCheckBox")[2].checked = !(document.getElementsByClassName("linkCheckBox")[2].checked);
+                document.getElementsByClassName("linkCheckBox")[2].checked = !(document.getElementsByClassName("linkCheckBox")[2].checked);
               break;
             case 52: // 4
               if (document.getElementsByClassName("linkBox").length > 3)
-              document.getElementsByClassName("linkCheckBox")[3].checked = !(document.getElementsByClassName("linkCheckBox")[3].checked);
+                document.getElementsByClassName("linkCheckBox")[3].checked = !(document.getElementsByClassName("linkCheckBox")[3].checked);
               break;
             case 53: // 5
               if (document.getElementsByClassName("linkBox").length > 4)
-              document.getElementsByClassName("linkCheckBox")[4].checked = !(document.getElementsByClassName("linkCheckBox")[4].checked);
+                document.getElementsByClassName("linkCheckBox")[4].checked = !(document.getElementsByClassName("linkCheckBox")[4].checked);
               break;
             case 54: // 6
               if (document.getElementsByClassName("linkBox").length > 5)
-              document.getElementsByClassName("linkCheckBox")[5].checked = !(document.getElementsByClassName("linkCheckBox")[5].checked);
+                document.getElementsByClassName("linkCheckBox")[5].checked = !(document.getElementsByClassName("linkCheckBox")[5].checked);
               break;
             case 55: // 7
               if (document.getElementsByClassName("linkBox").length > 6)
-              document.getElementsByClassName("linkCheckBox")[6].checked = !(document.getElementsByClassName("linkCheckBox")[6].checked);
+                document.getElementsByClassName("linkCheckBox")[6].checked = !(document.getElementsByClassName("linkCheckBox")[6].checked);
               break;
             case 56: // 8
               if (document.getElementsByClassName("linkBox").length > 7)
-              document.getElementsByClassName("linkCheckBox")[7].checked = !(document.getElementsByClassName("linkCheckBox")[7].checked);
+                document.getElementsByClassName("linkCheckBox")[7].checked = !(document.getElementsByClassName("linkCheckBox")[7].checked);
               break;
             case 57: // 9
               if (document.getElementsByClassName("linkBox").length > 8)
-              document.getElementsByClassName("linkCheckBox")[8].checked = !(document.getElementsByClassName("linkCheckBox")[8].checked);
+                document.getElementsByClassName("linkCheckBox")[8].checked = !(document.getElementsByClassName("linkCheckBox")[8].checked);
               break;
             case 58: // 0
               if (document.getElementsByClassName("linkBox").length > 9)
-              document.getElementsByClassName("linkCheckBox")[9].checked = !(document.getElementsByClassName("linkCheckBox")[9].checked);
+                document.getElementsByClassName("linkCheckBox")[9].checked = !(document.getElementsByClassName("linkCheckBox")[9].checked);
               break;
             case 69: //lmao E
               this.editActive();

@@ -2,7 +2,7 @@ import React from 'react';
 import { database } from "../tools/database.js";
 import { suggestions } from "../tools/suggestions.js"
 
-var key=0;
+var key = 0;
 
 export class AddLink extends React.Component {
     constructor(props) {
@@ -17,6 +17,8 @@ export class AddLink extends React.Component {
             suggestedLinks: [],
             uid : this.props.userId,
             selectedTab : this.props.currTab,
+            newTab: null,
+            tabs: this.props.tabs,
             allLinks : this.props.allLinks
         };
         this.submitForm = this.submitForm.bind(this);
@@ -26,6 +28,7 @@ export class AddLink extends React.Component {
         return {
             uid : props.userId,
             selectedTab : props.currTab,
+            tabs: props.tabs,
             allLinks : props.allLinks
         }
     }
@@ -134,6 +137,10 @@ export class AddLink extends React.Component {
         this.setState({imageAddress: event.target.value})
         this.toggleURL();
     }
+    setNewTab(tabName) {
+        if (tabName !== this.state.newTab)
+            this.setState({newTab: tabName})
+    }
 
     toggleDefault(isDefault) {
         if (document.getElementById("imageaddress").className === "imageAddress active")
@@ -158,6 +165,10 @@ export class AddLink extends React.Component {
         if (document.getElementById("uploadimg").className === "imgContainer active")
             document.getElementById("uploadimg").classList.toggle("active")
     }
+    toggleTabActive(e) { 
+        e.stopPropagation();
+        document.getElementById("selecttab").classList.toggle("active") 
+    }
     clearImg() {
         document.getElementById("imageaddressinput").value = "";
         this.setState({imageAddress: ""});
@@ -168,6 +179,8 @@ export class AddLink extends React.Component {
             suggestedTitle: [],
             suggestedLinks: []
         })
+        if (document.getElementById("selecttab").className === "selectTab active")
+            document.getElementById("selecttab").classList.toggle("active")
     }
 
     async submitForm(event) {
@@ -176,6 +189,7 @@ export class AddLink extends React.Component {
             name: this.state.name,
             link: this.state.link,
             image: this.state.image,
+            tab: this.state.newTab !== null ? this.state.newTab : this.state.selectedTab
         };
         if (!(this.state.link.includes("https://")) && !(this.state.link.includes("http://")))
             newLink.link = "http://" + newLink.link;
@@ -214,6 +228,8 @@ export class AddLink extends React.Component {
         } else if (document.activeElement.id === "imageaddressinput") {
             document.getElementById("imageaddressinput").blur();
         }
+        if (document.getElementById("selecttab").className === "selectTab active")
+            document.getElementById("selecttab").classList.toggle("active")
         window.formOpen = false;
         this.setState({
             name:null,
@@ -222,7 +238,8 @@ export class AddLink extends React.Component {
             defaultImg: "ultafedIgm/doggo.png",
             imageAddress: "",
             suggestedTitle: [],
-            suggestedLinks: []
+            suggestedLinks: [],
+            newTab: null
         })
         this.toggleDefault(true);
         document.getElementById("outimage").src = "arrow.png";
@@ -235,6 +252,23 @@ export class AddLink extends React.Component {
             <div className="addForm" id="AddFormDiv" onClick={e => this.closeSuggestions()}>
                 <form id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
+
+                    <div className="selectTab" id="selecttab">
+                        <div className="selectTabChosen" id="selecttabchosen" onClick={e => this.toggleTabActive(e)}>
+                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.selectedTab}
+                            <div className="selectTabArrow" id="selectTabArrow"></div></div>
+                        </div>
+                        <div className="selectTabDrop" id="selecttabdrop">
+                            <ul className="selectTabList" id="selecttablist">
+                                {
+                                    this.state.tabs.map((each) => 
+                                        <li className="selectTabItem" onClick={e => this.setNewTab(each.name)}>{each.name}</li>
+                                    )
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
                     <label><b>Title</b></label>
                     <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e, false)} spellCheck="false" required/>
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>

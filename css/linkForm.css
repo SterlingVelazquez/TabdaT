@@ -28,10 +28,113 @@
 
 .addForm h1 {
     padding-top:20px;
-    margin-bottom:25px;
+    margin-bottom:40px;
     font-size:30px;
     color:rgb(141, 152, 172);
     letter-spacing:0.5px;
+}
+
+.selectTab {
+    position:absolute;
+    top:4.5rem;
+    left:0;
+    width:100%;
+}
+.selectTabChosen {
+    position:relative;
+    display:flex;
+    width:80%;
+    left:10%;
+    overflow:hidden;
+    transition:0.5s;
+    cursor:pointer;
+}
+.selectTabChosen:hover{transform:scale(1.1)}
+.selectTabText {
+    position:relative;
+    margin:auto;
+    font-size:15px;
+    top:0;
+    height:25px;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+    color:rgb(109, 116, 133);
+    transition:0.5s;
+}
+.selectTabChosen:hover .selectTabText{color:rgb(91, 120, 146)}
+.selectTabArrow {
+    position:relative;
+    text-align:left;
+    display:inline-table;
+    width:8px;
+    height:8px;
+    top:-0.2rem;
+    left:0.7rem;
+    border-bottom:2px solid rgb(132, 140, 160);
+    border-right:2px solid rgb(132, 140, 160);
+    transform:rotateZ(45deg);
+    transition:0.5s;
+}
+.selectTab.active .selectTabArrow {
+    top:0.05rem;
+    transform:rotateZ(225deg);
+}
+.selectTabChosen:hover .selectTabArrow {
+    border-bottom:2px solid rgb(91, 120, 146);
+    border-right:2px solid rgb(91, 120, 146);
+    animation: moveArrow 1s linear infinite;
+}
+.selectTab.active .selectTabChosen:hover .selectTabArrow {
+    border-bottom:2px solid rgb(91, 120, 146);
+    border-right:2px solid rgb(91, 120, 146);
+    animation: moveArrowUp 1s linear infinite;
+}
+.selectTabDrop {
+    margin:auto;
+    margin-top:0.3rem;
+    width:50%;
+    white-space:nowrap;
+}
+.selectTabList {
+    background-color: rgb(246, 250, 255);
+    box-shadow: 0 0 10px rgb(216, 237, 255);
+    width:100%;
+    margin:auto;
+    text-align:center;
+    list-style: none;
+    padding: 0 10px;
+    max-height:0px;
+    overflow-y:auto;
+    transition:0.5s;
+}
+.selectTab.active .selectTabList {max-height:150px}
+.selectTabItem {
+    color:rgb(126, 133, 151);
+    font-size:16px;
+    border-bottom:thin solid rgb(205, 212, 253);
+    padding: 0.3rem 0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    transition:0.3s;
+    cursor:pointer;
+}
+.selectTabItem:hover {
+    color:rgb(130, 171, 204);
+}
+.selectTabList::-webkit-scrollbar {
+    width:0px;
+    height:3px;
+    left:10px;
+    border-left:0;
+    background:rgba(0,0,0,0.1);
+}
+.selectTabList::-webkit-scrollbar-track {
+    margin-right:-10px;
+    background:whitesmoke;
+}
+.selectTabList::-webkit-scrollbar-thumb {
+    background:rgb(165, 181, 209);
+    border-radius:20px;
 }
 
 .addLinkCancel {
@@ -129,11 +232,6 @@
     width:30px;
     height:30px;
     margin-top:5px;
-}
-.suggestionLink:focus .suggestionImg,
-.suggestionLink:hover .suggestionImg {
-    width:35px;
-    height:35px;
 }
 
 .imgContainer {
@@ -276,3 +374,31 @@
 .addFile:active::before {
     background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
   }
+
+@keyframes moveArrow {
+    0% {
+        top:-0.2rem;
+    } 25% {
+        top:-0.35rem;
+    } 50% {
+        top:-0.2rem;
+    } 75% {
+        top:-0.05rem;
+    } 100% {
+        top:-0.2rem;
+    }
+}
+
+@keyframes moveArrowUp {
+    0% {
+        top:0.05rem;
+    } 25% {
+        top:-0.1rem;
+    } 50% {
+        top:0.05rem;
+    } 75% {
+        top:0.2rem;
+    } 100% {
+        top:0.05rem;
+    }
+}
