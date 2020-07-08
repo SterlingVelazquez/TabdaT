@@ -162,7 +162,8 @@
     overflow:hidden;
     text-overflow:ellipsis;
     cursor:pointer;
-    transition:0.1s;
+    transform:scale(1);
+    transition:0.8s;
   }
   .navBtnText {
     display:inline;
@@ -173,6 +174,9 @@
     width:0%;
     transition:0.5s;
     box-shadow: 0px 0px 1px gray;
+  }
+  .navBtns.active {
+    transform:scale(1.1);
   }
   .navBtns:hover .navBtnBottom,
   .navBtns.active .navBtnBottom {
@@ -803,13 +807,13 @@
 
   @keyframes pulseFont {
     0% {
-      text-shadow: 0px 0px 1px gray;
+      transform:scale(1)
     }
     50% {
-      text-shadow: 0px 0px 5px rgb(0, 0, 0);
+      transform:scale(1.15)
       }
     100% {
-      text-shadow: 0px 0px 1px gray;
+      transform:scale(1)
     }
   }
 

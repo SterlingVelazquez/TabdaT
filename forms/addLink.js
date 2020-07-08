@@ -262,7 +262,7 @@ export class AddLink extends React.Component {
                             <ul className="selectTabList" id="selecttablist">
                                 {
                                     this.state.tabs.map((each) => 
-                                        <li className="selectTabItem" onClick={e => this.setNewTab(each.name)}>{each.name}</li>
+                                        <li className="selectTabItem" onClick={e => this.setNewTab(each.name)} key={key++}>{each.name}</li>
                                     )
                                 }
                             </ul>

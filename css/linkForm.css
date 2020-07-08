@@ -49,7 +49,6 @@
     transition:0.5s;
     cursor:pointer;
 }
-.selectTabChosen:hover{transform:scale(1.1)}
 .selectTabText {
     position:relative;
     margin:auto;

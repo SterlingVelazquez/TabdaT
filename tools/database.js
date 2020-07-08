@@ -30,30 +30,6 @@ class Database {
         return tabs;
     }
 
-    async getLinks(user, tab) {
-        var isEmpty = true;
-        await firebase.database().ref(user).once('value', function(snapshot) {
-            if (snapshot.hasChild('Links')) {
-                isEmpty = false;
-            }
-        })
-        var links = [];
-        if (!isEmpty) {
-            await firebase.database().ref(user + '/Links').orderByChild("tab").equalTo(tab).once('value').then(async function(snapshot) {
-                snapshot.forEach(function(childSnapshot) {
-                    links.push({
-                        name: childSnapshot.val()["name"],
-                        link: childSnapshot.val()["link"],
-                        image: childSnapshot.val()["image"],
-                        ref: childSnapshot.val()["ref"],
-                        pos: childSnapshot.val()["pos"]
-                    })
-                })
-            })
-        }
-        return links;
-    }
-
     async getAllLinks(user, tab) {
         var isEmpty = true;
         await firebase.database().ref(user).once('value', function(snapshot) {
@@ -63,7 +39,7 @@ class Database {
         })
         var links = [];
         if (!isEmpty) {
-            await firebase.database().ref(user + '/Links').once('value').then(async function(snapshot) {
+            await firebase.database().ref(user + '/Links').orderByChild("pos").once('value').then(async function(snapshot) {
                 snapshot.forEach(function(childSnapshot) {
                     links.push({
                         name: childSnapshot.val()["name"],
