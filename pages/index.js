@@ -280,6 +280,7 @@ class Home extends React.Component {
       linkIndex: 0
     })
     this.setState({links : await this.getLinks("My Bookmarks")})
+    this.getImages();
   }
 
   editActive() {
@@ -376,6 +377,8 @@ class Home extends React.Component {
       this.setState({allLinks: await database.getAllLinks(this.state.uid)})
       this.setState({links : await this.getLinks(this.state.selectedTab)})
       this.getImages();
+    } else {
+      this.eraseActive();
     }
   }
 
@@ -400,12 +403,61 @@ class Home extends React.Component {
     this.confirmTabBox(e, null)
   }
 
+  async changeTabPos(e, moveFront) {
+    var tab = e.dataTransfer.getData("text");
+    var name = tab.slice(0, tab.indexOf('/'));
+    if (tab.slice(tab.indexOf('/') + 1, tab.length) === "tab" && this.state.user !== "default") {
+      if (moveFront && name !== this.state.tabs[0].name) {
+        await firebase.database().ref(this.state.uid + '/Tabs/' + name).update({pos: this.state.tabs[0].pos - 1})
+        if (name === this.state.selectedTab) {
+          this.setState({
+            tabs: await database.getTabs(this.state.uid),
+            tabIndex: 0,
+          })
+        } else {
+          this.setState({tabs: await database.getTabs(this.state.uid)})
+        }
+      } else if (!moveFront && name !== this.state.tabs[this.state.tabs.length - 1].name) {
+        await firebase.database().ref(this.state.uid + '/Tabs/' + name).update({pos: this.state.tabs[this.state.tabs.length - 1].pos + 1})
+        if (name === this.state.selectedTab) {
+          this.setState({
+            tabs: await database.getTabs(this.state.uid),
+            tabIndex: this.state.tabs.length % 4 === 0  && this.state.tabs.length > 0 ? Math.floor(this.state.tabs.length / 4) - 1 : Math.floor(this.state.tabs.length / 4),
+          })
+        } else {
+          this.setState({tabs: await database.getTabs(this.state.uid)})
+        }
+      }
+    }
+  }
+
+  async changeLinkPos(e, moveFront) {
+    var link = e.dataTransfer.getData("text");
+    var name = link.slice(0, link.indexOf('/'));
+    if (link.slice(link.indexOf('/') + 1, link.length) === "link" && this.state.user !== "default") {
+      if (moveFront && name !== this.state.links[0].name) {
+        await firebase.database().ref(this.state.uid + '/Links/' + name).update({pos: this.state.links[0].pos - 1})
+        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+        this.setState({links: await this.getLinks(this.state.selectedTab)})
+        this.getImages();
+      } else if (!moveFront && name !== this.state.links[this.state.links.length - 1].name) {
+        await firebase.database().ref(this.state.uid + '/Links/' + name).update({pos: this.state.links[this.state.links.length - 1].pos + 1})
+        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+        this.setState({links: await this.getLinks(this.state.selectedTab)})
+        this.getImages();
+      }
+    }
+  }
+
   async switchTabs(e, newTab) {
-    if (newTab !== this.state.selectedTab && this.state.user !== "default") {
-      await firebase.database().ref(this.state.uid + '/Links/' + e.dataTransfer.getData("text")).update({tab: newTab}).then(
+    var link = e.dataTransfer.getData("text");
+    var name = link.slice(0, link.indexOf('/'));
+    if (link.slice(link.indexOf('/') + 1, link.length) === "link" && newTab !== this.state.selectedTab && this.state.user !== "default") {
+      await firebase.database().ref(this.state.uid + '/Links/' + name).update({tab: newTab}).then(
         this.setState({allLinks: await database.getAllLinks(this.state.uid)})
       )
       this.setState({links: await this.getLinks(this.state.selectedTab)})
+      this.getImages();
     }
   }
 
@@ -460,6 +512,7 @@ class Home extends React.Component {
         links: await this.getLinks(this.state.tabs[result * 4].name)
       })
     }
+    this.getImages();
   }
 
   async switchToNextTab() {
@@ -484,6 +537,7 @@ class Home extends React.Component {
         i = this.state.tabs.length;
       }
     }
+    this.getImages();
   }
 
   async switchToPreviousTab() {
@@ -513,6 +567,7 @@ class Home extends React.Component {
         i = this.state.tabs.length;
       }
     }
+    this.getImages();
   }
 
   changeSuggestion(num, isAdd) {
@@ -638,17 +693,23 @@ class Home extends React.Component {
             <br/>
             
             <div className = "buttonNav" id="buttonnav">
+              <div className="dropTabBox" id="droptabbox" onDragEnter={e => this.dropTabHover(true)} onDragLeave={e => this.dropTabHover(true)} onDrop={e => this.changeTabPos(e, true)}
+                onDragOver={e => e.preventDefault()}>
+                <p className="dropTabText">Move <br/> to front</p>
+              </div>
               <img className="leftTabArrow" id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
                 style={{
                   display: this.state.tabs.length > 3 ? "block" : "none",
-                  left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-2.4rem",
+                  left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem",
-                }}></img>
+                }}>
+              </img>
               {
                 this.state.tabs.slice(this.state.tabIndex * 4, this.state.tabIndex * 4 + 4).map( (each) => 
                   <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" 
-                    style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)}
-                      onDragOver={e => e.preventDefault()}>
+                    style={{borderBottomColor:each.color}} key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
+                    draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
+                    onDragEnd={e => this.dropTabActive()}>
                     <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
                     <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} src="trash.png"></img>
                     <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
@@ -659,9 +720,14 @@ class Home extends React.Component {
               <img className="rightTabArrow" id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
                 style={{
                   display: this.state.tabs.length > 3 ? "block" : "none",
-                  right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-2.4rem",
+                  right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
-                }}></img>
+                }}>
+              </img>
+              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:"linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)", textAlign:"left"}}
+                onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
+                <p className="dropTabText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
+              </div>
             </div>
 
             <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex}/>
@@ -669,30 +735,39 @@ class Home extends React.Component {
             <br/>
 
             <div className="grid" id="grid">
-            <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
-              style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
-            {
-              this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
-                <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link} 
-                  draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => e.dataTransfer.setData("text", each.name)}>
-                  <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.ref}></input></label>
-                  <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
-                    <img src={each.image} key={key++} className="linkImg"></img>
-                    <p className="linkNames">{each.name}</p>
-                    <div className="loaderDiv" id="loaderdiv">
-                      <div className="loader" id="loader">
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                        <div className="dot"></div>
+              <div className="dropLinkBox" id="droplinkbox" onDragEnter={e => this.dropLinkHover(true)} onDragLeave={e => this.dropLinkHover(true)} onDrop={e => this.changeLinkPos(e, true)}
+                onDragOver={e => e.preventDefault()}>
+                  <p className="dropLinkText">Move <br/> to front</p>
+              </div>
+              <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
+                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
+              {
+                this.state.links.slice(this.state.linkIndex * 10, this.state.linkIndex * 10 + 10).map( (each) =>
+                  <a className="linkBox" style={{textDecoration:"none"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link} 
+                    draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
+                    onDragEnd={e => this.dropLinkActive()}>
+                    <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.ref}></input></label>
+                    <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
+                      <img src={each.image} key={key++} className="linkImg"></img>
+                      <p className="linkNames">{each.name}</p>
+                      <div className="loaderDiv" id="loaderdiv">
+                        <div className="loader" id="loader">
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </a>
-              )
-            }
-            <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
-              style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
+                  </a>
+                )
+              }
+              <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
+                style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
+              <div className="dropLinkBox" id="droplinkbox2" style={{left:"auto", right:"-11rem", background:"linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)", textAlign:"left"}}
+               onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} onDragOver={e => e.preventDefault()}>
+                <p className="dropLinkText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
+              </div>
             </div>
 
             <br/>
@@ -752,14 +827,12 @@ class Home extends React.Component {
     document.getElementById("AddFormDiv").classList.toggle("active");
     document.getElementById("shadow").classList.toggle("active");
   }
-
   openEditForm(e, link) {
     e.preventDefault();
     this.setState({selectedLink: link});
     document.getElementById("EditFormDiv").classList.toggle("active");
     document.getElementById("shadow").classList.toggle("active");
   }
-
   openTabEdit(each) {
     this.setState({currTab:each})
     document.getElementById("colorpicker2").value = each.color;
@@ -773,11 +846,40 @@ class Home extends React.Component {
       document.getElementById("righttabarrow").classList.toggle("active");
     }
   }
-
   openImportLinks() {
     document.getElementById("bookmarkbox").classList.toggle("focus");
     document.getElementById("shadow").classList.toggle("active");
   }
+
+  tabDragStart(e, tab) {
+    this.dropTabActive();
+    e.dataTransfer.setData("text", tab.name + '/tab')
+  }
+  linkDragStart(e, link) {
+    this.dropLinkActive();
+    e.dataTransfer.setData("text", link.name + '/link')
+  }
+  dropTabActive() {
+    document.getElementById("droptabbox").classList.toggle("active");
+    document.getElementById("droptabbox2").classList.toggle("active");
+  }
+  dropTabHover(isFirst) {
+    if (isFirst)
+      document.getElementById("droptabbox").classList.toggle("focus");
+    else
+      document.getElementById("droptabbox2").classList.toggle("focus");
+  }
+  dropLinkActive() {
+    document.getElementById("droplinkbox").classList.toggle("active");
+    document.getElementById("droplinkbox2").classList.toggle("active");
+  }
+  dropLinkHover(isFirst) {
+    if (isFirst)
+      document.getElementById("droplinkbox").classList.toggle("focus");
+    else
+      document.getElementById("droplinkbox2").classList.toggle("focus");
+  }
+
 
   getKeyPresses() {
     document.addEventListener("keydown", async function(e) {

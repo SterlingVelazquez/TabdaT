@@ -22,7 +22,6 @@ class Database {
                 tabs.push({
                     name: childSnapshot.val()["name"],
                     color: childSnapshot.val()["color"],
-                    pos: childSnapshot.val()["color"],
                     pos: childSnapshot.val()["pos"]
                 })
             })

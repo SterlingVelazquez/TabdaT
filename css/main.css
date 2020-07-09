@@ -153,6 +153,7 @@
     text-align:center;
     width:180px;
     margin:6px 10px 0px 10px;
+    padding:0 0px;
     font-size:15px;
     border:none;
     border-bottom:0px solid;
@@ -192,6 +193,42 @@
     margin-left:30px;
   }
 
+  .dropTabBox {
+    position:absolute;
+    margin-top:-1%;
+    left:-11rem;
+    width:0rem;
+    height:4.1rem;
+    background:linear-gradient(to right, rgb(249, 251, 253) 0%,#b6b9d1 100%);
+    text-align:right;
+    z-index:5;
+    opacity:0;
+    transition:0.5s;
+    pointer-events:none;
+  }
+  .dropTabText {
+    position:absolute;
+    top:0.3rem;
+    right:0.4rem;
+    width:70px;
+    color: rgb(249, 251, 253);
+    text-align:right;
+    pointer-events:none;
+    transition:0.5s;
+    opacity:1;
+  }
+  .dropTabBox.active {
+    opacity:1;
+    width:10rem;
+    pointer-events:all;
+  }
+  .dropTabBox.active .dropTabText {
+    opacity:1;
+  }
+  .dropTabBox.focus {
+    width:11rem;
+  }
+
   .leftTabArrow {
     position:absolute;
     top:-0.4rem;
@@ -218,6 +255,41 @@
   .rightTabArrow.active {
     opacity:0;
     pointer-events:none;
+  }
+  
+  .dropLinkBox {
+    position:absolute;
+    margin-top:-1%;
+    left:-11rem;
+    width:0rem;
+    height:18rem;
+    background:linear-gradient(to right, rgb(249, 251, 253) 0%,#b6b9d1 100%);
+    text-align:right;
+    z-index:5;
+    opacity:0;
+    transition:0.5s;
+  }
+  .dropLinkText {
+    position:absolute;
+    top:7rem;
+    right:0.4rem;
+    font-size:16px;
+    width:100px;
+    color: rgb(249, 251, 253);
+    text-align:right;
+    pointer-events:none;
+    transition:0.5s;
+    opacity:1;
+  }
+  .dropLinkBox.active {
+    opacity:1;
+    width:10rem;
+  }
+  .dropLinkBox.active .dropTabText {
+    opacity:1;
+  }
+  .dropLinkBox.focus {
+    width:11rem;
   }
 
   .leftLinkArrow {
