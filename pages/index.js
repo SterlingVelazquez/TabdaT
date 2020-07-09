@@ -806,7 +806,7 @@ class Home extends React.Component {
               <p className="modTextClose" onClick={e => this.eraseActive()}>Close</p>
             </div>
 
-            <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+            <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-flex"}}>
               <button className="modBtnConfirm" id="modbtnconfirm">
                 <div className="modImgConfirm" id="modimgconfirm"></div>
               </button>
@@ -815,7 +815,7 @@ class Home extends React.Component {
           </div>
 
         </main>
-      
+        
       <div className="tabEraseConfirm" id="taberaseconfirm">
           <p className="tabEraseConfirmText">Are you sure you want to <span style={{color:"rgb(255, 121, 121)"}}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
           <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png"></img></button>
