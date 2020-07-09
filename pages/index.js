@@ -32,6 +32,9 @@ class Home extends React.Component {
       tabToErase: null,
       allLinks : [],
       bookmarks: [],
+      preferences: {
+        nightMode: false
+      },
       currTab : {
         name: "",
         color : "",
@@ -61,7 +64,7 @@ class Home extends React.Component {
           document.getElementById("sidesignin").classList.toggle("active");
         var preferences = await database.getPreferences(user.uid);
         if (preferences.length !== 0) 
-          if (preferences[0].night === 'true' && document.getElementById("container").className === "container") 
+          if (preferences[0].night === true && document.getElementById("container").className === "container") 
             this.toggleNightMode();
         this.setState({
           user:user,
@@ -610,18 +613,21 @@ class Home extends React.Component {
   toggleNightMode() {
     document.getElementById("nightmodecontainer").classList.toggle("active");
     document.getElementById("container").classList.toggle("focus");
+    var night = this.state.preferences;
+    night.nightMode = !(night.nightMode);
+    this.setState({preferences: night});
     if (document.getElementById("container").className === "container focus") {
       if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
         document.getElementById("trashimg").src = "trashNight.png";
         document.getElementById("editimg").src = "editNight.png";
       }
-      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "true"})
+      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: true})
     } else {
       if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
         document.getElementById("trashimg").src = "trash.png";
         document.getElementById("editimg").src = "edit.png";
       }
-      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: "false"})
+      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: false})
     }
   }
 
@@ -724,7 +730,8 @@ class Home extends React.Component {
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
                 }}>
               </img>
-              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:"linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)", textAlign:"left"}}
+              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.nightMode) ? 
+                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)", textAlign:"left"}}
                 onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
                 <p className="dropTabText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
@@ -764,8 +771,9 @@ class Home extends React.Component {
               }
               <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
                 style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
-              <div className="dropLinkBox" id="droplinkbox2" style={{left:"auto", right:"-11rem", background:"linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)", textAlign:"left"}}
-               onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} onDragOver={e => e.preventDefault()}>
+              <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} 
+                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.nightMode) ? 
+                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(37, 37, 37) 100%)", textAlign:"left"}}>
                 <p className="dropLinkText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
             </div>
