@@ -1,0 +1,213 @@
+@keyframes linkLoader1 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 20% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+}
+@keyframes linkLoader2 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 5% {
+        opacity: 0;
+        filter:blur(10px);
+    } 25% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader3 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 10% {
+        opacity: 0;
+        filter:blur(10px);
+    } 30% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader4 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 15% {
+        opacity: 0;
+        filter:blur(10px);
+    } 35% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader5 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 20% {
+        opacity: 0;
+        filter:blur(10px);
+    } 40% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader6 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 25% {
+        opacity: 0;
+        filter:blur(10px);
+    } 45% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader7 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 30% {
+        opacity: 0;
+        filter:blur(10px);
+    } 50% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader8 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 35% {
+        opacity: 0;
+        filter:blur(10px);
+    } 55% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader9 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 40% {
+        opacity: 0;
+        filter:blur(10px);
+    } 60% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader10 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 45% {
+        opacity: 0;
+        filter:blur(10px);
+    } 65% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader11 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 50% {
+        opacity: 0;
+        filter:blur(10px);
+    } 70% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader12 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 55% {
+        opacity: 0;
+        filter:blur(10px);
+    } 75% {
+        opacity: 1;
+        filter:blur(0px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }

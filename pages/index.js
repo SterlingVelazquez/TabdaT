@@ -139,6 +139,10 @@ class Home extends React.Component {
   async getImages() {
     var list = this.state.links;
     var count = 0;
+    var links = document.getElementsByClassName("linkBox");
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.toggle("active")
+    }
     length = document.getElementsByClassName("loader").length;
     if (length > 0)
       for (var i = 0; i < length; i++) {
@@ -256,6 +260,7 @@ class Home extends React.Component {
   }
 
   linkCallback = async (link) => {
+    document.getElementById("uploadlinkloader").style.display = "block";
     if (link.tab === this.state.selectedTab) {
       this.setState({links : await this.getLinks(this.state.selectedTab)})
     } else {
@@ -273,9 +278,11 @@ class Home extends React.Component {
     this.setState({links : await this.getLinks(this.state.selectedTab)})
     await this.getDisplayedLinks(link.name);
     this.getImages();
+    document.getElementById("uploadlinkloader").style.display = "none";
   }
 
   multipleLinkCallback = async (links) => {
+    document.getElementById("uploadlinkloader").style.display = "block";
     await database.addLinks(links, this.state.uid);
     this.setState({
       selectedTab: "My Bookmarks",
@@ -284,6 +291,7 @@ class Home extends React.Component {
     })
     this.setState({links : await this.getLinks("My Bookmarks")})
     this.getImages();
+    document.getElementById("uploadlinkloader").style.display = "none";
   }
 
   editActive() {
@@ -363,6 +371,7 @@ class Home extends React.Component {
   }
 
   async confirmErase() {
+    document.getElementById("deletelinkloader").style.display = "block";
     var toErase = [];
     var selectedLinks = document.getElementsByClassName("linkCheckBox");
     for (var i = 0; i < selectedLinks.length; i++) {
@@ -375,14 +384,15 @@ class Home extends React.Component {
     if (toErase.length !== 0) { 
         await database.eraseLinks(this.state.uid, toErase);
       this.setState({tabs : await database.getTabs(this.state.uid)})
-      if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
-        this.changeLinks(-1);
       this.setState({allLinks: await database.getAllLinks(this.state.uid)})
       this.setState({links : await this.getLinks(this.state.selectedTab)})
+      if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
+        this.changeLinks(-1);
       this.getImages();
     } else {
       this.eraseActive();
     }
+    document.getElementById("deletelinkloader").style.display = "none";
   }
 
   async confirmTabBox(e, tab) {
@@ -393,6 +403,8 @@ class Home extends React.Component {
   }
 
   async eraseTab(e) {
+    document.getElementById("taberaseconfirmbox").classList.toggle("active");
+    document.getElementById("taberasedeleting").classList.toggle("active");
     await database.eraseTab(this.state.uid, this.state.tabToErase);
     if (this.state.tabToErase === this.state.selectedTab) {
       this.get();
@@ -404,6 +416,8 @@ class Home extends React.Component {
     }
     this.getImages();
     this.confirmTabBox(e, null)
+    document.getElementById("taberaseconfirmbox").classList.toggle("active");
+    document.getElementById("taberasedeleting").classList.toggle("active");
   }
 
   async changeTabPos(e, moveFront) {
@@ -473,6 +487,10 @@ class Home extends React.Component {
       this.setState({linkIndex : max})
     } else {
       this.setState({linkIndex : result})
+    }
+    var links = document.getElementsByClassName("linkBox");
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.toggle("active")
     }
   }
 
@@ -786,6 +804,33 @@ class Home extends React.Component {
                 <img src="plus.png"></img>
               </div>
               <button className="addLink"><b>Add New Link</b></button>
+              <p className="uploadLinkLoader" id="uploadlinkloader">
+                <span className="linkLoadLetter">U</span>
+                <span className="linkLoadLetter">p</span>
+                <span className="linkLoadLetter">l</span>
+                <span className="linkLoadLetter">o</span>
+                <span className="linkLoadLetter">a</span>
+                <span className="linkLoadLetter">d</span>
+                <span className="linkLoadLetter">i</span>
+                <span className="linkLoadLetter">n</span>
+                <span className="linkLoadLetter">g</span>
+                <span className="linkLoadLetter">.</span>
+                <span className="linkLoadLetter">.</span>
+                <span className="linkLoadLetter">.</span>
+              </p>
+              <p className="uploadLinkLoader" id="deletelinkloader">
+                <span className="linkLoadLetter">D</span>
+                <span className="linkLoadLetter">e</span>
+                <span className="linkLoadLetter">l</span>
+                <span className="linkLoadLetter">e</span>
+                <span className="linkLoadLetter">t</span>
+                <span className="linkLoadLetter">i</span>
+                <span className="linkLoadLetter">n</span>
+                <span className="linkLoadLetter">g</span>
+                <span className="linkLoadLetter">.</span>
+                <span className="linkLoadLetter">.</span>
+                <span className="linkLoadLetter">.</span>
+              </p>
             </div>
             <br/>
 
@@ -815,12 +860,28 @@ class Home extends React.Component {
           </div>
 
         </main>
-        
+
       <div className="tabEraseConfirm" id="taberaseconfirm">
+        <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
           <p className="tabEraseConfirmText">Are you sure you want to <span style={{color:"rgb(255, 121, 121)"}}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
           <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png"></img></button>
           <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
+        </div>
+        <div className="tabEraseDeleting" id="taberasedeleting">
+          <p className="tabEraseDeletingText">Deleting...</p>
+          <div className="deleteLoader" id="deleteloader">
+            <div className="sk-chase" id="deleteloading">
+              <div className="sk-chase-dot"></div>
+              <div className="sk-chase-dot"></div>
+              <div className="sk-chase-dot"></div>
+              <div className="sk-chase-dot"></div>
+              <div className="sk-chase-dot"></div>
+              <div className="sk-chase-dot"></div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div className="shadow" id="shadow"></div>
 
       <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks}/>

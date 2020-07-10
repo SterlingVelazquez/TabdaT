@@ -246,6 +246,10 @@
   .container.focus .tabEraseConfirmBtn:nth-child(3) {
     border-left:thin solid rgb(67, 69, 73);
   }
+  .container.focus .sk-chase-dot:before {
+    background-color: rgb(173, 173, 173);
+    box-shadow:0 0 12px rgb(173, 173, 173);
+  }
 
   .container.focus .nightContainer {
     box-shadow:0px 0px 5px white;
