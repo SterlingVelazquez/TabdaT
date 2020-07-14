@@ -168,14 +168,12 @@
     text-align:center;
     width:180px;
     margin:6px 10px 0px 10px;
-    padding:0 0px;
+    padding:1px 0px;
     border:none;
-    border-bottom:0px solid;
     text-shadow:1px 1px 2px gray;
     background-color:transparent;
-    overflow:hidden;
-    text-overflow:ellipsis;
     cursor:pointer;
+    overflow: hidden;
     transform:scale(1);
     transition:0.8s;
   }
