@@ -20,6 +20,7 @@
     position:absolute;
     top:35px;
     height:15px;
+    margin-top:0px;
     margin-left:-8px;
     width:auto;
     box-shadow:none;
@@ -35,10 +36,13 @@
       font-size:20px;
   }
 .addTabPlus.active {
-  margin-top:3px;
+  margin-top:4px;
   opacity:1;
   pointer-events:all;
   cursor:pointer;
+}
+.addTab.hideAddTab {
+  opacity:0;
 }
 
 .addTabDiv label {

@@ -1,17 +1,30 @@
 .navBar {
     position:fixed;
     width:240px;
-    height:100vh;
+    height:100%;
     left:-240px;
     top:0;
     background-color:rgb(250, 250, 250);
     box-shadow:0px 0px 0px lightgray;
     transition:0.8s;
+    overflow-x:hidden;
     z-index:6;
 }
 .navBar.active {
     left:0px;
     box-shadow:3px 0px 5px lightgray;
+}
+.navBar::-webkit-scrollbar {
+    width:0px;
+}
+
+.navTitle {
+    position:relative;
+    left:0.5rem;
+    top:0.8rem;
+    font-size:33px;
+    color:rgb(131, 134, 153);
+    text-shadow:0px 0px 2px lightgray;
 }
 
 .sideShadow {
@@ -90,15 +103,19 @@
 
 .sideMenuBtn {
     position:fixed;
-    top:1rem;
-    left:1rem;
-    height:2rem;
-    width:2rem;
+    top:0.6rem;
+    left:0.6rem;
+    padding:0.4rem 0.5rem 0.8rem 0.5rem;
     transition:0.8s;
+    background-color:rgb(249, 251, 253);
+    border-radius:100%;
     cursor:pointer;
+    z-index:2;
 }
 .sideMenuBtn.active {
-    left:200px;
+    left:190px;
+    padding:0.4rem 0rem 1.2rem 0.5rem;
+    background-color:rgb(250, 250, 250);
 }
 .cancelBar {
     width:2rem;
@@ -121,15 +138,6 @@
     margin-top:-0.8rem;
     transform:rotateZ(-45deg);
     width:1.5rem;
-}
-
-.navTitle {
-    position:relative;
-    left:0.5rem;
-    top:0.8rem;
-    font-size:33px;
-    color:rgb(131, 134, 153);
-    text-shadow:0px 0px 2px lightgray;
 }
 
 .importBox {
@@ -220,12 +228,346 @@
 
 .sideContainer {
     position:relative;
-    height:2.8rem;
-    margin-top:1.8rem;
+    padding: 0.5rem 0;
+    margin-top:1rem;
+    margin-bottom:5rem;
 }
-.sideLabel {
+.sideContainerHeader {
+    position:relative;
+    padding:0.5rem 0 0.5rem 0.8rem;
+    height:40px;
+    text-align:left;
+    cursor:pointer;
+}
+.sideContainerHeader:hover .sideHeader {
+    color: rgb(99, 154, 175);
+}
+.sideContainerHeader:hover .sideHeaderArrow {
+    border-bottom: 2px solid rgb(121, 161, 177);
+    border-right:2px solid rgb(121, 161, 177);
+    animation:rotateArrowDown 1s, bobbingArrowDown 1s linear 1s infinite;
+}
+.sideHeader {
+    display:inline;
+    text-align:left;
     font-size:16px;
-    color:rgb(93, 93, 93);
+    color: rgb(119, 119, 119);
+    transition:0.5s;
+}
+.sideHeaderArrow {
+    position:relative;
+    display:inline-table;
+    width:0.5rem;
+    height:0.5rem;
+    border-bottom: 2px solid rgb(151, 151, 151);
+    border-right:2px solid rgb(151, 151, 151);
+    margin-left:0.7rem;
+    top:-0.3rem;
+    transform:rotateZ(45deg);
+    transition:0.5s;
+    animation:rotateArrowDown 1s;
+}
+.sideContainer.active .sideHeaderArrow {
+    top:-0.05rem;
+    transform:rotateZ(225deg);
+    animation:rotateArrowUp 1s;
+}
+.sideContainer.active .sideContainerHeader:hover .sideHeaderArrow {
+    border-bottom: 2px solid rgb(121, 161, 177);
+    border-right:2px solid rgb(121, 161, 177);
+    animation: rotateArrowUp 1s, bobbingArrowUp 1s linear 1s infinite;
+}
+.sideOptions {
+    position:relative;
+    max-height:0rem;
+    overflow:hidden;
+    animation:closeOptions 2s;
+}
+.sideContainer.active .sideOptions {
+    max-height:200rem;
+    animation:showOptions 2s;
+}
+.sideOptionContainer {
+    position:relative;
+    height:60px;
+    padding:1.2rem 1rem;
+    text-align:left;
+}
+.option {
+    position:relative;
+    display:inline;
+    line-height:28px;
+    vertical-align:middle;
+    color: rgb(121, 121, 121);
+    left:-5rem;
+    opacity:0;
+    transition:0.5s;
+}
+.sideContainer.active .option {
+    opacity:1;
+    left:0rem;
+}
+
+.switchContainer {
+    position:absolute;
+    right:-2rem;
+    height:1.5rem;
+    width:3rem;
+    opacity:0;
+    background-color:lightblue;
+    border-radius:50px;
+    padding:14px 6px 14px 16px;
+    box-shadow:0px 0px 10px lightblue;
+    pointer-events:all;
+    cursor:pointer;
+    z-index:0;
+}
+.sideContainer.active .switchContainer {
+    right:1rem;
+    opacity:1;
+}
+.switch {
+    position:absolute;
+    bottom:10%;
+    left:45%;
+    background-color:white;
+    border-radius:100%;
+    width:1.45rem;
+    height:1.45rem;
+    cursor:pointer;
+    transition:0.5s;
+}
+.switchContainer.active {
+    background-color:rgb(223, 223, 223);
+    box-shadow:0px 0px 10px rgb(223, 223, 223);
+}
+.switchContainer.active .switch {
+    left:7%;
+}
+
+.saveBox {
+    position:fixed;
+    top:3rem;
+    left:25.8rem;
+    width:50px;
+    height:50px;
+    z-index:1;
+    cursor:pointer;
+    pointer-events:none;
+    opacity:0;
+    transition:0.6s ease-in-out;
+    transform:rotateZ(0deg);
+}
+.saveBox.active {
+    pointer-events:all;
+    left:15.8rem;
+    opacity:1;
+}
+.saveBtn {
+    position:relative;
+    width: 100%;
+    height:100%;
+    border-radius:100px;
+    background:rgb(250, 250, 250);
+    box-shadow:3px 3px 5px rgb(184, 184, 184);
+    transition:0.3s;
+    cursor:pointer;
+}
+.saveBox:hover .saveBtn {
+    background:rgb(216, 236, 255);
+}
+.saveImg {
+    position:relative;
+    width:32px;
+    height:auto;
+    margin:auto;
+    right:-0.5px;
+    top:3px;
+    box-shadow:none;
+}
+.saveText {
+    position:fixed;
+    right:-1px;
+    top:3rem;
+    height:auto;
+    width:auto;
+    padding:2px 10px;
+    transition:1s;
+    z-index:-1;
+    color:rgb(133, 142, 158);
+    background-color:rgb(249, 251, 253);
+    border-radius:10px;
+}
+
+.saveConfirm {
+    position:fixed;
+    width:250px;
+    height:auto;
+    top:-20%;
+    left:calc(50% - 125px);
+    background-color: rgb(246, 247, 253);
+    box-shadow: 0 0 10px rgb(246, 247, 253);
+    border:2px solid rgb(204, 206, 214);
+    border-radius:20px;
+    transition:0.5s;
+    opacity:0;
+    pointer-events:none;
+}
+.saveConfirm.active {
+    opacity:1;
+    pointer-events:all;
+    top:calc(50% - 100px);
+}
+.saveConfirmText {
+    position:relative;
+    height:auto;
+    width:80%;
+    margin-left:10%;
+    margin-top:5%;
+    font-size:18px;
+    margin-bottom:0.6rem;
+}
+.saveConfirmBtn {
+    position:relative;
+    width:49.8%;
+    height:60px;
+    margin-top:3%;
+    vertical-align: bottom;
+    cursor:pointer;
+    transition:0.5s;
+}
+.saveConfirmBtn:nth-child(2):hover {
+    background-color:rgb(255, 241, 241);
+}
+.saveConfirmBtn:nth-child(3):hover {
+    background-color:rgb(236, 255, 236);
+}
+.saveConfirmBtn:nth-child(2) {
+    border-bottom-left-radius:18px;
+}
+.saveConfirmBtn:nth-child(3) {
+    border-bottom-right-radius:18px;
+    border-left:thin solid rgb(204, 206, 214);
+}
+.saveConfirmImg {
+    position:relative;
+    width:25%;
+    height:50%;
+    box-shadow:none;
+}
+.saveCheck {
+    position:relative;
+    width:17px;
+    height:30px;
+    border-bottom:4.2px solid rgb(141, 152, 172);
+    border-right:4.2px solid rgb(141, 152, 172);
+    transform: rotateZ(40deg);
+    margin:auto;
+    margin-top:-9%;
+}
+
+.resetBox {
+    position:relative;
+    width:100%;
+    max-height:0rem;
+    margin-top:-5.5rem;
+    margin-bottom:5rem;
+    transition:1s;
+    opacity:0;
+    overflow:hidden;
+}
+.resetBox.active {
+    max-height:6.2rem;
+    opacity:1;
+}
+.resetPreferences {
+    position:relative;
+    width:100%;
+    height:45px;
+    text-align:left;
+    font-size:12px;
+    margin-top:1.2rem;
+    padding:0.8rem;
+    padding-left:1.2rem;
+    color: rgb(121, 121, 121);
+    transition:0.4s;
+    cursor:pointer;
+}
+.resetPreferences:hover {
+    color: rgb(134, 174, 207);
+    letter-spacing:0.2px;
+}
+.resetConfirmBox {
+    position:relative;
+    overflow:hidden;
+    max-height:0rem;
+    opacity:0;
+    pointer-events:none;
+    transition:0.5s ease-in-out;
+}
+.resetConfirmBox.active {
+    pointer-events:all;
+    opacity:1;
+    max-height: 2.2rem;
+}
+.resetConfirm {
+    display:inline-table;
+    text-align:left;
+    color: rgb(129, 102, 102);
+    width:60%;
+    font-size:12px;
+    margin-top:-0.5rem;
+    margin-left:0rem;
+}
+.resetBtn {
+    position:relative;
+    display:inline-table;
+    width:30px;
+    height:30px;
+    padding:10px;
+    padding-bottom:2rem;
+    bottom:0.6rem;
+    vertical-align: bottom;
+    cursor:pointer;
+    transition:0.3s;
+}
+.resetBtn:hover {
+    transform:scale(1.2);
+}
+.resetBtn:nth-child(3) {
+    margin-left:0.5rem;
+    bottom:0.65rem;
+}
+.resetCancel {
+    position:absolute;
+    left:0.3rem;
+    width:1.25rem;
+    height:1.25rem;
+    box-shadow:none;
+}
+.resetCheck {
+    width:10px;
+    height:18px;
+    border-bottom:3px solid rgb(141, 152, 172);
+    border-right:3px solid rgb(141, 152, 172);
+    transform: rotateZ(40deg);
+    margin:auto;
+}
+
+.sideNightContainer {
+    position:fixed;
+    width:240px;
+    bottom:0;
+    height:4.5rem;
+    padding-top:0.7rem;
+    margin-bottom:0rem;
+    transition:0.8s;
+    background-color:rgb(250, 250, 250);
+    box-shadow:0px 0px 20px -10px rgb(133, 133, 133);
+}
+.sideNightLabel {
+    font-size:16px;
+    color:rgb(119, 119, 119);
     margin-left:-0.8rem;
     padding-top:0.4rem;
 }
@@ -353,6 +695,68 @@
     100% {
         margin-top:-4.5rem;
         opacity: 0;
+    }
+}
+
+@keyframes bobbingArrowDown {
+    0% {
+        transform:translateY(0) rotateZ(45deg)
+    } 25% {
+        transform:translateY(0.15rem) rotateZ(45deg)
+    } 50% {
+        transform:translateY(0) rotateZ(45deg)
+    } 75% {
+        transform:translateY(-0.15rem) rotateZ(45deg)
+    } 100% {
+        transform:translateY(0) rotateZ(45deg)
+    }
+}
+
+@keyframes bobbingArrowUp {
+    0% {
+        transform:translateY(0) rotateZ(225deg)
+    } 25% {
+        transform:translateY(0.15rem) rotateZ(225deg)
+    } 50% {
+        transform:translateY(0) rotateZ(225deg)
+    } 75% {
+        transform:translateY(-0.15rem) rotateZ(225deg)
+    } 100% {
+        transform:translateY(0) rotateZ(225deg)
+    }
+}
+
+@keyframes rotateArrowUp {
+    from {
+        transform:rotateZ(45deg)
+    } to {
+        transform:rotateZ(225deg)
+    }
+}
+
+@keyframes rotateArrowDown {
+    from {
+        transform:rotateZ(225deg)
+    } to {
+        transform:rotateZ(45deg)
+    }
+}
+
+@keyframes showOptions {
+    from {
+        max-height:0rem;
+    } to {
+        max-height:40rem;
+    }
+}
+
+@keyframes closeOptions {
+    0% {
+        max-height:60rem;
+    } 20% {
+        max-height:60rem;
+    } 100% {
+        max-height:0rem;
     }
 }
 

@@ -46,7 +46,7 @@
 
   .shadow {
     position: fixed;
-    z-index: 10;
+    z-index: 5;
     width: 100%;
     height: 0%;
     background-color: black;
@@ -252,6 +252,7 @@
     width:40px;
     box-shadow:none;
     opacity:1;
+    transform:scale(1);
     pointer-events:all;
   }
   .rightTabArrow {
@@ -262,11 +263,22 @@
     height:44px;
     width:40px;
     box-shadow:none;
-    transform:rotateZ(180deg);
+    opacity:1;
+    transform:rotateZ(180deg) scale(1);
     pointer-events:all;
   }
   .leftTabArrow.active,
   .rightTabArrow.active {
+    opacity:0;
+    pointer-events:none;
+  }
+  .leftTabArrow.hide {
+    transform:scale(0);
+    opacity:0;
+    pointer-events:none;
+  }
+  .rightTabArrow.hide {
+    transform:rotateZ(180deg) scale(0);
     opacity:0;
     pointer-events:none;
   }
@@ -281,6 +293,7 @@
     text-align:right;
     z-index:5;
     opacity:0;
+    pointer-events:none;
     transition:0.5s;
   }
   .dropLinkText {
@@ -298,6 +311,7 @@
   .dropLinkBox.active {
     opacity:1;
     width:10rem;
+    pointer-events:all;
   }
   .dropLinkBox.active .dropTabText {
     opacity:1;
@@ -315,6 +329,9 @@
     width:76px;
     box-shadow:none;
     pointer-events:all;
+    opacity:1;
+    transform:scale(1);
+    transition:1s;
   }
   .rightLinkArrow {
     position:absolute;
@@ -324,8 +341,20 @@
     height:82px;
     width:76px;
     box-shadow:none;
-    transform:rotateZ(180deg);
+    opacity:1;
+    transform:rotateZ(180deg) scale(1);
     pointer-events:all;
+    transition:1s;
+  }
+  .leftLinkArrow.hide {
+    transform:scale(0);
+    pointer-events:none;
+    opacity:0;
+  }
+  .rightLinkArrow.hide {
+    transform:rotateZ(180deg) scale(0);
+    pointer-events:none;
+    opacity:0;
   }
 
   .grid {
@@ -337,7 +366,7 @@
     pointer-events:all;
 
     width: 800px;
-    margin-top: 2rem;
+    margin-top: 2.3rem;
   }
   .grid.active,
   .grid.focus {
@@ -375,9 +404,9 @@
   .linkBox.active:nth-child(11) {animation: linkRotateIn 1.2s}
   .linkBox.active:nth-child(12) {animation: linkRotateIn 1.3s}
 
-  .linkBox.active:hover img {
+  .linkBox:hover img {
     box-shadow:0px 0px 10px rgb(49, 168, 248);
-    transform:scale(1.08)
+    transform:scale(1.08);
   }
   .linkCheckBox {
     position:absolute;
@@ -492,6 +521,15 @@
     margin-top:10px;
     cursor:pointer;
     text-align:left;
+    transform: scale(1);
+    transition:1s;
+    opacity:1;
+    pointer-events:all;
+  }
+  .addContainer.active {
+    transform: scale(0);
+    pointer-events:none;
+    opacity:0;
   }
   .addLink {
     position:absolute;
@@ -571,10 +609,27 @@
     text-align:center;
     margin:1rem;
     margin-bottom:3rem;
+    top:0;
+    left:0;
     width:50px;
     height:50px;
     z-index:3;
     cursor:pointer;
+    pointer-events:all;
+    transition:1s;
+    transform:rotateZ(0deg);
+  }
+  .modBox.hide:nth-child(13) {
+    pointer-events:none;
+    opacity:0;
+    left:-10rem;
+    transform:rotateZ(-720deg);
+  }
+  .modBox.hide:nth-child(14) {
+    pointer-events:none;
+    opacity:0;
+    left:6rem;
+    transform:rotateZ(720deg);
   }
   .modBtn {
     position:relative;
@@ -585,6 +640,9 @@
     box-shadow:3px 3px 5px rgb(184, 184, 184);
     transition:0.5s;
     cursor:pointer;
+  }
+  .modBox.hide .modBtn {
+    box-shadow:0px 0px 0px rgb(184, 184, 184);
   }
   .modBox:nth-child(13):hover .modBtn {
     background:rgb(216, 236, 255);
@@ -671,13 +729,22 @@
     position:relative;
     text-align:center;
     margin-left:-3.35rem;
+    top:0.05rem;
+    left:0;
     width:50px;
     height:50px;
     opacity:0;
     pointer-events:none;
     cursor:pointer;
     transition:1s;
+    transform:rotateZ(0deg);
     z-index:2;
+  }
+  .modBoxConfirm.hide {
+    pointer-events:none;
+    opacity:0;
+    left:3.35rem;
+    transform:rotateZ(720deg);
   }
   .modBoxConfirm:hover .modBtnConfirm {
     background:rgb(237, 255, 237);
@@ -691,6 +758,9 @@
     box-shadow:3px 3px 5px rgb(184, 184, 184);
     transition:0.3s;
     cursor:pointer;
+  }
+  .modBoxConfirm.hide .modBtnConfirm {
+    box-shadow:0px 0px 0px rgb(184, 184, 184);
   }
   .modImgConfirm {
     width:14px;
@@ -901,7 +971,7 @@
       padding-top:40vh;
     }
     100% {
-      padding-top:14vh;
+      padding-top:13vh;
     }
   }
 
@@ -1013,16 +1083,6 @@
     }
   }
 
-  @media (max-width:790px) {
-    .grid {
-        max-width:400px;
-    }
-    .buttonNav {
-      width:400px;
-      margin-bottom:30px;
-    }
-  }
-
   @keyframes sk-chase {
     100% { transform: rotate(360deg); } 
   }
@@ -1037,4 +1097,14 @@
     } 100%, 0% {
       transform: scale(1.0); 
     } 
+  }
+
+  @media (max-width:790px) {
+    .grid {
+        max-width:100%;
+    }
+    .buttonNav {
+      width:400px;
+      margin-bottom:30px;
+    }
   }

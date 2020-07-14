@@ -2,12 +2,12 @@ import React from 'react';
 import Head from 'next/head';
 import { database } from "../tools/database.js";
 import { firebase } from "../tools/config.js"
-import { sorting } from "../tools/sorting.js"
 import { AddLink } from "../forms/addLink.js"
 import { AddTab } from "../forms/addTab.js"
 import { EditLink } from "../forms/editLink.js"
 import { EditTab } from "../forms/editTab.js"
 import { Import } from "../forms/import.js"
+import { NavBar } from "../forms/navBar.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
@@ -32,9 +32,17 @@ class Home extends React.Component {
       tabToErase: null,
       allLinks : [],
       bookmarks: [],
-      preferences: {
-        nightMode: false
-      },
+      preferences: [],
+      oldPreferences: [],
+      defaultPreferences: {
+        addLink: false,
+        addTab: false,
+        editBtn: false, 
+        linkArrows: false,
+        night: false,
+        removeBtn: false,
+        tabArrows: false, 
+    },
       currTab : {
         name: "",
         color : "",
@@ -55,6 +63,11 @@ class Home extends React.Component {
     this.multipleLinkCallback = this.multipleLinkCallback.bind(this);
     this.editLinkCallback = this.editLinkCallback.bind(this);
     this.editTabCallback = this.editTabCallback.bind(this);
+    this.editActive = this.editActive.bind(this);
+    this.eraseActive = this.eraseActive.bind(this);
+    this.signIn = this.signIn.bind(this);
+    this.setPreferences = this.setPreferences.bind(this);
+    this.savePreferences = this.savePreferences.bind(this);
   }
 
   async componentDidMount() {
@@ -62,10 +75,7 @@ class Home extends React.Component {
       if (user) {
         if (!(document.getElementById("sidesignin").className.includes("active")))
           document.getElementById("sidesignin").classList.toggle("active");
-        var preferences = await database.getPreferences(user.uid);
-        if (preferences.length !== 0) 
-          if (preferences[0].night === true && document.getElementById("container").className === "container") 
-            this.toggleNightMode();
+        this.setInitialPreferences(await database.getPreferences(user.uid));
         this.setState({
           user:user,
           uid:user.uid,
@@ -83,7 +93,7 @@ class Home extends React.Component {
             });
             this.setState({links : await this.getLinks(this.state.tabs[0].name)});
           } else {
-            this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+            this.setState({allLinks: await database.getAllLinks(this.state.uid)});
             this.setState({links : await this.getLinks([])});
           }
           this.getImages();
@@ -116,6 +126,7 @@ class Home extends React.Component {
         tabIndex: 0
       })
       this.setState({links : await this.getLinks(this.state.tabs[0].name)});
+      this.getImages();
     } else {
       this.setState({
         allLinks: await database.getAllLinks(this.state.uid),
@@ -123,8 +134,8 @@ class Home extends React.Component {
         tabIndex: 0
       })
       this.setState({links : await this.getLinks([])});
+      this.getImages();
     }
-    this.getImages();
   }
 
   async getLinks(selectedTab) {
@@ -137,9 +148,9 @@ class Home extends React.Component {
   }
 
   async getImages() {
-    var list = this.state.links;
-    var count = 0;
+    var list = this.state.allLinks;
     var links = document.getElementsByClassName("linkBox");
+    var count = 0;
     for (var i = 0; i < links.length; i++) {
       links[i].classList.toggle("active")
     }
@@ -150,9 +161,9 @@ class Home extends React.Component {
       }
     for (var i = 0; i < list.length; i++) {
       if (typeof list[i].ref !== "undefined") {
-        count++;
         await firebase.storage().ref(list[i].ref).getDownloadURL().then((res) => {
           list[i].image = res;
+          count++;
         })
       }
     }
@@ -162,6 +173,51 @@ class Home extends React.Component {
       }
     if (count !== 0)
       this.setState({links: this.state.links})
+  }
+
+  async setInitialPreferences(preferences) {
+    this.setState({preferences: preferences, oldPreferences: JSON.parse(JSON.stringify(preferences))})
+    if (preferences.night && !(document.getElementById("container").className.includes("focus"))) {
+      document.getElementById("nightmodecontainer").classList.toggle("active");
+      document.getElementById("container").classList.toggle("focus");
+      document.getElementById("trashimg").src = "trashNight.png";
+      document.getElementById("editimg").src = "editNight.png";
+      document.getElementById("saveimg").src = "saveNight.png";
+    }
+    if (preferences.addTab && document.getElementById("addtabplus").className !== "addTabPlus")
+      document.getElementById("addtabplus").classList.toggle("active");
+    if (preferences.addLink && document.getElementById("addcontainer").className !== "addContainer active") {
+      document.getElementById("addcontainer").classList.toggle("active");
+      document.getElementById("erasebox").style.top = "-3rem";
+      document.getElementById("editbox").style.top = "-3rem";
+      document.getElementById("confirmerase").style.top = "-3rem";
+    }
+    if (preferences.editBtn && document.getElementById("editbox").className !== "modBox hide") {
+      document.getElementById("editbox").classList.toggle("hide");
+      document.getElementById("erasebox").style.marginLeft = "-4.1rem"
+    }
+    if (preferences.removeBtn && document.getElementById("erasebox").className !== "modBox hide") {
+      document.getElementById("erasebox").classList.toggle("hide");
+      document.getElementById("confirmerase").classList.toggle("hide");
+      document.getElementById("editbox").style.marginLeft = "6.2rem";
+    }
+    if (preferences.tabArrows && document.getElementById("lefttabarrow").className !== "leftTabArrow hide") {
+      document.getElementById("lefttabarrow").classList.toggle("hide");
+      document.getElementById("righttabarrow").classList.toggle("hide");
+    }
+    if (preferences.linkArrows && document.getElementById("leftarrow").className !== "leftLinkArrow hide") {
+      document.getElementById("leftarrow").classList.toggle("hide");
+      document.getElementById("rightarrow").classList.toggle("hide");
+    }
+    if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
+      document.getElementById("resetbox").classList.toggle("active");
+  }
+  async setPreferences(pref) {
+    this.setState({preferences: pref})
+  }
+  savePreferences() {
+    firebase.database().ref(this.state.uid + "/Preferences").set(this.state.preferences);
+    this.setState({oldPreferences: JSON.parse(JSON.stringify(this.state.preferences))})
   }
 
   async signIn() {
@@ -207,29 +263,29 @@ class Home extends React.Component {
           <img src={document.getElementById("container").className === "container focus" ? "white-male.png" : "black-male.png"} id="profilepic"></img>
         </div>
     })
-    await firebase.auth().signOut();
+    this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))})
     this.get();
+    await firebase.auth().signOut();
   }
 
   async setInputText(event) {
     this.setState({inputText: event.target.value}, async function() {
       if (this.state.inputText !== '') {
-        this.setState({links: await database.stringSearch(this.state.inputText, this.state.allLinks, 0.75, false)});
-        this.getImages();
+        this.setState({links: await database.stringSearch(this.state.inputText, JSON.parse(JSON.stringify(this.state.allLinks)), 0.75, false)});
       } else {
         this.setState({links : await this.getLinks(this.state.selectedTab)})
-        this.getImages();
       }
     });
   }
 
   async updateTabs(each) {
-    this.setState({
-      selectedTab : await each.name,
-      links : await this.getLinks(each.name),
-      linkIndex: 0,
-    });
-    this.getImages();
+    if (each.name !== this.state.selectedTab) {
+      this.setState({
+        selectedTab : await each.name,
+        links : await this.getLinks(each.name),
+        linkIndex: 0,
+      });
+    }
   }
 
   async getDisplayedLinks(name) {
@@ -251,33 +307,35 @@ class Home extends React.Component {
       tab.pos = this.state.tabs[this.state.tabs.length - 1].pos + 1;
     }
     await database.addTab(tab, this.state.uid);
+    var newTab = JSON.parse(JSON.stringify(this.state.tabs));
+    newTab.push(tab);
     this.setState({
-      tabs : await database.getTabs(this.state.uid),
+      tabs : newTab,
       selectedTab : tab.name,
       links : await this.getLinks(tab.name)
     })
-    this.getImages();
   }
 
   linkCallback = async (link) => {
     document.getElementById("uploadlinkloader").style.display = "block";
-    if (link.tab === this.state.selectedTab) {
-      this.setState({links : await this.getLinks(this.state.selectedTab)})
-    } else {
-      while (link.tab !== this.state.selectedTab) {
+    if (link.tab !== this.state.selectedTab)
+      while (link.tab !== this.state.selectedTab)
         await this.switchToNextTab();
-      }
-    }
     if (this.state.links.length !== 0) {
       link.pos = this.state.links[this.state.links.length - 1].pos + 1;
     } else {
       link.pos = 0;
     }
     await database.addLink(link, this.state.uid);
-    this.setState({allLinks: await database.getAllLinks(this.state.uid)})
+    if (typeof link.image === "object")
+      await firebase.storage().ref(this.state.uid + '/' + link.name).getDownloadURL().then((res) => {
+        link.image = res;
+      })
+    var newLinks = JSON.parse(JSON.stringify(this.state.allLinks));
+    newLinks.push(link);
+    this.setState({allLinks: newLinks})
     this.setState({links : await this.getLinks(this.state.selectedTab)})
     await this.getDisplayedLinks(link.name);
-    this.getImages();
     document.getElementById("uploadlinkloader").style.display = "none";
   }
 
@@ -323,11 +381,24 @@ class Home extends React.Component {
         image: "",
       }})
     } else {
-      link.pos = this.state.selectedLink.pos;
-      await database.editLink(link, this.state.uid, this.state.selectedLink.ref, [this.state.selectedLink.name]);
-      this.setState({allLinks: await database.getAllLinks(this.state.uid)});
+      document.getElementById("uploadlinkloader").style.display = "block";
+      var selectedLink = JSON.parse(JSON.stringify(this.state.selectedLink));
+      link.pos = selectedLink.pos;
+      await database.editLink(link, this.state.uid, selectedLink.ref, [selectedLink.name]);
+      if (typeof link.image === "object")
+        await firebase.storage().ref(this.state.uid + '/' + link.name).getDownloadURL().then((res) => {
+          link.image = res;
+        })
+      var newLinks = JSON.parse(JSON.stringify(this.state.allLinks));
+      for (var i = 0; i < this.state.allLinks.length; i++) {
+        if (selectedLink.name === this.state.allLinks[i].name) {
+          newLinks.splice(i, 1, link)
+          i = this.state.allLinks.length;
+        }
+      }
+      this.setState({allLinks: newLinks});
       this.setState({links : await this.getLinks(this.state.selectedTab)});
-      this.getImages();
+      document.getElementById("uploadlinkloader").style.display = "none";
     }
   }
 
@@ -382,8 +453,7 @@ class Home extends React.Component {
         })
     }
     if (toErase.length !== 0) { 
-        await database.eraseLinks(this.state.uid, toErase);
-      this.setState({tabs : await database.getTabs(this.state.uid)})
+      await database.eraseLinks(this.state.uid, toErase);
       this.setState({allLinks: await database.getAllLinks(this.state.uid)})
       this.setState({links : await this.getLinks(this.state.selectedTab)})
       if (this.state.links.length > 1 && this.state.links.length % 10 === 0)
@@ -470,11 +540,16 @@ class Home extends React.Component {
     var link = e.dataTransfer.getData("text");
     var name = link.slice(0, link.indexOf('/'));
     if (link.slice(link.indexOf('/') + 1, link.length) === "link" && newTab !== this.state.selectedTab && this.state.user !== "default") {
-      await firebase.database().ref(this.state.uid + '/Links/' + name).update({tab: newTab}).then(
-        this.setState({allLinks: await database.getAllLinks(this.state.uid)})
-      )
+      await firebase.database().ref(this.state.uid + '/Links/' + name).update({tab: newTab});
+      for (var i = 0; i < this.state.allLinks.length; i++) {
+        if (name === this.state.allLinks[i].name) {
+          var update = this.state.allLinks;
+          update[i].tab = newTab;
+          this.setState({allLinks: update})
+          i = this.state.allLinks.length;
+        }
+      }
       this.setState({links: await this.getLinks(this.state.selectedTab)})
-      this.getImages();
     }
   }
 
@@ -533,7 +608,6 @@ class Home extends React.Component {
         links: await this.getLinks(this.state.tabs[result * 4].name)
       })
     }
-    this.getImages();
   }
 
   async switchToNextTab() {
@@ -558,7 +632,6 @@ class Home extends React.Component {
         i = this.state.tabs.length;
       }
     }
-    this.getImages();
   }
 
   async switchToPreviousTab() {
@@ -588,7 +661,6 @@ class Home extends React.Component {
         i = this.state.tabs.length;
       }
     }
-    this.getImages();
   }
 
   changeSuggestion(num, isAdd) {
@@ -623,30 +695,30 @@ class Home extends React.Component {
     }
   }
 
-  toggleSideMenu() {
-    document.getElementById("navbar").classList.toggle("active");
-    document.getElementById("sidemenubtn").classList.toggle("active");
-  }
-
   toggleNightMode() {
     document.getElementById("nightmodecontainer").classList.toggle("active");
     document.getElementById("container").classList.toggle("focus");
-    var night = this.state.preferences;
-    night.nightMode = !(night.nightMode);
-    this.setState({preferences: night});
+    var nightMode = this.state.preferences;
+    nightMode.night = document.getElementById("container").className === "container focus";
+    this.setState({preferences: nightMode});
     if (document.getElementById("container").className === "container focus") {
       if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
         document.getElementById("trashimg").src = "trashNight.png";
         document.getElementById("editimg").src = "editNight.png";
+        document.getElementById("saveimg").src = "saveNight.png";
       }
-      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: true})
     } else {
       if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
         document.getElementById("trashimg").src = "trash.png";
         document.getElementById("editimg").src = "edit.png";
+        document.getElementById("saveimg").src = "save.png";
       }
-      firebase.database().ref(this.state.uid + '/Preferences/NightMode').update({night: false})
     }
+  }
+  
+  toggleSideMenu() {
+    document.getElementById("navbar").classList.toggle("active");
+    document.getElementById("sidemenubtn").classList.toggle("active");
   }
 
   render() {
@@ -672,44 +744,8 @@ class Home extends React.Component {
 
           <div className="bodyBox">
 
-            <div className="navBar" id="navbar">
-              <p className="navTitle" id="navtitle">Options</p>
-              <div className="sideSignIn" id="sidesignin" onClick={e => this.signIn()}>
-                <div className="rocketContainer">
-                  <img src="rocket.png" className="rocket" id="rocket"></img>
-                  <img src="flame.png" className="flame" id="flame"></img>
-                </div>
-                <p className="baseSignIn" id="basesignin"><b>Sign In</b> To Google To Unlock All Features</p>
-              </div>
-              <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
-                <div className="cancelBar"></div>
-                <div className="cancelBar"></div>
-                <div className="cancelBar"></div>
-              </div>
-              <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
-                <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
-                  <p className="importText" id="importtext">Import Your Bookmarks</p>
-                  <div className="arrow" id="arrow">
-                    <div className="arrowBody"></div>
-                    <div className="arrowHead"></div>
-                    <div className="arrowHead"></div>
-                  </div>
-                  <div className="arrowBox">
-                    <div className="boxBottom"></div>
-                    <div className="boxSide"></div>
-                    <div className="boxSide"></div>
-                  </div>
-                </div>
-                <div className="sideContainer" id="sideContainer">
-                  <p className="sideLabel" id="sidelabel">Night Mode</p>
-                  <button className="nightContainer" id="nightmodecontainer" onClick={e => this.toggleNightMode()} style={{pointerEvents: this.state.user === "default" ? "none" : "all"}}>
-                    <img src="sun.png" className="nightImg"></img>
-                    <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
-                    <div className="nightSwitch" id="nightswitch"></div>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
+              oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}/>
 
             {this.state.profilePic}
 
@@ -748,15 +784,15 @@ class Home extends React.Component {
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
                 }}>
               </img>
-              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.nightMode) ? 
+              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.night) ? 
                 "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)", textAlign:"left"}}
                 onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
                 <p className="dropTabText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
             </div>
 
-            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex}/>
-            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab} tabs={this.state.tabs}/>
+            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences}/>
+            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab} tabs={this.state.tabs} preferences={this.state.preferences}/>
             <br/>
 
             <div className="grid" id="grid">
@@ -790,14 +826,14 @@ class Home extends React.Component {
               <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
                 style={{display: this.state.links.length > 10 ? "block" : "none"}}></img>
               <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} 
-                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.nightMode) ? 
+                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.night) ? 
                 "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(37, 37, 37) 100%)", textAlign:"left"}}>
                 <p className="dropLinkText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
             </div>
 
             <br/>
-            <div className="addContainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
+            <div className="addContainer" id="addcontainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
               (this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0) ? 
                 {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
               <div className="addSlider">
@@ -910,14 +946,11 @@ class Home extends React.Component {
     document.getElementById("buttonnav").classList.toggle("focus");
     document.getElementById("edittabdiv").classList.toggle("active");
     if (!(document.getElementById("addtabdiv").className.includes("active"))) {
-      document.getElementById("addtabplus").classList.toggle("active");
+      if (!this.state.preferences.addTab)
+        document.getElementById("addtabplus").classList.toggle("active");
       document.getElementById("lefttabarrow").classList.toggle("active");
       document.getElementById("righttabarrow").classList.toggle("active");
     }
-  }
-  openImportLinks() {
-    document.getElementById("bookmarkbox").classList.toggle("focus");
-    document.getElementById("shadow").classList.toggle("active");
   }
 
   tabDragStart(e, tab) {
@@ -966,9 +999,8 @@ class Home extends React.Component {
               break;
             case 27: // esc
               if (document.getElementById("searchbar").value !== "") {
-                document.getElementById("searchbar").value="";
                 this.setState({links : await this.getLinks(this.state.selectedTab)})
-                this.getImages();
+                document.getElementById("searchbar").value="";
               }
               document.getElementById("searchbar").blur();
               break;
@@ -989,11 +1021,11 @@ class Home extends React.Component {
               }
               break;
             case 69: //lmao E
-              if (document.activeElement.id !== "searchbar" && this.state.user !== "default")
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && document.getElementById("editbox").className !== "modBox hide")
                 this.editActive();
               break;
             case 82: // R
-              if (document.activeElement.id !== "searchbar" && this.state.user !== "default")
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && document.getElementById("erasebox").className !== "modBox hide")
                 this.eraseActive();
               break;
             case 76: // L

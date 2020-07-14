@@ -8,6 +8,7 @@ export class EditTab extends React.Component {
                 name : this.props.currTab.name, 
                 color : this.props.currTab.color,
                 tabs: this.props.tabs,
+                preferences: this.props.preferences,
             }
         } else {
             this.state = {
@@ -23,7 +24,8 @@ export class EditTab extends React.Component {
             return {
                 name: props.currTab.name,
                 color: props.currTab.color,
-                tabs: props.tabs
+                tabs: props.tabs,
+                preferences: props.preferences,
             }
         }
         return null;
@@ -87,7 +89,8 @@ export class EditTab extends React.Component {
         document.getElementById("taberrmsg2").style.display = "none";
         document.getElementById("titletaberrmsg2").style.display = "none";
         if (!(document.getElementById("addtabdiv").className.includes("active"))) {
-            document.getElementById("addtabplus").classList.toggle("active");
+            if (!this.state.preferences.addTab)
+                document.getElementById("addtabplus").classList.toggle("active");
             document.getElementById("lefttabarrow").classList.toggle("active");
             document.getElementById("righttabarrow").classList.toggle("active");
         }

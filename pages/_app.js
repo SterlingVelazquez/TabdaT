@@ -4,7 +4,7 @@ import '../css/tabForm.css'
 import '../css/nightMode.css'
 import '../css/navBar.css'
 import '../css/import.css'
-import '../css/loadingAnimations.css'
+import '../css/complexAnimations.css'
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {

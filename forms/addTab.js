@@ -10,6 +10,7 @@ export class AddTab extends React.Component {
             tabs: this.props.tabs,
             numTabs: this.props.tabs.length,
             tabIndex: this.props.tabIndex,
+            preferences: this.props.preferences,
         };
         this.submitForm = this.submitForm.bind(this);
     }
@@ -20,6 +21,7 @@ export class AddTab extends React.Component {
             tabs: props.tabs,
             numTabs: props.tabs.length,
             tabIndex: props.tabIndex,
+            preferences: props.preferences,
         }
     }
 
@@ -76,7 +78,8 @@ export class AddTab extends React.Component {
         document.getElementById("titletaberrmsg").style.display = "none";
         document.getElementById("addtabform").reset();
         if (!(document.getElementById("edittabdiv").className.includes("active"))) {
-            document.getElementById("addtabplus").classList.toggle("active");
+            if (!this.state.preferences.addTab)
+                document.getElementById("addtabplus").classList.toggle("active");
             document.getElementById("lefttabarrow").classList.toggle("active");
             document.getElementById("righttabarrow").classList.toggle("active");
           }

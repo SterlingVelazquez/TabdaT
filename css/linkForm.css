@@ -200,14 +200,18 @@
     color:rgb(89, 96, 109);
     border-bottom: thin solid rgba(141, 152, 172, 0.328);
     padding: 0.4rem 0;
+    padding-right:40px;
     width:90%;
     transition:0.5s;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    overflow:hidden;
     cursor:pointer;
 }
 .suggestionLink:focus,
 .suggestionLink:hover {
     color:rgb(85, 114, 168);
-    font-size:18px;
+    letter-spacing:0.5px;
 }
 .suggestionTitle {
     text-align:left;
@@ -216,21 +220,32 @@
     color:rgb(89, 96, 109);
     border-bottom: thin solid rgba(141, 152, 172, 0.328);
     padding: 0.4rem 0;
+    padding-right:40px;
     width:90%;
     transition:0.5s;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    overflow:hidden;
     cursor:pointer;
 }
 .suggestionTitle:focus,
 .suggestionTitle:hover {
     color:rgb(85, 114, 168);
-    font-size:18px;
+    letter-spacing:0.5px;
 }
 .suggestionImg {
+    position:absolute;
+    display:inline-table;
     float:right;
     box-shadow:none;
     width:30px;
     height:30px;
     margin-top:5px;
+    right:0.8rem;
+}
+.suggestionTitle:hover .suggestionImg,
+.suggestionLink:hover .suggestionImg {
+    transform:scale(1.2);
 }
 
 .imgContainer {

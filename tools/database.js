@@ -5,14 +5,31 @@ class Database {
 
     async getPreferences(user) {
         var preferences = [];
-        await firebase.database().ref(user + '/Preferences/NightMode').once('value').then(async function(snapshot) {
+        await firebase.database().ref(user + '/Preferences').once('value').then(async function(snapshot) {
             if (snapshot.exists()) {
                 preferences.push({
+                    addLink: snapshot.val()["addLink"],
+                    addTab: snapshot.val()["addTab"],
+                    editBtn: snapshot.val()["editBtn"],
+                    linkArrows: snapshot.val()["linkArrows"],
                     night: snapshot.val()["night"],
+                    removeBtn: snapshot.val()["removeBtn"],
+                    tabArrows: snapshot.val()["tabArrows"],
                 })
+            } else {
+                preferences.push({
+                    addTab: false,
+                    addLink: false,
+                    editBtn: false,
+                    linkArrows: false,
+                    night: false,
+                    removeBtn: false,
+                    tabArrows: false,
+                })
+                firebase.database().ref(user + '/Preferences').set(preferences[0]);
             }
         })
-        return preferences;
+        return preferences[0];
     }
 
     async getTabs(user) {

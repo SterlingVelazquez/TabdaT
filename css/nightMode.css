@@ -2,8 +2,8 @@
     position:absolute;
     text-align:center;
     max-height:35px;
-    top:0.1rem;
-    right:0.9rem;
+    top:1.2rem;
+    right:1.2rem;
     opacity:1;
     background:lightblue;
     border-radius:50px;
@@ -67,6 +67,58 @@
   .container.focus .baseNavBar.active {
     left:0px;
     box-shadow:3px 0px 5px rgb(95, 95, 95);
+  }
+  .container.focus .sideMenuBtn {
+    background-color:rgb(14, 14, 14);
+  }
+  .container.focus .sideMenuBtn.active {
+    background-color:rgb(31, 31, 31);
+  }
+  .container.focus .switchContainer {
+    background-color:rgb(78, 78, 78);
+    box-shadow:0px 0px 10px rgb(78, 78, 78);
+  }
+  .container.focus .switch {
+    background-color:rgb(226, 226, 226);
+  }
+  .container.focus .switchContainer.active {
+    background-color:rgb(61, 61, 61);
+    box-shadow:0px 0px 0px rgb(61, 61, 61);
+  }
+  .container.focus .switchContainer.active .switch {
+    background-color:rgb(204, 204, 204);
+  }
+
+  .container.focus .saveBtn {
+    background:rgb(46, 46, 46);
+    box-shadow:3px 3px 5px rgb(46, 46, 46);
+  }
+  .container.focus .saveBox:hover .saveBtn {
+    background:rgb(66, 66, 66);
+  }
+  .container.focus .saveText {
+    color:rgb(204, 204, 204);
+    background-color:rgb(14, 14, 14);
+  }
+
+  .container.focus .saveConfirm {
+    background-color: rgb(41, 41, 41);
+    box-shadow: 0 0 10px rgb(49, 49, 49);
+    border:2px solid rgb(29, 29, 29);
+  }
+  .container.focus .saveConfirmBtn:nth-child(2):hover {
+    background-color:rgb(73, 59, 59);
+  }
+  .container.focus .saveConfirmBtn:nth-child(3):hover {
+    background-color:rgb(44, 54, 44);
+  }
+  .container.focus .saveConfirmBtn:nth-child(3) {
+    border-left:thin solid rgb(67, 69, 73);
+  }
+  
+  .container.focus .sideNightContainer {
+    background-color:rgb(31, 31, 31);
+    box-shadow:0px 0px 30px -25px lightgray;
   }
 
   .container.focus .profilePic {
