@@ -87,7 +87,6 @@ export class Import extends React.Component {
                     toAdd[j].image = "ultafedIgm/doggo.png";
                 }
                 for (var k = 0; k < suggestions.length; k++) {
-                    console.log(k);
                     if (toAdd[j].link.includes(suggestions[k].url)) {
                         toAdd[j].image = suggestions[k].image;
                         k = suggestions.length;

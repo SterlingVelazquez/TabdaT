@@ -73,6 +73,7 @@
   top:40px;
   opacity:0;
   width:20px;
+  border-radius:100%;
   cursor:pointer;
   pointer-events:none;
   transition:top 0.5s linear 0.2s, opacity 0.5s linear 0.2s;

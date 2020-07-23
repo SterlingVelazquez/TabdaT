@@ -231,7 +231,7 @@ export class EditLink extends React.Component {
 
     async submitForm(event) {
         event.preventDefault();
-        if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && this.state.newTab === this.props.currLink.tab &&
+        if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && (this.state.newTab === this.props.currLink.tab || this.state.newTab === null) &&
             ((document.getElementById("defaultimg2").className === "imgContainer active" && this.state.defaultImg === this.props.currLink.image) ||
                 (document.getElementById("uploadimg2").className === "imgContainer active" && this.state.image === this.props.currLink.image) || 
                     (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress === this.props.currLink.image))) {
@@ -245,12 +245,12 @@ export class EditLink extends React.Component {
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
                 newLink.link = "http://" + newLink.link;
-            if (newLink.image === "arrow.png") {
+            if (newLink.image === "arrow.png") 
                 newLink.image = this.state.defaultImg;
-            }
-            if (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress !== "") {
+            if (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress !== "")
                 newLink.image = this.state.imageAddress;
-            }
+            if (newLink.image === this.props.currLink.image && typeof this.props.currLink.ref !== "undefined")
+                newLink.ref = this.props.currLink.ref;
             if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
                 || newLink.name.includes('[') || newLink.name.includes(']')) {
                 document.getElementById("errmsg2").style.display = "block";

@@ -47,6 +47,13 @@
     background-color:rgb(14, 14, 14);
   }
 
+  .container.focus ::-webkit-scrollbar-track {
+    background:rgb(68, 68, 68);
+  }
+  .container.focus ::-webkit-scrollbar-thumb {
+    background:linear-gradient(rgb(100, 100, 100) 0%, rgb(165, 165, 165) 100%);
+  }
+
   .container.focus .letter {
     color:rgb(219, 219, 219);
     text-shadow:0px 0px 3px rgb(219, 219, 219);
@@ -68,6 +75,9 @@
     left:0px;
     box-shadow:3px 0px 5px rgb(95, 95, 95);
   }
+  .container.focus .sideContainerHeader {
+    text-shadow:0 0 1px rgb(199, 199, 199);
+  }
   .container.focus .sideMenuBtn {
     background-color:rgb(14, 14, 14);
   }
@@ -87,6 +97,54 @@
   }
   .container.focus .switchContainer.active .switch {
     background-color:rgb(204, 204, 204);
+  }
+
+  .container.focus .colorViewer {
+    border: thin solid rgb(109, 109, 109);
+  }
+  .container.focus .customColorPicker {
+    background-color:rgb(49, 49, 49);
+    box-shadow:0px 0px 10px rgb(49, 49, 49);
+  }
+  .container.focus .defaultColor:hover,
+  .container.focus .previewColor:hover {
+    color:rgb(173, 173, 173);
+  }
+  .container.focus .swatch {
+    border:thin solid rgb(92, 92, 92);
+  }
+  .container.focus .colorInputLabel {
+    background:rgb(70, 70, 70);
+    box-shadow:inset 0 0 5px rgb(59, 59, 59);
+  }
+  .container.focus .hashTag {
+    color:rgb(213, 215, 219);
+  }
+  .container.focus .colorInput {
+    border: thin solid rgb(51, 51, 51);
+    background:rgb(73, 73, 73);
+    color: rgb(211, 211, 211);
+  }
+
+  .container.focus .brightnessSlider,
+  .container.focus .hueSlider {
+    border:thin solid rgb(77, 77, 77);
+  }
+  .container.focus .colorTester {
+    border:thin solid rgb(68, 68, 68);
+    box-shadow:0 0 10px rgb(90, 90, 90);
+  }
+
+  .container.focus .sizeSlider {
+    background:linear-gradient(to right, rgb(231, 246, 248) 0%, rgb(189, 189, 189) 50%, rgb(87, 87, 87) 100%);
+  }
+  .container.focus .sizeSlider::-webkit-slider-thumb {
+    background: radial-gradient(rgb(231, 246, 248) 0%, rgb(158, 231, 144) 100%);
+    border: thin solid rgb(65, 65, 65);
+    box-shadow:0 0 10px rgb(158, 231, 144);
+  }
+  .container.focus .sliderNumber {
+    color: rgb(175, 175, 175);
   }
 
   .container.focus .saveBtn {
@@ -134,19 +192,6 @@
     font-size:17px;
     text-shadow:0px 0px 10px rgb(249, 251, 253);
   }
-  .container.focus .modBtn {
-    background:rgb(219, 219, 219);
-    box-shadow:0px 0px 10px rgb(219, 219, 219);
-  }
-  .container.focus .modBox:nth-child(3):hover .modBtn {
-    background:rgb(216, 236, 255);
-  }
-  .container.focus .modBox:nth-child(4):hover .modBtn {
-    background:rgb(255, 239, 239);
-  }
-  .container.focus .modText {
-    color:rgb(219, 219, 219);
-  }
 
   .container.focus .searchBar {
     color: rgb(194, 194, 194);
@@ -177,7 +222,7 @@
   }
 
   .container.focus .navBtns {
-    text-shadow:none;
+    text-shadow:0 0 3px black;
   }
 
   .container.focus .navBtnBottom {
@@ -186,6 +231,9 @@
 
   .container.focus img {
     box-shadow:none;
+  }
+  .container.focus .linkNames {
+    text-shadow: 0 0 3px rgb(14, 14, 14);
   }
 
   .container.focus .dropTabBox {
@@ -202,11 +250,7 @@
   }
 
   .container.focus .linkBox img {
-    box-shadow: 0px 0px 20px rgb(77, 77, 77);
-  }
-
-  .container.focus .linkBox:hover img {
-    box-shadow:0px 0px 20px rgb(49, 168, 248);
+    box-shadow: 0 0 20px rgb(77, 77, 77);
   }
 
   .container.focus .grid.active .linkBox:hover img {
@@ -249,11 +293,11 @@
   }
   .container.focus .modBox:nth-child(13):hover .modBtn {
     background:rgb(77, 91, 107);
-    box-shadow:0px 0px 10px rgb(77, 91, 107);
+    box-shadow:0px 0px 10px rgb(64, 80, 98), inset 0 0 40px rgb(56, 72, 92)
   }
   .container.focus .modBox:nth-child(14):hover .modBtn {
     background:rgb(102, 83, 83);
-    box-shadow:0px 0px 10px rgb(102, 83, 83);
+    box-shadow:0px 0px 10px rgb(97, 70, 70), inset 0 0 40px rgb(73, 49, 49);
   }
   .container.focus .modText {
     color: rgb(194, 194, 194);
@@ -269,7 +313,7 @@
   }
   .container.focus .modBoxConfirm:hover .modBtnConfirm {
     background:rgb(56, 70, 56);
-    box-shadow:0px 0px 10px rgb(56, 70, 56);
+    box-shadow:0px 0px 10px rgb(56, 70, 56), inset 0 0 40px rgb(45, 58, 45);
   }
   .container.focus .modBoxConfirm.active .modImgConfirm {
     border-bottom:4.2px solid rgb(194, 194, 194);

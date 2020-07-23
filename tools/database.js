@@ -10,21 +10,45 @@ class Database {
                 preferences.push({
                     addLink: snapshot.val()["addLink"],
                     addTab: snapshot.val()["addTab"],
+                    buttonsColor: snapshot.val()["buttonsColor"],
                     editBtn: snapshot.val()["editBtn"],
+                    gridSize: snapshot.val()["gridSize"],
+                    imageShadowColor: snapshot.val()["imageShadowColor"],
+                    imageShadowSize: snapshot.val()["imageShadowSize"],
                     linkArrows: snapshot.val()["linkArrows"],
+                    linkImageSize: snapshot.val()["linkImageSize"],
+                    linkShadowColor: snapshot.val()["linkShadowColor"],
+                    linkShadowSize: snapshot.val()["linkShadowSize"],
+                    linkTextColor: snapshot.val()["linkTextColor"],
+                    linkTextSize: snapshot.val()["linkTextSize"],
                     night: snapshot.val()["night"],
+                    numLinks: snapshot.val()["numLinks"],
                     removeBtn: snapshot.val()["removeBtn"],
                     tabArrows: snapshot.val()["tabArrows"],
+                    tabShadowSize: snapshot.val()["tabShadowSize"],
+                    tabTextShadowColor: snapshot.val()["tabTextShadowColor"],
                 })
             } else {
                 preferences.push({
-                    addTab: false,
                     addLink: false,
+                    addTab: false,
+                    buttonsColor: false,
                     editBtn: false,
+                    gridSize:20,
+                    imageShadowColor: false,
+                    imageShadowSize:20,
                     linkArrows: false,
+                    linkImageSize:50,
+                    linkShadowColor: false,
+                    linkShadowSize:10,
+                    linkTextColor: false,
+                    linkTextSize:50,
                     night: false,
+                    numLinks:10,
                     removeBtn: false,
                     tabArrows: false,
+                    tabShadowSize:20,
+                    tabTextShadowColor: false,
                 })
                 firebase.database().ref(user + '/Preferences').set(preferences[0]);
             }
@@ -141,14 +165,15 @@ class Database {
     }
 
     async editLink(link, uid, ref, name) {
-        if (typeof link.image === "object") {
+       if (typeof link.image === "object") {
             await this.eraseLinks(uid, [{name: name, ref: ref}]);
             await firebase.storage().ref(uid).child(link.name).put(link.image).then(async res => {
                 link.ref = uid + '/' + link.name;
                 await firebase.database().ref(uid + '/Links/' + link.name).set(link);
             })
         } else if (typeof ref === "string") {
-            await firebase.storage().ref(uid).child(name[0]).delete();
+            if (typeof link.ref === "undefined")
+                await firebase.storage().ref(uid).child(name[0]).delete();
             await firebase.database().ref(uid + '/Links/' + name[0]).remove();
             await firebase.database().ref(uid + '/Links/' + link.name).set(link);
         } else {
