@@ -50,7 +50,8 @@ class Database {
                     tabShadowSize:20,
                     tabTextShadowColor: false,
                 })
-                firebase.database().ref(user + '/Preferences').set(preferences[0]);
+                if (user !== "default")
+                    firebase.database().ref(user + '/Preferences').set(preferences[0]);
             }
         })
         return preferences[0];

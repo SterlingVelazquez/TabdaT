@@ -111,6 +111,7 @@ class Home extends React.Component {
           this.getImages();
         })
       } else {
+        this.setInitialPreferences(await database.getPreferences("default"));
         this.setState({tabs : await database.getTabs(this.state.uid)})
         if (this.state.tabs.length !== 0) {
           this.setState({
