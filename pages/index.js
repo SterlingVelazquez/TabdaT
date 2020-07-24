@@ -276,11 +276,13 @@ class Home extends React.Component {
       profilePic : 
         <div onClick={e => this.signIn()} className="profilePic">
           <p>Sign In</p>
-          <img src={document.getElementById("container").className === "container focus" ? "white-male.png" : "black-male.png"} id="profilepic"></img>
+          <img src="black-male.png" id="profilepic"></img>
         </div>
     })
     this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))})
     this.get();
+    if (document.getElementById("container").className.includes("focus"))
+      this.toggleNightMode();
     await firebase.auth().signOut();
   }
 
@@ -830,7 +832,6 @@ class Home extends React.Component {
 
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"></link>
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
-          <script type="text/javascript" src="jscolor.js"></script>
         </Head>
 
         <main>
