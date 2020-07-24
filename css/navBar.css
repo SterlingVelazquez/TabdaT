@@ -331,7 +331,7 @@
 
 .switchContainer {
     position:absolute;
-    right:-2rem;
+    right:-3rem;
     height:1.5rem;
     width:3rem;
     opacity:0;
@@ -368,7 +368,7 @@
 
 .sizeSliderBox {
     position:absolute;
-    right:-8rem;
+    right:-10rem;
     opacity:0;
     transition:0.5s;
 }

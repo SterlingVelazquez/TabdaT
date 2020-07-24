@@ -6,7 +6,7 @@
     border: thin solid rgb(211, 211, 211);
     border-radius:100%;
     top:1.3rem;
-    right:-1rem;
+    right:-2rem;
     opacity:0;
     cursor:pointer;
     pointer-events:none;
