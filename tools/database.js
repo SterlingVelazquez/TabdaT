@@ -27,6 +27,7 @@ class Database {
                     tabArrows: snapshot.val()["tabArrows"],
                     tabShadowSize: snapshot.val()["tabShadowSize"],
                     tabTextShadowColor: snapshot.val()["tabTextShadowColor"],
+                    theme: snapshot.val()["theme"],
                 })
             } else {
                 preferences.push({
@@ -49,12 +50,27 @@ class Database {
                     tabArrows: false,
                     tabShadowSize:20,
                     tabTextShadowColor: false,
+                    theme: false,
                 })
                 if (user !== "default")
                     firebase.database().ref(user + '/Preferences').set(preferences[0]);
             }
         })
         return preferences[0];
+    }
+    
+    setPreferences(upload, preferences, user) {
+        var newPref = JSON.parse(JSON.stringify(preferences));
+        if (upload) {
+            firebase.storage().ref(user + "/ThemeUltafedIgm").put(upload);
+            newPref.theme = "/ThemeUltafedIgm";
+            firebase.database().ref(user + "/Preferences").set(newPref);
+        } else {
+            if (preferences.theme && !(preferences.theme.includes("https://i.pinimg.com/"))) {
+                newPref.theme = "/ThemeUltafedIgm";
+            }
+            firebase.database().ref(user + "/Preferences").set(newPref);
+        }
     }
 
     async getTabs(user) {

@@ -54,7 +54,8 @@ class Home extends React.Component {
         tabArrows: false,
         tabShadowSize:20,
         tabTextShadowColor: false,
-    },
+        theme: false,
+      },
       currTab : {
         name: "",
         color : "",
@@ -87,7 +88,7 @@ class Home extends React.Component {
       if (user) {
         if (!(document.getElementById("sidesignin").className.includes("active")))
           document.getElementById("sidesignin").classList.toggle("active");
-        this.setInitialPreferences(await database.getPreferences(user.uid));
+        this.setInitialPreferences(await database.getPreferences(user.uid), user.uid);
         this.setState({
           user:user,
           uid:user.uid,
@@ -191,48 +192,63 @@ class Home extends React.Component {
       this.setState({links: this.state.links})
   }
 
-  async setInitialPreferences(preferences) {
+  async setInitialPreferences(preferences, user) {
     this.setState({preferences: preferences, oldPreferences: JSON.parse(JSON.stringify(preferences))})
-    if (preferences.night && !(document.getElementById("container").className.includes("focus"))) {
-      document.getElementById("nightmodecontainer").classList.toggle("active");
-      document.getElementById("container").classList.toggle("focus");
-      document.getElementById("trashimg").src = "trashNight.png";
-      document.getElementById("editimg").src = "editNight.png";
-      document.getElementById("saveimg").src = "saveNight.png";
-    }
-    if (preferences.addTab && document.getElementById("addtabplus").className !== "addTabPlus")
-      document.getElementById("addtabplus").classList.toggle("active");
     if (preferences.addLink && document.getElementById("addcontainer").className !== "addContainer active") {
-      document.getElementById("addcontainer").classList.toggle("active");
       document.getElementById("erasebox").style.top = "-3rem";
       document.getElementById("editbox").style.top = "-3rem";
       document.getElementById("confirmerase").style.top = "-3rem";
     }
     if (preferences.editBtn && document.getElementById("editbox").className !== "modBox hide") {
-      document.getElementById("editbox").classList.toggle("hide");
       document.getElementById("erasebox").style.marginLeft = "-4.1rem"
     }
     if (preferences.removeBtn && document.getElementById("erasebox").className !== "modBox hide") {
-      document.getElementById("erasebox").classList.toggle("hide");
-      document.getElementById("confirmerase").classList.toggle("hide");
       document.getElementById("editbox").style.marginLeft = "6.2rem";
-    }
-    if (preferences.tabArrows && document.getElementById("lefttabarrow").className !== "leftTabArrow hide") {
-      document.getElementById("lefttabarrow").classList.toggle("hide");
-      document.getElementById("righttabarrow").classList.toggle("hide");
-    }
-    if (preferences.linkArrows && document.getElementById("leftarrow").className !== "leftLinkArrow hide") {
-      document.getElementById("leftarrow").classList.toggle("hide");
-      document.getElementById("rightarrow").classList.toggle("hide");
     }
     if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
       document.getElementById("resetbox").classList.toggle("active");
+    if (this.state.preferences.theme) {
+      if (this.state.preferences.theme === "/ThemeUltafedIgm") {
+        document.getElementById("themecontainer2").classList.toggle("active");
+        await firebase.storage().ref(user + "/ThemeUltafedIgm").getDownloadURL().then((res) => {
+          var newPreferences = preferences;
+          newPreferences.theme = res;
+          this.setState({
+            preferences: newPreferences,
+            oldPreferences: JSON.parse(JSON.stringify(newPreferences))
+          })
+          document.getElementById("themeuploadimage").src = res;
+        })
+      }
+      document.getElementById("theme").style.display = "block";
+    } else {
+      document.getElementById("themecontainer1").classList.toggle("active");
+    }
+  }
+  async setDefaultPreferences() {
+  if (preferences.editBtn && document.getElementById("editbox").className !== "modBox hide") {
+    document.getElementById("editbox").classList.toggle("hide");
+  }
+  if (preferences.removeBtn && document.getElementById("erasebox").className !== "modBox hide") {
+    document.getElementById("erasebox").classList.toggle("hide");
+    document.getElementById("confirmerase").classList.toggle("hide");
+  }
+  if (preferences.tabArrows && document.getElementById("lefttabarrow").className !== "leftTabArrow hide") {
+    document.getElementById("lefttabarrow").classList.toggle("hide");
+    document.getElementById("righttabarrow").classList.toggle("hide");
+  }
+  if (preferences.linkArrows && document.getElementById("leftarrow").className !== "leftLinkArrow hide") {
+    document.getElementById("leftarrow").classList.toggle("hide");
+    document.getElementById("rightarrow").classList.toggle("hide");
+  }
+  if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
+    document.getElementById("resetbox").classList.toggle("active");
   }
   async setPreferences(pref) {
     this.setState({preferences: pref})
   }
-  savePreferences() {
-    firebase.database().ref(this.state.uid + "/Preferences").set(this.state.preferences);
+  savePreferences(isUpload) {
+    database.setPreferences(isUpload, this.state.preferences, this.state.uid)
     this.setState({oldPreferences: JSON.parse(JSON.stringify(this.state.preferences))})
   }
 
@@ -262,13 +278,15 @@ class Home extends React.Component {
   }
 
   async signOut() {
-    if (document.getElementById("erasebox").className === "modBox active") {
+    if (document.getElementById("erasebox").className.includes("active"))
       this.eraseActive();
-    } else if (document.getElementById("editbox").className === "modBox focus") {
+    else if (document.getElementById("editbox").className.includes("focus"))
       this.editActive();
-    }
     if (document.getElementById("edittabdiv").className === "addTabDiv active")
       this.openTabEdit(this.state.currTab);
+    if (document.getElementById("savebox").className.includes("active"))
+      document.getElementById("savebox").classList.toggle("active");
+
     document.getElementById("sidesignin").classList.toggle("active");
     this.setState({
       user: "default",
@@ -279,11 +297,12 @@ class Home extends React.Component {
           <img src="black-male.png" id="profilepic"></img>
         </div>
     })
-    this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))})
+    await firebase.auth().signOut();
+    this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))});
     this.get();
     if (document.getElementById("container").className.includes("focus"))
       this.toggleNightMode();
-    await firebase.auth().signOut();
+    document.getElementById("theme").style.display = "none";
   }
 
   async setInputText(event) {
@@ -392,13 +411,8 @@ class Home extends React.Component {
     if (document.getElementById("editimg").src.includes("edit")) {
       document.getElementById("editimg").src = "cancel.png"
     } else {
-      if (document.getElementById("container").className === "container focus") {
-        document.getElementById("editimg").src = "editNight.png"
-        document.getElementById("trashimg").src = "trashNight.png"
-      } else {
-        document.getElementById("editimg").src = "edit.png"
-        document.getElementById("trashimg").src = "trash.png"
-      }
+      document.getElementById("editimg").src = "edit.png"
+      document.getElementById("trashimg").src = "trash.png"
     }
   }
 
@@ -474,13 +488,8 @@ class Home extends React.Component {
     if (document.getElementById("trashimg").src.includes("trash")) {
       document.getElementById("trashimg").src = "cancel.png"
     } else {
-      if (document.getElementById("container").className === "container focus") {
-        document.getElementById("trashimg").src = "trashNight.png"
-        document.getElementById("editimg").src = "editNight.png"
-      } else {
-        document.getElementById("trashimg").src = "trash.png"
-        document.getElementById("editimg").src = "edit.png"
-      }
+      document.getElementById("trashimg").src = "trash.png"
+      document.getElementById("editimg").src = "edit.png"
     }
   }
 
@@ -798,23 +807,11 @@ class Home extends React.Component {
   }
 
   toggleNightMode() {
-    document.getElementById("nightmodecontainer").classList.toggle("active");
-    document.getElementById("container").classList.toggle("focus");
-    var nightMode = this.state.preferences;
-    nightMode.night = document.getElementById("container").className === "container focus";
-    this.setState({preferences: nightMode});
-    if (document.getElementById("container").className === "container focus") {
-      if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
-        document.getElementById("trashimg").src = "trashNight.png";
-        document.getElementById("editimg").src = "editNight.png";
-        document.getElementById("saveimg").src = "saveNight.png";
-      }
-    } else {
-      if (!(document.getElementById("trashimg").src.includes("cancel.png")) && !(document.getElementById("editimg").src.includes("cancel.png"))) {
-        document.getElementById("trashimg").src = "trash.png";
-        document.getElementById("editimg").src = "edit.png";
-        document.getElementById("saveimg").src = "save.png";
-      }
+    if (!this.state.preferences.theme) {
+      document.getElementById("container").classList.toggle("focus");
+      var nightMode = this.state.preferences;
+      nightMode.night = document.getElementById("container").className === "container focus";
+      this.setState({preferences: nightMode});
     }
   }
   
@@ -825,7 +822,7 @@ class Home extends React.Component {
 
   render() {
     return (
-      <div className="container" id="container">
+      <div className={this.state.preferences.theme ? "container themes" : (this.state.preferences.night ? "container focus" : "container")} id="container">
         <Head>
           <title>TabdaT</title>
           <link rel="icon" href="/favicon.ico"/>
@@ -834,7 +831,10 @@ class Home extends React.Component {
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
         </Head>
 
+        <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""}/>
+
         <main>
+
           <p style={{color:"black"}} className="title">
             <span className="letter">T</span>
             <span className="letter">ɑ</span>
@@ -860,7 +860,7 @@ class Home extends React.Component {
                 onDragOver={e => e.preventDefault()}>
                 <p className="dropTabText">Move <br/> to front</p>
               </div>
-              <img className="leftTabArrow" id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
+              <img className={this.state.preferences.tabArrows ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
                 style={{
                   display: this.state.tabs.length > 3 ? "block" : "none",
                   left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
@@ -871,7 +871,7 @@ class Home extends React.Component {
                 this.state.tabs.slice(this.state.tabIndex * 4, this.state.tabIndex * 4 + 4).map( (each) => 
                   <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{borderBottomColor:each.color, 
                     textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor : 
-                    '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + (this.state.preferences.night ? "000000" : "808080")}} 
+                    '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "rgba(0, 0, 0, 0)" : (this.state.preferences.night ? "#000000" : "#808080"))}} 
                     key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
                     draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
                     onDragEnd={e => this.dropTabActive()}>
@@ -882,15 +882,16 @@ class Home extends React.Component {
                   </button>
                 )
               }
-              <img className="rightTabArrow" id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
+              <img className={this.state.preferences.tabArrows ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
                 style={{
                   display: this.state.tabs.length > 3 ? "block" : "none",
                   right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
                 }}>
               </img>
-              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.night) ? 
-                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)", textAlign:"left"}}
+              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.night || this.state.preferences.theme) ? 
+                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.616) 50%," + 
+                "rgb(46, 46, 46) 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)"), textAlign:"left"}}
                 onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
                 <p className="dropTabText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
@@ -905,7 +906,7 @@ class Home extends React.Component {
                 onDragOver={e => e.preventDefault()}>
                 <p className="dropLinkText">Move <br/> to front</p>
               </div>
-              <img className="leftLinkArrow" id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
+              <img className={this.state.preferences.linkArrows ? "leftLinkArrow hide" : "leftLinkArrow"} id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
                 style={{display: this.state.links.length > this.state.preferences.numLinks ? "block" : "none"}}></img>
               {
                 this.state.links.slice(this.state.linkIndex * this.state.preferences.numLinks, 
@@ -916,12 +917,12 @@ class Home extends React.Component {
                     <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.ref}></input></label>
                     <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                       <img src={each.image} key={key++} className="linkImg" style={{boxShadow: this.state.preferences.imageShadowColor ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + ' #' + 
-                        this.state.preferences.imageShadowColor : (this.state.preferences.night ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #4D4D4D" : '0 0 ' + 
+                        this.state.preferences.imageShadowColor : (this.state.preferences.night || this.state.preferences.theme ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #4D4D4D" : '0 0 ' + 
                         (this.state.preferences.imageShadowSize + "px") + " #B6B6B6"), width:45 + (this.state.preferences.linkImageSize * 0.9) + "px", height:45 + (this.state.preferences.linkImageSize * 0.9) + "px"}}></img>
-                      <p className="linkNames" style={{color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : (this.state.preferences.night ? "rgb(199, 199, 199)" : 
-                        "rgb(82, 86, 92)"), textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px")
-                        + ' #' + this.state.preferences.linkShadowColor : '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.night ? "0E0E0E" : "F9FBFD"), 
-                        fontSize: 10 + (this.state.preferences.linkTextSize * 0.08) + "px"}}>{each.name}</p>
+                      <p className="linkNames" style={{color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : (this.state.preferences.theme ? "FFFFFF" :  (this.state.preferences.night ? "rgb(199, 199, 199)" : 
+                        "rgb(82, 86, 92)")), textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px")
+                        + ' #' + this.state.preferences.linkShadowColor : '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.theme || this.state.preferences.night ? "0E0E0E" : "F9FBFD"), 
+                        fontSize: 10 + (this.state.preferences.linkTextSize * 0.08) + "px", maxHeight: 30 + (this.state.preferences.linkTextSize * 0.25) + "px"}}>{each.name}</p>
                       <div className="loaderDiv" id="loaderdiv">
                         <div className="loader" id="loader">
                           <div className="dot"></div>
@@ -934,24 +935,25 @@ class Home extends React.Component {
                   </a>
                 )
               }
-              <img className="rightLinkArrow" id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
+              <img className={this.state.preferences.linkArrows ? "rightLinkArrow hide" : "rightLinkArrow"} id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
                 style={{display: this.state.links.length > this.state.preferences.numLinks ? "block" : "none"}}></img>
               <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} 
-                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.night) ? 
-                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(37, 37, 37) 100%)", textAlign:"left"}}>
+                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ? 
+                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.69) 50%, rgba(37, 37, 37, 0.89)" : 
+                "linear-gradient(to left, rgba(14, 14, 14, 0) 0%,rgb(37, 37, 37) 100%)"), textAlign:"left"}}>
                 <p className="dropLinkText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
               </div>
             </div>
 
             <br/>
-            <div className="addContainer" id="addcontainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
+            <div className={!(this.state.preferences.addLink) ? "addContainer" : "addContainer active"} id="addcontainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
               (this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0) ? 
                 {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
               <div className="addSlider">
-                <img src="plus.png"></img>
+                <img className="plusImage" src="plus.png"></img>
               </div>
               <button className="addLink" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.night ? "313131" : "F9FBFD")}}><b>Add New Link</b></button>
+                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}><b>Add New Link</b></button>
               <p className="uploadLinkLoader" id="uploadlinkloader">
                 <span className="linkLoadLetter">U</span>
                 <span className="linkLoadLetter">p</span>
@@ -982,9 +984,9 @@ class Home extends React.Component {
             </div>
             <br/>
 
-            <div className="modBox" id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+            <div className={this.state.preferences.editBtn ? "modBox hide" : "modBox"} id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
               <button className="modBtn" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.night ? "313131" : "F9FBFD")}}>
+                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
                 <img className="modImg" id="editimg" src="edit.png"></img>
                 <p className="modTextEdit">Edit</p>
               </button>
@@ -992,18 +994,18 @@ class Home extends React.Component {
               <p className="modTextClose" onClick={e => this.editActive()}>Close</p>
             </div>
 
-            <div className="modBox" id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
+            <div className={this.state.preferences.removeBtn ? "modBox hide" : "modBox"} id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
               <button className="modBtn" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.night ? "313131" : "F9FBFD")}}>
+                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
                 <img className="modImg" id="trashimg" src="trash.png"></img>
                 <p className="modTextErase">Remove</p>
               </button>
               <p className="modTextClose" onClick={e => this.eraseActive()}>Close</p>
             </div>
 
-            <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-flex"}}>
+            <div className={this.state.preferences.removeBtn ? "modBoxConfirm hide" : "modBoxConfirm"} id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-flex"}}>
               <button className="modBtnConfirm" id="modbtnconfirm" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.night ? "313131" : "F9FBFD")}}>
+                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
                 <div className="modImgConfirm" id="modimgconfirm"></div>
               </button>
               <p className="modTextConfirm" onClick={e => this.confirmErase()}>Confirm</p>

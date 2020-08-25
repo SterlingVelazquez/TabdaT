@@ -84,8 +84,10 @@ export class AddTab extends React.Component {
             document.getElementById("righttabarrow").classList.toggle("active");
           }
         window.formOpen = false;
-        if (document.getElementById("container").className === "container focus") {
+        if (document.getElementById("container").className.includes("focus")) {
             this.setState({color:"#9C9C9C"})
+        } else if (document.getElementById("container").className.includes("themes")) {
+            this.setState({color:"#CCCCCC"})
         } else {
             this.setState({color:"#000000"})
         }
@@ -94,7 +96,7 @@ export class AddTab extends React.Component {
     render () {
         return (
             <div className="addTabDiv" id="addtabdiv" style={this.state.user === "default" ? {display:"none"} : {display:"inline-flex"}}>
-                <img className="addTabPlus active" id="addtabplus" src="plus.png" onClick={e => this.viewTab()}
+                <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}
                     style={{marginLeft: this.state.numTabs % 4 === 0 ? "-8px" : "60px", display: this.state.tabIndex < Math.floor(this.state.numTabs / 4) ? "none" : "block"}}></img>
                 <form className="addTabForm" id="addtabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>

@@ -6,7 +6,26 @@ var colorChanges = {
     linkShadowColor: null,
     linkTextColor: null,
     tabTextShadowColor: null,
-}
+    },
+    upload = false,
+    themeArr = [
+        "https://i.pinimg.com/originals/90/ce/32/90ce32d91e1117e54b5f8c9ed9dd2bdc.jpg",
+        "https://i.pinimg.com/originals/ae/34/8e/ae348ebc425e81c6b38cff441cdd68a6.jpg",
+        "https://i.pinimg.com/originals/ec/cc/0d/eccc0db3c688b39b401f13d127074620.jpg",
+        "https://i.pinimg.com/originals/86/27/13/862713796f1ab641eb5ffe749359f351.jpg",
+        "https://i.pinimg.com/originals/5c/88/d6/5c88d67220d3227812e0ab959ba7d624.jpg",
+        "https://i.pinimg.com/originals/14/de/93/14de934b421dc36178b331dd5a73307e.jpg",
+        "https://i.pinimg.com/originals/3e/4c/af/3e4caf442d2a63b5444443b96aff0815.jpg",
+        "https://i.pinimg.com/originals/6f/7a/98/6f7a9840860d66be5a8cdb7ed79facc6.jpg",
+        "https://i.pinimg.com/originals/cc/ae/d2/ccaed2c79d3e6af46e4389ef9d373189.png",
+        "https://i.pinimg.com/originals/45/d0/0c/45d00cc47826e23f792d5512d1a081c9.png",
+        "https://i.pinimg.com/originals/aa/37/26/aa372677c7c55886d68f6ba41adc9ce2.jpg",
+        "https://i.pinimg.com/originals/5a/f3/7d/5af37dd92340946eb909e7eec3b399a0.png",
+        "https://i.pinimg.com/originals/99/f5/b1/99f5b16ba177d6d5b9362502be60b394.png",
+        "https://i.pinimg.com/originals/7d/a5/52/7da552d01eb0072bee8b3af9305cbb10.jpg",
+        "https://i.pinimg.com/originals/52/8f/30/528f30c01ac723dc5dbacc8fe8467ef2.png",
+        "https://i.pinimg.com/originals/98/7d/7b/987d7bd1f7c904b5d0942b01b4857067.jpg"
+    ];
 
 export class NavBar extends React.Component {
 
@@ -32,15 +51,12 @@ export class NavBar extends React.Component {
     }
 
     hideAddTab() {
-        if (document.getElementsByClassName("addTabDiv active").length === 0)
-            document.getElementById("addtabplus").classList.toggle("active");
         var hidePreferences = this.state.preferences;
         hidePreferences.addTab = !hidePreferences.addTab;
         this.props.setPreferences(hidePreferences);
         this.comparePreferences();
     }
     hideAddLink() {
-        document.getElementById("addcontainer").classList.toggle("active");
         var hidePreferences = this.state.preferences;
         document.getElementById("erasebox").style.top = !hidePreferences.addLink ? "-2rem" : "0";
         document.getElementById("editbox").style.top = !hidePreferences.addLink ? "-2rem" : "0";
@@ -52,7 +68,6 @@ export class NavBar extends React.Component {
     hideEditBtn() {
         if (document.getElementById("editbox").className === "modBox focus")
             this.props.editActive();
-        document.getElementById("editbox").classList.toggle("hide")
         var hidePreferences = this.state.preferences;
         if (!hidePreferences.editBtn) {
             document.getElementById("erasebox").style.marginLeft = "-4.1rem"
@@ -66,8 +81,6 @@ export class NavBar extends React.Component {
     hideRemoveBtn() {
         if (document.getElementById("erasebox").className === "modBox active")
             this.props.eraseActive();
-        document.getElementById("erasebox").classList.toggle("hide");
-        document.getElementById("confirmerase").classList.toggle("hide");
         var hidePreferences = this.state.preferences;
         if (!hidePreferences.removeBtn) {
             document.getElementById("editbox").style.marginLeft = "6.2rem"
@@ -79,16 +92,12 @@ export class NavBar extends React.Component {
         this.comparePreferences();
     }
     hideTabArrows() {
-        document.getElementById("lefttabarrow").classList.toggle("hide");
-        document.getElementById("righttabarrow").classList.toggle("hide");
         var hidePreferences = this.state.preferences;
         hidePreferences.tabArrows = !hidePreferences.tabArrows;
         this.props.setPreferences(hidePreferences);
         this.comparePreferences();
     }
     hideLinkArrows() {
-        document.getElementById("leftarrow").classList.toggle("hide");
-        document.getElementById("rightarrow").classList.toggle("hide");
         var hidePreferences = this.state.preferences;
         hidePreferences.linkArrows = !hidePreferences.linkArrows;
         this.props.setPreferences(hidePreferences);
@@ -407,15 +416,108 @@ export class NavBar extends React.Component {
         this.comparePreferences();
     }
 
-    async nightMode() {
-        this.props.toggleNightMode();
+    toggleActiveImage(id, isChosen) {
+        if (isChosen) {
+            if (document.getElementById("themecontainer1").className.includes("active"))
+                document.getElementById("themecontainer1").classList.toggle("active")
+            else if (document.getElementById("themecontainer2").className.includes("active"))
+                document.getElementById("themecontainer2").classList.toggle("active")
+            document.getElementById("theme").style.display = "block";
+        } else if (id === "themecontainer1" && !(document.getElementById("themecontainer1").className.includes("active"))) {
+            if (document.getElementById("themecontainer2").className.includes("active"))
+                document.getElementById("themecontainer2").classList.toggle("active")
+            document.getElementById(id).classList.toggle("active");
+            document.getElementById("theme").style.display = "none";
+        } else if (id === "themecontainer2" && !(document.getElementById("themecontainer2").className.includes("active"))) {
+            if (!(document.getElementById("themeuploadimage").src.includes("arrow.png"))) {
+                var themePreferences = this.state.preferences;
+                themePreferences.theme = document.getElementById("themeuploadimage").src;
+                this.props.setPreferences(themePreferences);
+                document.getElementById("theme").style.display = "block";
+            }
+            else if (document.getElementById("themecontainer1").className.includes("active"))
+                document.getElementById("themecontainer1").classList.toggle("active")
+            document.getElementById(id).classList.toggle("active");
+        }
         this.comparePreferences();
+    }
+    setDefaultTheme() {
+        if (!(document.getElementById("themecontainer1").className.includes("active"))) {
+            var themePreferences = this.state.preferences;
+            themePreferences.theme = false;
+            this.props.setPreferences(themePreferences);
+            this.toggleActiveImage("themecontainer1", false)
+        }
+    }
+    setChosenTheme(id) {
+        if (this.state.preferences.theme !== id) {
+            var themePreferences = this.state.preferences;
+            themePreferences.theme = id;
+            this.props.setPreferences(themePreferences);
+            this.toggleActiveImage(id, true)
+        }
+    }
+    setUploadTheme(event) {
+        event.stopPropagation();
+        document.getElementById("addtheme").addEventListener('change', async (event) => {
+            if (event.target.files.length !== 0) {
+                var files = event.target.files, reader = new FileReader();
+                reader.onload = function () {
+                    document.getElementById("themeuploadimage").src = reader.result;
+                    var themePreferences = this.state.preferences;
+                    themePreferences.theme = reader.result;
+                    this.props.setPreferences(themePreferences);
+                    if (!(document.getElementById("themecontainer2").className.includes("active"))) {
+                        if (document.getElementById("themecontainer1").className.includes("active"))
+                            document.getElementById("themecontainer1").classList.toggle("active")
+                        document.getElementById("themecontainer2").classList.toggle("active");
+                    }
+                    document.getElementById("theme").style.display = "block";
+                    this.comparePreferences();
+                }.bind(this)
+                upload = files[0];
+                reader.readAsDataURL(files[0]);
+            }
+        })
+    }
+    closeThemes() {
+        if (!this.state.preferences.theme) {
+            this.toggleActiveImage("themecontainer1");
+            document.getElementById("themeuploadimage").src = "arrow.png";
+        } else if (this.state.preferences.theme.includes("Themes/")) {
+            this.toggleActiveImage(this.state.preferences.theme, true);
+            document.getElementById("themeuploadimage").src = "arrow.png";
+        } else {
+            if (!(document.getElementById("themecontainer2").className.includes("active"))) {
+                if (document.getElementsByClassName("themeImage active").length > 0)
+                    document.getElementsByClassName("themeImage active")[0].classList.toggle("active")
+                else if (document.getElementById("themecontainer1").className.includes("active"))
+                    document.getElementById("themecontainer1").classList.toggle("active")
+                document.getElementById("themecontainer2").classList.toggle("active");
+            }
+            document.getElementById("themeuploadimage").src = this.state.preferences.theme;
+        }
+    }
+
+    async nightMode() {
+        if (!(this.state.preferences.theme)) {
+            this.props.toggleNightMode();
+            this.comparePreferences();
+        }
     }
 
     toggleActive(id) {
         document.getElementById(id).classList.toggle("active");
         if (id === "resetconfirmbox")
             document.getElementById("navbar").scrollTo({top: 1000, behavior:'smooth'});
+    }
+    toggleReset() {
+        document.getElementById("resetconfirmbox").classList.toggle("active");
+        if (document.getElementById("resetconfirmbox").className.includes("active"))
+            document.getElementById("navbar").scrollTo({
+                top:100000,
+                behavior:"smooth"
+            })
     }
     toggleOptions(id) {
         this.toggleColorView("", "", "", true, true);
@@ -494,8 +596,15 @@ export class NavBar extends React.Component {
             this.setImageShadowSize(false);
         if (this.state.preferences.linkShadowSize !== this.state.oldPreferences.linkShadowSize)
             this.setLinkShadowSize(false);
+        if (this.state.preferences.theme !== this.state.oldPreferences.theme) {
+            var themePreferences = this.state.preferences;
+            themePreferences.theme = this.state.oldPreferences.theme;
+            this.props.setPreferences(themePreferences);
+            this.closeThemes();
+        }
         document.getElementById("saveconfirm").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
+        upload = false;
     }
 
     comparePreferences() {
@@ -512,13 +621,27 @@ export class NavBar extends React.Component {
         }
     }
     savePreferences() {
-        this.props.savePreferences();
+        if (upload && document.getElementById("themeuploadimage").src !== "arrow.png" && document.getElementById("themecontainer2").className.includes("active")) {
+            this.props.savePreferences(upload);
+        } else {
+            if (document.getElementById("themeuploadimage").src === "arrow.png" && document.getElementById("themecontainer2").className.includes("active")) {
+                var themePreferences = this.state.preferences;
+                themePreferences.theme = this.state.oldPreferences.theme;
+                this.props.setPreferences(themePreferences);
+                this.props.savePreferences(false);
+                this.closeThemes();
+            } else {
+                this.props.savePreferences(false);
+                document.getElementById("themeuploadimage").src = "arrow.png";
+            }
+        }
         if (document.getElementById("savebox").className.includes("active"))
             document.getElementById("savebox").classList.toggle("active");
         if (document.getElementById("saveconfirm").className.includes("active")) {
             document.getElementById("saveconfirm").classList.toggle("active");
             document.getElementById("shadow").classList.toggle("active");
         }
+        upload = false;
     }
 
     render() {
@@ -538,24 +661,16 @@ export class NavBar extends React.Component {
                     <div className="cancelBar"></div>
                 </div>
                 <div className="sideShadow" id="sideshadow" style={{pointerEvents: this.state.user === "default" ? "none" : "all", opacity: this.state.user === "default" ? "0.5" : "1"}}>
-                    <div className="importBox" id="importbox" onClick={e => this.openImportLinks()}>
+                    <div className="importBox" id="importbox" onClick={e => this.openImportLinks()} style={{pointerEvents: this.state.user !== "default" ? "all" : "none"}}>
                         <p className="importText" id="importtext">Import Your Bookmarks</p>
-                        <div className="arrow" id="arrow">
-                            <div className="arrowBody"></div>
-                            <div className="arrowHead"></div>
-                            <div className="arrowHead"></div>
-                        </div>
-                        <div className="arrowBox">
-                            <div className="boxBottom"></div>
-                            <div className="boxSide"></div>
-                            <div className="boxSide"></div>
-                        </div>
+                        <img className="importImage" src="import.png"></img>
                     </div>
 
-                    <div className="sideContainer active" id="sidecontainershow" style={{marginTop:"1.5rem"}}>
+                    <div className="sideContainer" id="sidecontainershow" style={{marginTop:"1rem", pointerEvents: this.state.user !== "default" ? "all" : "none"}}>
                         <div className="sideContainerHeader" id="sidecontainerheader1" onClick={e => this.toggleOptions("sidecontainershow")}>
-                            <p className="sideHeader">Show / Hide Stuff</p>
-                            <div className="sideHeaderArrow"></div>
+                            <div className="optionDecor1"></div>
+                            <img className="optionImage1" id="optionimage1" src="visibility.png"></img>
+                            <p className="sideHeader">Visibility</p>
                         </div>
                         <div className="sideOptions" id="hideoptions">
                             <div className="sideOptionContainer">
@@ -609,10 +724,11 @@ export class NavBar extends React.Component {
                         </div>
                     </div>
 
-                    <div className="sideContainer" id="sidecontainercolor">
+                    <div className="sideContainer" id="sidecontainercolor" style={{pointerEvents: this.state.user !== "default" ? "all" : "none"}}>
                         <div className="sideContainerHeader" id="sidecontainerheader2" onClick={e => this.toggleOptions("sidecontainercolor")}>
+                            <div className="optionDecor2"></div>
+                            <img className="optionImage2" id="optionimage2" src="colors.png"></img>
                             <p className="sideHeader">Colors</p>
-                            <div className="sideHeaderArrow"></div>
                         </div>
                         <div className="sideOptions" id="linkoptions">
                             <div className="sideOptionContainer">
@@ -793,18 +909,19 @@ export class NavBar extends React.Component {
                         </div>
                     </div>
 
-                    <div className="sideContainer" id="sidecontainersize">
+                    <div className="sideContainer" id="sidecontainersize" style={{pointerEvents: this.state.user !== "default" ? "all" : "none"}}>
                         <div className="sideContainerHeader" id="sidecontainerheader3" onClick={e => this.toggleOptions("sidecontainersize")}>
+                            <div className="optionDecor3"></div>
+                            <img className="optionImage3" id="optionimage3" src="sizes.png"></img>
                             <p className="sideHeader">Sizes</p>
-                            <div className="sideHeaderArrow"></div>
                         </div>
                         <div className="sideOptions" id="hideoptions">
                             <div className="sideOptionContainerSize">
                                 <p className="option">Number of Links</p>
                                 <div className="sizeSliderBox">
                                     <img className={"resetSlider" + (this.state.preferences.numLinks !== 10 ? " active" : "")} id="resetslider1" src="reset.png" onClick={e => this.resetNumLinks()}></img>
-                                    <input type="range" min="10" max="100" defaultValue="10" className="sizeSlider" id="sizeslider1" onChange={e => this.updateSlideNum("sizeslider1", "slidernumber1")}
-                                        onMouseUp={e => this.setNumLinks(true)}></input>
+                                    <input type="range" min="10" max="100" defaultValue={this.state.preferences.numLinks} className="sizeSlider" id="sizeslider1" 
+                                        onChange={e => this.updateSlideNum("sizeslider1", "slidernumber1")} onMouseUp={e => this.setNumLinks(true)}></input>
                                     <p className="sliderNumber" id="slidernumber1">{this.state.preferences.numLinks}</p>
                                 </div>
                             </div>
@@ -812,8 +929,8 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.08s"}}>Grid</p>
                                 <div className="sizeSliderBox" style={{transitionDelay:"0.08s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.gridSize !== 20 ? " active" : "")} id="resetslider2" src="reset.png" onClick={e => this.resetGridSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="20" className="sizeSlider" id="sizeslider2" onChange={e => this.updateSlideNum("sizeslider2", "slidernumber2")}
-                                        onMouseUp={e => this.setGridSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.gridSize} className="sizeSlider" id="sizeslider2" 
+                                        onChange={e => this.updateSlideNum("sizeslider2", "slidernumber2")} onMouseUp={e => this.setGridSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber2">{this.state.preferences.gridSize}</p>
                                 </div>
                             </div>
@@ -821,8 +938,8 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.16s"}}>Link Image</p>
                                 <div className="sizeSliderBox" style={{transitionDelay: "0.16s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.linkImageSize !== 50 ? " active" : "")} id="resetslider3" src="reset.png" onClick={e => this.resetLinkImageSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="50" className="sizeSlider" id="sizeslider3" onChange={e => this.updateSlideNum("sizeslider3", "slidernumber3")}
-                                        onMouseUp={e => this.setLinkImageSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkImageSize} className="sizeSlider" id="sizeslider3" 
+                                        onChange={e => this.updateSlideNum("sizeslider3", "slidernumber3")} onMouseUp={e => this.setLinkImageSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber3">{this.state.preferences.linkImageSize}</p>
                                 </div>
                             </div>
@@ -830,8 +947,8 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.24s"}}>Link Text</p>
                                 <div className="sizeSliderBox" style={{transitionDelay: "0.24s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.linkTextSize !== 50 ? " active" : "")} id="resetslider4" src="reset.png" onClick={e => this.resetLinkTextSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="50" className="sizeSlider" id="sizeslider4" onChange={e => this.updateSlideNum("sizeslider4", "slidernumber4")}
-                                        onMouseUp={e => this.setLinkTextSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkTextSize} className="sizeSlider" id="sizeslider4" 
+                                        onChange={e => this.updateSlideNum("sizeslider4", "slidernumber4")} onMouseUp={e => this.setLinkTextSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber4">{this.state.preferences.linkTextSize}</p>
                                 </div>
                             </div>
@@ -839,8 +956,8 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.32s"}}>Tab Shadow</p>
                                 <div className="sizeSliderBox" style={{transitionDelay: "0.32s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.tabShadowSize !== 20 ? " active" : "")} id="resetslider5" src="reset.png" onClick={e => this.resetTabShadowSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="20" className="sizeSlider" id="sizeslider5" onChange={e => this.updateSlideNum("sizeslider5", "slidernumber5")}
-                                        onMouseUp={e => this.setTabShadowSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.tabShadowSize} className="sizeSlider" id="sizeslider5" 
+                                        onChange={e => this.updateSlideNum("sizeslider5", "slidernumber5")} onMouseUp={e => this.setTabShadowSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber5">{this.state.preferences.tabShadowSize}</p>
                                 </div>
                             </div>
@@ -848,8 +965,8 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.4s"}}>Image Shadow</p>
                                 <div className="sizeSliderBox" style={{transitionDelay: "0.4s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.imageShadowSize !== 20 ? " active" : "")} id="resetslider6" src="reset.png" onClick={e => this.resetImageShadowSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="20" className="sizeSlider" id="sizeslider6" onChange={e => this.updateSlideNum("sizeslider6", "slidernumber6")}
-                                        onMouseUp={e => this.setImageShadowSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.imageShadowSize} className="sizeSlider" id="sizeslider6" 
+                                        onChange={e => this.updateSlideNum("sizeslider6", "slidernumber6")} onMouseUp={e => this.setImageShadowSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber6">{this.state.preferences.imageShadowSize}</p>
                                 </div>
                             </div>
@@ -857,16 +974,71 @@ export class NavBar extends React.Component {
                                 <p className="option" style={{transitionDelay: "0.48s"}}>Link Shadow</p>
                                 <div className="sizeSliderBox" style={{transitionDelay: "0.48s"}}>
                                     <img className={"resetSlider" + (this.state.preferences.linkShadowSize !== 10 ? " active" : "")} id="resetslider7" src="reset.png" onClick={e => this.resetLinkShadowSize()}></img>
-                                    <input type="range" min="1" max="100" defaultValue="10" className="sizeSlider" id="sizeslider7" onChange={e => this.updateSlideNum("sizeslider7", "slidernumber7")}
-                                        onMouseUp={e => this.setLinkShadowSize(true)}></input>
+                                    <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkShadowSize} className="sizeSlider" id="sizeslider7" 
+                                        onChange={e => this.updateSlideNum("sizeslider7", "slidernumber7")} onMouseUp={e => this.setLinkShadowSize(true)}></input>
                                     <p className="sliderNumber" id="slidernumber7">{this.state.preferences.linkShadowSize}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <div className="sideContainer" id="sidecontainerthemes" style={{pointerEvents: this.state.user !== "default" ? "all" : "none"}}>
+                        <div className="sideContainerHeader" id="sidecontainerheader4" onClick={e => this.toggleOptions("sidecontainerthemes")}>
+                            <div className="optionDecor4"></div>
+                            <img className="optionImage4" id="optionimage4" src="themes.png"></img>
+                            <p className="sideHeader">Themes</p>
+                        </div>
+                        <div className="sideOptions" id="themeoptions">
+                            <div className="themeContainer" id="themecontainer1" onClick={e => this.setDefaultTheme()}>
+                                <div className="themeSelect"></div>
+                                <p className="themeSelectText">Default</p>
+                            </div>
+                            <div className="themeContainer" id="themecontainer2" onClick={e => this.toggleActiveImage("themecontainer2", false)}>
+                                <div className="themeSelect">
+                                    <input onClick={e => this.setUploadTheme(e)} type="file" id="addtheme" className="addTheme" accept="image/*"></input>
+                                    <img className="themeUploadImage" id="themeuploadimage" src="arrow.png"></img>
+                                </div>
+                                <p className="themeSelectText">Upload</p>
+                            </div>
+                            <div className="themeGrid active">
+                                <img className={this.state.preferences.theme === themeArr[0] ? "themeImage active" : "themeImage"} id={themeArr[0]}
+                                    onClick={e => this.setChosenTheme(themeArr[0])} src="https://i.pinimg.com/474x/90/ce/32/90ce32d91e1117e54b5f8c9ed9dd2bdc.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[1] ? "themeImage active" : "themeImage"} id={themeArr[1]}
+                                    onClick={e => this.setChosenTheme(themeArr[1])} src="https://i.pinimg.com/474x/ae/34/8e/ae348ebc425e81c6b38cff441cdd68a6.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[2] ? "themeImage active" : "themeImage"} id={themeArr[2]}
+                                    onClick={e => this.setChosenTheme(themeArr[2])} src="https://i.pinimg.com/474x/ec/cc/0d/eccc0db3c688b39b401f13d127074620.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[3] ? "themeImage active" : "themeImage"} id={themeArr[3]}
+                                    onClick={e => this.setChosenTheme(themeArr[3])} src="https://i.pinimg.com/474x/86/27/13/862713796f1ab641eb5ffe749359f351.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[4] ? "themeImage active" : "themeImage"} id={themeArr[4]}
+                                    onClick={e => this.setChosenTheme(themeArr[4])} src="https://i.pinimg.com/474x/5c/88/d6/5c88d67220d3227812e0ab959ba7d624.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[5] ? "themeImage active" : "themeImage"} id={themeArr[5]}
+                                    onClick={e => this.setChosenTheme(themeArr[5])} src="https://i.pinimg.com/474x/14/de/93/14de934b421dc36178b331dd5a73307e.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[6] ? "themeImage active" : "themeImage"} id={themeArr[6]}
+                                    onClick={e => this.setChosenTheme(themeArr[6])} src="https://i.pinimg.com/474x/3e/4c/af/3e4caf442d2a63b5444443b96aff0815.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[7] ? "themeImage active" : "themeImage"} id={themeArr[7]}
+                                    onClick={e => this.setChosenTheme(themeArr[7])} src="https://i.pinimg.com/474x/6f/7a/98/6f7a9840860d66be5a8cdb7ed79facc6.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[8] ? "themeImage active" : "themeImage"} id={themeArr[8]}
+                                    onClick={e => this.setChosenTheme(themeArr[8])} src="https://i.pinimg.com/474x/cc/ae/d2/ccaed2c79d3e6af46e4389ef9d373189.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[9] ? "themeImage active" : "themeImage"} id={themeArr[9]}
+                                    onClick={e => this.setChosenTheme(themeArr[9])} src="https://i.pinimg.com/474x/45/d0/0c/45d00cc47826e23f792d5512d1a081c9.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[10] ? "themeImage active" : "themeImage"} id={themeArr[10]}
+                                    onClick={e => this.setChosenTheme(themeArr[10])} src="https://i.pinimg.com/474x/aa/37/26/aa372677c7c55886d68f6ba41adc9ce2.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[11] ? "themeImage active" : "themeImage"} id={themeArr[11]}
+                                    onClick={e => this.setChosenTheme(themeArr[11])} src="https://i.pinimg.com/474x/5a/f3/7d/5af37dd92340946eb909e7eec3b399a0.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[12] ? "themeImage active" : "themeImage"} id={themeArr[12]}
+                                    onClick={e => this.setChosenTheme(themeArr[12])} src="https://i.pinimg.com/474x/99/f5/b1/99f5b16ba177d6d5b9362502be60b394.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[13] ? "themeImage active" : "themeImage"} id={themeArr[13]}
+                                    onClick={e => this.setChosenTheme(themeArr[13])} src="https://i.pinimg.com/474x/7d/a5/52/7da552d01eb0072bee8b3af9305cbb10.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[14] ? "themeImage active" : "themeImage"} id={themeArr[14]}
+                                    onClick={e => this.setChosenTheme(themeArr[14])} src="https://i.pinimg.com/474x/52/8f/30/528f30c01ac723dc5dbacc8fe8467ef2.jpg"></img>
+                                <img className={this.state.preferences.theme === themeArr[15] ? "themeImage active" : "themeImage"} id={themeArr[15]}
+                                    onClick={e => this.setChosenTheme(themeArr[15])} src="https://i.pinimg.com/474x/98/7d/7b/987d7bd1f7c904b5d0942b01b4857067.jpg"></img>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="resetBox" id="resetbox">
-                        <p className="resetPreferences" id="resetpreferences" onClick={e => this.toggleActive("resetconfirmbox")}>Reset to Default Settings</p>
+                        <p className="resetPreferences" id="resetpreferences" onClick={e => this.toggleReset()}>Reset to Default Settings</p>
                         <div className="resetConfirmBox" id="resetconfirmbox">
                             <p className="resetConfirm" id="resetconfirm">Are you sure you want to reset all settings?</p>
                             <button className="resetBtn" onClick={e => this.toggleActive("resetconfirmbox")}><img className="resetCancel" src="cancel.png"></img></button>
@@ -889,7 +1061,8 @@ export class NavBar extends React.Component {
 
                     <div className="sideNightContainer" id="sidenightcontainer">
                         <p className="sideNightLabel" id="sidelabel">Night Mode</p>
-                        <button className="nightContainer" id="nightmodecontainer" onClick={e => this.nightMode()} style={{pointerEvents: this.state.user === "default" ? "none" : "all"}}>
+                        <button className={this.state.preferences.night ? "nightContainer active" : "nightContainer"} id="nightmodecontainer" onClick={e => this.nightMode()} 
+                            style={{pointerEvents: this.state.user === "default" || this.state.preferences.theme ? "none" : "all"}}>
                             <img src="sun.png" className="nightImg"></img>
                             <img src="moon.png" className="nightImg" style={{marginLeft:"20px"}}></img>
                             <div className="nightSwitch" id="nightswitch"></div>

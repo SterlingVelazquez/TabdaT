@@ -9,17 +9,26 @@
     box-sizing: border-box;
   }
 
+  p, img, div, h1 {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  }
+
   .container {
     min-height: 100vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align:center;
-    background-color:rgb(249, 251, 253);
+    background:rgb(249, 251, 253);
     transition:0.8s;
   }
   ::-webkit-scrollbar {
-    width:10px;
+    width:0px;
     height:3px;
     left:10px;
     border-left:0;
@@ -32,6 +41,16 @@
   ::-webkit-scrollbar-thumb {
     background:linear-gradient(rgb(177, 175, 211) 0%, rgb(81, 88, 119) 100%);
     border-radius:20px;
+  }
+
+  .theme {
+    display:none;
+    position:absolute;
+    object-fit: cover;
+    height:100%;
+    width:100%;
+    cursor:default;
+    border-radius:0;
   }
 
   main {
@@ -95,7 +114,7 @@
     text-align:right;
     z-index:5;
     height:62px;
-    width:160px;
+    width:150px;
     padding:10px;
     border:none;
     background-color:rgb(249, 251, 253);
@@ -122,8 +141,8 @@
     font-size:16px;
     transition:0.5s;
   }
-  .profilePic:hover p {
-    font-size:17px;
+  .profilePic:hover {
+    transform:scale(1.1);
   }
 
   .searchBar {
@@ -142,6 +161,7 @@
   .searchBar:focus {
     outline:none;
     box-shadow:3px 3px 10px rgb(152, 185, 255);
+    transform:scale(1.02);
   }
   .searchBar:focus .buttonNav {
     background-color:black;
@@ -190,7 +210,7 @@
     box-shadow: 0px 0px 1px gray;
   }
   .navBtns.active {
-    transform:scale(1.1);
+    transform:scale(1.15);
   }
   .navBtns:hover .navBtnBottom,
   .navBtns.active .navBtnBottom {
@@ -287,7 +307,7 @@
     margin-top:-1%;
     left:-11rem;
     width:0rem;
-    height:18rem;
+    height:100%;
     background:linear-gradient(to right, rgb(249, 251, 253) 0%,#b6b9d1 100%);
     text-align:right;
     z-index:5;
@@ -508,7 +528,8 @@
     -webkit-line-clamp: 2;  /* Number of lines displayed before it truncate */
     width:88%;
     margin: 11px 0 20px 6%;
-    height:40px;
+    height:auto;
+    max-height:47.5px;
     font-size:14px;
     transform:scale(1);
     transition:0.8s;
@@ -668,10 +689,9 @@
     position:absolute;
     text-align:right;
     padding:10px;
-    width:0px;
-    right:0px;
+    width:0;
+    right:0;
     top:6px;
-    height:auto;
     margin:0;
     transition:1s;
     z-index:-1;
@@ -697,7 +717,7 @@
     color:rgb(133, 142, 158);
     width:auto; height:auto;
     top:0.6rem;
-    left:-0.5rem;
+    left:0.5rem;
     pointer-events:none;
     opacity:0;
     z-index:-1;
@@ -713,7 +733,7 @@
   }
   .modBox.focus .modTextEdit,
   .modBox.active .modTextErase {
-    left:-3.1rem;
+    left:-0.5rem;
     opacity:0;
   }
   .modTextClose {
@@ -1113,9 +1133,9 @@
   @media (max-width:790px) {
     .grid {
         max-width:100%;
+        margin-top:0rem;
     }
     .buttonNav {
-      width:400px;
       margin-bottom:30px;
     }
   }

@@ -1,15 +1,15 @@
 .addTabDiv {
-    position:relative;
-    display:inline-block;
-    max-width:0px;
-    max-height:100px;
-    font-size:15px;
-    opacity:1;
-    z-index:4;
-    font-family:'Noto Sans JP', sans-serif;
-    transition:1s;
-    pointer-events:none;
-  }
+  position:relative;
+  display:inline-block;
+  max-width:0px;
+  max-height:100px;
+  font-size:15px;
+  opacity:1;
+  z-index:4;
+  font-family:'Noto Sans JP', sans-serif;
+  transition:1s;
+  pointer-events:none;
+}
 .addTabDiv.active {
   max-width:180px;
   margin:11px 0px 11px 20px;
@@ -17,24 +17,27 @@
 }
 
 .addTabPlus {  
-    position:absolute;
-    top:35px;
-    height:15px;
-    margin-top:0px;
-    margin-left:-8px;
-    width:auto;
-    box-shadow:none;
-    cursor:none;
-    pointer-events:none;
-    opacity:0;
-    transition:0.5s;
-  }
+  position:absolute;
+  top:30px;
+  padding:0.5rem;
+  height:30px;
+  border-radius:100%;
+  margin-top:0px;
+  margin-left:-8px;
+  width:auto;
+  box-shadow:none;
+  cursor:none;
+  pointer-events:none;
+  opacity:0;
+  transition:0.5s;
+}
 .addTabPlus:focus,
 .addTabPlus:hover {
-      outline:none;
-      color:blue;
-      font-size:20px;
-  }
+  outline:none;
+  color:blue;
+  font-size:20px;
+  transform:scale(1.2);
+}
 .addTabPlus.active {
   margin-top:4px;
   opacity:1;
