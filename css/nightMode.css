@@ -233,12 +233,10 @@
   .container.focus .searchBar {
     color: rgb(194, 194, 194);
     background-color:rgb(51, 51, 51);
-    box-shadow:0px 0px 10px rgb(59, 59, 59);
+    box-shadow:3px 3px 20px rgb(0, 0, 0);
   }
-
   .container.focus .searchBar:focus {
-    outline:none;
-    box-shadow:3px 3px 20px rgb(152, 185, 255);
+    box-shadow:0px 0px 10px rgb(59, 59, 59);
   }
 
   .container.focus .searchBar:focus .buttonNav {
@@ -392,14 +390,16 @@
 
   .container.focus .addForm {
     background-color: rgb(34, 34, 34);
-}
+    box-shadow: 0px 0px 20px rgb(0, 0, 0);
+  }
 
   .container.focus .addForm h1 {
     color:rgba(248, 248, 248, 0.781);
+    text-shadow:0 0 10px black;
   }
 
   .container.focus .selectTabText {
-      color:rgba(248, 248, 248, 0.781);
+    color:rgba(248, 248, 248, 0.781);
   }
   .container.focus .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
   .container.focus .selectTabArrow {
@@ -416,7 +416,7 @@
   }
   .container.focus .selectTabList {
       background-color: rgb(51, 51, 51);
-      box-shadow: 0 0 10px rgb(65, 65, 65);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.623);
   }
   .container.focus .selectTabItem {
       color:rgba(248, 248, 248, 0.781);
@@ -439,12 +439,16 @@
 
   .container.focus .addForm label {
     color:rgba(248, 248, 248, 0.781);
+    text-shadow:0 0 4px black;
   }
 
+  .container.focus .defaultImg {
+    box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  }
   .container.focus .imgContainer .imgLabel {
     color:rgba(248, 248, 248, 0.781);
+    text-shadow:0 0 4px black;
   }
-
   .container.focus .imgContainer.active .imgLabel {
     color:rgba(87, 125, 190, 0.8);
     border-bottom:thin solid rgba(87, 125, 190, 0.8);
@@ -459,7 +463,7 @@
 
   .container.focus .previewBox {
     background-color: rgb(34, 34, 34);
-    box-shadow: 0 0 10px rgb(246, 247, 253);
+    box-shadow:0px 0px 15px rgb(0, 0, 0);
   }
 
   .container.focus .imgAddressInput:focus + .previewBox {
@@ -470,7 +474,7 @@
   .container.focus .addForm button.submit {
     background: rgba(248, 248, 248, 0.781);
     color: rgb(68, 75, 87);
-    box-shadow:0px 0px 5px rgba(248, 248, 248, 0.781);
+    box-shadow:0px 0px 10px rgba(0, 0, 0, 0.781);
   }
 
   .container.focus .addForm button.submit:hover {
