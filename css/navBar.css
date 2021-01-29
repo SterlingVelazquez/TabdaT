@@ -581,6 +581,7 @@
     transition:0.5s;
     opacity:0;
     pointer-events:none;
+    z-index:11;
 }
 .saveConfirm.active {
     opacity:1;

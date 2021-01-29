@@ -312,3 +312,108 @@
   .linkBox.active:nth-child(100) {animation: linkRotateIn 1.76s}
   .linkBox.active:nth-child(101) {animation: linkRotateIn 1.77s}
   .linkBox.active:nth-child(102) {animation: linkRotateIn 1.77s}
+
+  @keyframes contactCheckLine1 {
+    0% {
+        transform:rotateZ(-22.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(-22.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(-22.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(-22.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(-22.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine2 {
+    0% {
+        transform:rotateZ(22.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(22.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(22.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(22.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(22.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine3 {
+    0% {
+        transform:rotateZ(-67.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(-67.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(-67.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(-67.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(-67.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine4 {
+    0% {
+        transform:rotateZ(67.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(67.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(67.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(67.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(67.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine5 {
+    0% {
+        transform:rotateZ(-112.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(-112.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(-112.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(-112.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(-112.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine6 {
+    0% {
+        transform:rotateZ(112.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(112.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(112.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(112.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(112.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine7 {
+    0% {
+        transform:rotateZ(-157.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(-157.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(-157.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(-157.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(-157.5deg) scaleY(0);
+    }
+}
+@keyframes contactCheckLine8 {
+    0% {
+        transform:rotateZ(157.5deg) scaleY(0);
+    } 20% {
+        transform:rotateZ(157.5deg) scaleY(0);
+    } 34% {
+        transform:rotateZ(157.5deg) scaleY(1);
+    } 40% {
+        transform:rotateZ(157.5deg) scaleY(0);
+    } 100% {
+        transform:rotateZ(157.5deg) scaleY(0);
+    }
+}

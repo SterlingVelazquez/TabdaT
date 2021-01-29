@@ -7,6 +7,7 @@ import '../css/import.css'
 import '../css/complexAnimations.css'
 import '../css/colorPicker.css'
 import '../css/themes.css'
+import '../css/profile.css'
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {

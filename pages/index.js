@@ -2,6 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { database } from "../tools/database.js"
 import { firebase } from "../tools/config.js"
+import { Profile } from "../forms/profile.js"
 import { AddLink } from "../forms/addLink.js"
 import { AddTab } from "../forms/addTab.js"
 import { EditLink } from "../forms/editLink.js"
@@ -64,12 +65,7 @@ class Home extends React.Component {
         name: "",
         link: "",
         image: "",
-      },
-      profilePic :
-        <div onClick={e => this.signIn()} className="profilePic">
-          <p>Sign In</p>
-          <img src="black-male.png" id="profilepic"></img>
-        </div>
+      }
     };
     this.tabCallback = this.tabCallback.bind(this);
     this.linkCallback = this.linkCallback.bind(this);
@@ -79,6 +75,7 @@ class Home extends React.Component {
     this.editActive = this.editActive.bind(this);
     this.eraseActive = this.eraseActive.bind(this);
     this.signIn = this.signIn.bind(this);
+    this.signOut = this.signOut.bind(this);
     this.setPreferences = this.setPreferences.bind(this);
     this.savePreferences = this.savePreferences.bind(this);
   }
@@ -88,15 +85,12 @@ class Home extends React.Component {
       if (user) {
         if (!(document.getElementById("sidesignin").className.includes("active")))
           document.getElementById("sidesignin").classList.toggle("active");
+        document.getElementById("signintext").classList.toggle("active");
+        document.getElementById("profilepic").classList.toggle("active");
         this.setInitialPreferences(await database.getPreferences(user.uid), user.uid);
         this.setState({
           user:user,
           uid:user.uid,
-          profilePic : 
-          <div onClick={e => this.signOut()} className="profilePic">
-              <p>Sign Out</p>
-              <img src={user.photoURL} id="profilepic"></img>
-          </div>,
         }, async function() {
           this.setState({tabs : await database.getTabs(this.state.uid)})
           if (this.state.tabs.length !== 0) {
@@ -254,23 +248,13 @@ class Home extends React.Component {
 
   async signIn() {
     this.setState({user : await firebase.auth().signInWithPopup(provider)});
-    if (this.state.user === "default") {
-      this.setState({
-        profilePic : 
-          <div onClick={e => this.signIn()} className="profilePic">
-            <p>Sign In</p>
-            <img src={document.getElementById("container").className === "container focus" ? "white-male.png" : "black-male.png"} id="profilepic"></img>
-          </div>,
-      })
-    } else {
+    if (this.state.user !== "default") {
+      console.log("hello");
       if (!(document.getElementById("sidesignin").className.includes("active")))
         document.getElementById("sidesignin").classList.toggle("active");
+      document.getElementById("signintext").className = "signInText";
+      document.getElementById("profilepic").className = "profilePic active";
       this.setState({
-        profilePic : 
-          <div onClick={e => this.signOut()} className="profilePic">
-            <p>Sign Out</p>
-            <img src={this.state.user.additionalUserInfo.profile.picture} id="profilepic"></img>
-          </div>,
         uid : this.state.user.user.uid,
       })
       this.get();
@@ -286,16 +270,14 @@ class Home extends React.Component {
       this.openTabEdit(this.state.currTab);
     if (document.getElementById("savebox").className.includes("active"))
       document.getElementById("savebox").classList.toggle("active");
-
+    if (document.getElementById("profilewrapper").className.includes("active"))
+      document.getElementById("profilewrapper").classList.toggle("active");
     document.getElementById("sidesignin").classList.toggle("active");
+    document.getElementById("signintext").classList.toggle("active");
+    document.getElementById("profilepic").classList.toggle("active");
     this.setState({
       user: "default",
       uid: "default",
-      profilePic : 
-        <div onClick={e => this.signIn()} className="profilePic">
-          <p>Sign In</p>
-          <img src="black-male.png" id="profilepic"></img>
-        </div>
     })
     await firebase.auth().signOut();
     this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))});
@@ -829,7 +811,10 @@ class Home extends React.Component {
 
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"></link>
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
+          <script src="https://smtpjs.com/v3/smtp.js"></script>
         </Head>
+
+        <Profile user={this.state.user} signIn={this.signIn.bind(this)} signOut={this.signOut.bind(this)}/>
 
         <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""}/>
 
@@ -850,8 +835,6 @@ class Home extends React.Component {
               oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
               defaultPreferences={this.state.defaultPreferences}/>
 
-            {this.state.profilePic}
-
             <input className="searchBar" id="searchbar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
             <br/>
             
@@ -862,7 +845,7 @@ class Home extends React.Component {
               </div>
               <img className={this.state.preferences.tabArrows ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
                 style={{
-                  display: this.state.tabs.length > 3 ? "block" : "none",
+                  display: this.state.tabs.length > 3 && this.state.user !== "default" ? "block" : "none",
                   left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem",
                 }}>
@@ -884,7 +867,7 @@ class Home extends React.Component {
               }
               <img className={this.state.preferences.tabArrows ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
                 style={{
-                  display: this.state.tabs.length > 3 ? "block" : "none",
+                  display: this.state.tabs.length > 3 && this.state.user !== "default" ? "block" : "none",
                   right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
                   top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
                 }}>
@@ -1106,7 +1089,7 @@ class Home extends React.Component {
         this.toggleNightMode();
       if (!e.shiftKey) {
         if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
-          document.getElementsByClassName("modBox active").length === 0) {
+          document.getElementsByClassName("modBox active").length === 0 && !(document.activeElement.id.includes("contact"))) {
           switch(e.keyCode) {
             case 9: // tab
               e.preventDefault();
@@ -1155,6 +1138,14 @@ class Home extends React.Component {
             case 79: // O
               if (document.activeElement.id === "")
                 this.toggleSideMenu();
+              break;
+            case 80: // P
+              if (this.state.user !== "default" && document.activeElement.id === "") {
+                if (document.getElementById("profilewrapper").className.includes("active"))
+                  document.getElementById("profilewrapper").className = "profileWrapper";
+                else 
+                  document.getElementById("profilewrapper").className = "profileWrapper active";
+                }
               break;
             case 192: // `
               if (this.state.tabs.length > 1 && document.activeElement.id !== "searchbar")
@@ -1326,9 +1317,15 @@ class Home extends React.Component {
                 this.switchToPreviousTab();
               break;
           }
+        } else if (document.activeElement.id.includes("contact")) {
+          switch(e.keyCode) {
+            case 9: // tab
+              e.preventDefault();
+            break;
+          }
         }
       } else if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
-        document.getElementsByClassName("modBox active").length === 0) {
+        document.getElementsByClassName("modBox active").length === 0 && document.activeElement.id === "") {
         switch(e.keyCode) {
           case 48: // 0
             if (document.getElementsByClassName("linkBox").length > 9)

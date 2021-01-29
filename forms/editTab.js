@@ -107,7 +107,7 @@ export class EditTab extends React.Component {
                 <form className="addTabForm" id="edittabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg2">Can't contain: . [ ] # $ /</p>
                     <p className="tabErrMsg" id="titletaberrmsg2" style={{left:"3.5rem"}}>Name taken</p>
-                    <input className="tabInput" id="tabinput2" type="text" onChange={e => this.setName(e)} spellCheck="false" style={{color:this.state.color}}></input>
+                    <input className="tabInput" id="tabinput2" type="text" onChange={e => this.setName(e)} spellCheck="false" style={{color:this.state.color}} required></input>
                     <input className="colorPicker" id="colorpicker2" onChange={e => this.setColor()} type="color"></input>
                     <button className="tabCancel" id="tabcancel2" type="button" onClick={e => this.viewTab()}>Cancel</button>
                     <button className="tabSubmit" id="tabsubmit2" type="submit">Submit</button>

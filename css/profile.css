@@ -1,0 +1,455 @@
+.profileWrapper {
+    position:fixed;
+    top:20px;
+    right:20px;
+    transition:top 0.4s ease-in 0.1s, right 0.4s ease-out;
+    z-index:7;
+    animation:profileFade 5s;
+    border-radius:30px;
+}
+.profileWrapper.active {
+    top:10px;
+    right:10px;
+}
+.profileWrapper.contact {
+    top:30px;
+    right:0px;
+}
+
+.profileRelative {
+    position:relative;
+    width:50px;
+    height:50px;
+    border-radius:30px;
+    background:rgb(252, 253, 255);
+    box-shadow:0 0 0px lightgray;
+    transform: rotateY(0deg);
+    transform-style: preserve-3d;
+    transition:height 0.4s ease-in 0.1s, width 0.4s ease-out,
+        box-shadow 1s ease-out, background-color 0.8s, transform 0.8s;
+}
+.profileWrapper.active .profileRelative {
+    width:180px;
+    height:120px;
+    box-shadow: 0 0 5px rgb(93, 93, 93);
+}
+.profileWrapper.contact .profileRelative {
+    transform: rotateY(180deg) rotateZ(90deg);
+    height:260px;
+    width:290px;
+}
+.profileWrapper.contact .profileIcon {
+    opacity:0;
+}
+
+.profileDiv {
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius:30px;
+    transition:0.8s;
+}
+.profilePic {
+    position:fixed;
+    top:0px;
+    right:0px;
+    z-index:5;
+    border-radius:30px;
+    box-shadow:none;
+    width:50px;
+    height:auto;
+    margin:0;
+    box-shadow:0 0 0px lightgray;
+    filter:contrast(0.4);
+    transition: 0.4s;
+}
+.profilePic:hover {
+    transform:scale(1.1);
+}
+.profileWrapper.active .profilePic {
+    top:10px;
+    right:10px;
+}
+.profilePic.active {
+    filter:contrast(1);
+    box-shadow: 0 0 5px lightgray;
+}
+
+.signInText {
+    position:fixed;
+    text-align:center;
+    height:32px; width:80px;
+    padding:5px;
+    top:4px; left:-80px;
+    color:rgb(112, 112, 112);
+    font-size:14px;
+    cursor:pointer;
+    transition:0.4s;
+    opacity:0;
+    pointer-events:none;
+}
+.signInText.active {
+    opacity:1;
+    right:70px;
+    pointer-events:all;
+}
+.signOutText {
+    text-align:center;
+    margin:18px 0 0 11px;
+    height:32px; width:80px;
+    padding:5px;
+    color:rgb(122, 103, 103);
+    font-size:14px;
+    cursor:pointer;
+    opacity:0;
+    transition:opacity 0.4s, color 0.8s;
+    pointer-events:none;
+}
+.profileWrapper.active .signOutText {
+    opacity:1;
+    pointer-events:all;
+}
+
+.profileList {
+    width:100%;
+    height:200px;
+    list-style: none;
+    margin-top:15px;
+    white-space: nowrap;
+    opacity:0;
+    transition:0.4s;
+    pointer-events:none;
+}
+.profileWrapper.active .profileList {
+    opacity:1;
+    pointer-events:all;
+}
+.profileOption {
+    width:100%;
+    height:40px;
+    padding:10px 0 10px 18px;
+    text-align:left;
+    cursor:pointer;
+    transition:0.3s;
+    transform-origin: 0;
+}
+.profileOption:hover {
+    transform:scale(1.05);
+}
+.profileIcon {
+    height:auto;
+    box-shadow:none;
+    filter:contrast(0%) brightness(1.2);
+    border-radius:0;
+}
+.profileIcon:nth-child(1) {
+    width:24px;
+}
+.profileText {
+    display:inline-block;
+    width:80px;
+    height:auto; margin:auto;
+    color:rgb(136, 136, 136);
+    transition:0.8s;
+}
+
+.contactDiv {
+    position:absolute;
+    width:100%;
+    height:100%;
+    margin:10px;
+    overflow:hidden;
+    transform:rotateY(180deg);
+    opacity:0;
+    pointer-events: none;
+    transition:opacity 0.2s;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.profileWrapper.contact .contactDiv {
+    opacity: 1;
+    pointer-events:all;
+}
+.contactText {
+    position:relative;
+    height:auto;
+    margin-top:112px;
+    margin-left:125px;
+    width:90%;
+    font-size:14px;
+    font-weight:500;
+    text-align:left;
+    transform:rotate(90deg);
+    opacity: 1;
+    pointer-events: all;
+    transition:opacity 0.3s, color 0.8s;
+}
+.contactForm {
+    position:relative;
+    transform:rotate(90deg);
+    margin-left:-50px;
+    margin-top:-83px;
+    opacity: 1;
+    pointer-events: all;
+    transition:0.3s;
+}
+.contactForm.hide,
+.contactText.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+.contactLabel {
+    position:relative;
+    width:70%;
+    height:auto;
+    margin:0;
+    text-align:left;
+    font-size:13px;
+    color:rgb(119, 119, 119);
+    transition:0.8s;
+}
+.contactEmail {
+    position:relative;
+    border-bottom:thin solid rgb(119, 119, 119);
+    margin: 5px 0 15px -109px;
+    width:215px;
+    color: rgb(52, 56, 63);
+    transition:0.8s;
+}
+.emailError {
+    position:absolute;
+    font-size:12px;
+    color:rgb(139, 98, 98);
+    right:80px;
+    top:40px;
+    opacity:0;
+    transition:opacity 0.2s, color 0.8s;
+}
+.emailError.active {
+    opacity:1;
+}
+.contactMessage {
+    position:relative;
+    border:thin solid rgb(83, 83, 83);
+    height:auto;
+    width:215px;
+    height:70px;
+    margin: 10px 109px 0 0;
+    resize: none;
+    border-radius:5px;
+    padding: 5px; 
+    color: rgb(52, 56, 63);
+    transition:0.8s;
+}
+.contactButton {
+    position:relative;
+    padding: 12px;
+    right:9px;
+    color:rgb(119, 119, 119);
+    cursor:pointer;
+    transition:transform 0.3s, color 0.8s, opacity 0.3s;
+    opacity: 1;
+    pointer-events: all;
+}
+.contactButton:hover {
+    transform:scale(1.1);
+}
+.contactButton:nth-child(8) {
+    color:rgb(139, 98, 98);
+}
+.contactButton.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+.submitContactDiv {
+    position:absolute;
+    top: 20px; left: 48px;
+    width:220px;
+    height:200px;
+    transform:rotateZ(90deg);
+    pointer-events:none;
+}
+.contactCheck {
+    position:relative;
+    display:inline-table;
+    width:25px;
+    height:48px;
+    margin-right:10px;
+    transform:rotateZ(35deg);
+    border-bottom:8px solid rgb(63, 80, 117);
+    border-right: 8px solid rgb(63, 80, 117);
+    left:-25%; top:30%;
+    z-index:100;
+    animation: contactCheckPulse 3s;
+    display:none;
+    transition:0.8s;
+}
+.contactCheck.active {
+    display:inline-table;
+}
+.contactCheckEffects {
+    position:absolute;
+    width:130px; height:130px;
+    border-radius:100%;
+    left:20%; top:11%;
+}
+.contactCheckLine {
+    position:absolute;
+    height:1px; width:1px;
+    background:black;
+    border-bottom:15px solid  rgb(42, 42, 42);
+    display:none;
+    transition:0.8s;
+}
+.contactCheckLine.active {
+    display:block;
+}
+.contactCheckLine:nth-child(1) {
+    top:5%; left:30%;
+    transform:rotateZ(-22.5deg) scaleY(0);
+    animation: contactCheckLine1 3s;
+}
+.contactCheckLine:nth-child(2) {
+    top:5%; left:70%;
+    transform:rotateZ(22.5deg) scaleY(0);
+    animation: contactCheckLine2 3s;
+}
+.contactCheckLine:nth-child(3) {
+    top:28%; left:8%;
+    transform:rotateZ(-67.5deg) scaleY(0);
+    animation: contactCheckLine3 3s;
+}
+.contactCheckLine:nth-child(4) {
+    top:28%; left:92%;
+    transform:rotateZ(67.5deg) scaleY(0);
+    animation: contactCheckLine4 3s;
+}
+.contactCheckLine:nth-child(5) {
+    top:62%; left:10%;
+    transform:rotateZ(-112.5deg) scaleY(0);
+    animation: contactCheckLine5 3s;
+}
+.contactCheckLine:nth-child(6) {
+    top:62%; left:90%;
+    transform:rotateZ(112.5deg) scaleY(0);
+    animation: contactCheckLine6 3s;
+}
+.contactCheckLine:nth-child(7) {
+    top:83%; left:30%;
+    transform:rotateZ(-157.5deg) scaleY(0);
+    animation: contactCheckLine7 3s;
+}
+.contactCheckLine:nth-child(8) {
+    top:83%; left:70%;
+    transform:rotateZ(157.5deg) scaleY(0);
+    animation: contactCheckLine8 3s;
+}
+.submitContactText {
+    position:relative;
+    display:inline-table;
+    height:auto; width:120px;
+    margin:0;
+    padding:0;
+    font-size:18px;
+    color:rgb(63, 80, 117);
+    margin-bottom:20px;
+    top:30px; left:80px;
+    animation: submitContactTextFade 3s;
+    display:none;
+    transition:0.8s;
+}
+.submitContactText.active {
+    display:block;
+}
+.afterContactText {
+    position:relative;
+    height:auto; width:auto;
+    margin:0;
+    padding:0;
+    top:50px;
+    animation:afterContactTextFade 4.5s;
+    display:none;
+    transition:0.8s;
+}
+.afterContactText.active {
+    display:block;
+}
+.submitContactCancel {
+    position:absolute;
+    top:-40px;
+    right:-20px;
+    box-shadow:none;
+    padding:20px;
+    width:3.6rem;
+    height:auto;
+    cursor:pointer;
+    display:none;
+    pointer-events:none;
+    animation:afterContactTextFade 4.5s;
+}
+.submitContactCancel:hover {
+    width:3.6rem;
+}
+.submitContactCancel.active {
+    display:block;
+    pointer-events:all;
+}
+
+@keyframes profileFade {
+    0% {
+      opacity:0;
+      pointer-events:none;
+    } 52% {
+      opacity:0;
+      pointer-events:none;
+    } 100% {
+      opacity:1;
+      pointer-events:all;
+    }
+}
+
+@keyframes contactCheckPulse {
+    0% {
+        transform:scale(0) rotateZ(35deg);
+        left:2%;
+    } 30% {
+        transform:scale(1.3) rotateZ(35deg);
+        left:2%;
+    } 40% {
+        transform:scale(1) rotateZ(35deg);
+        left:2%;
+    } 45% {
+        left:2%
+    } 100% {
+        left:-26%;
+    }
+}
+
+@keyframes submitContactTextFade {
+    0% {
+        opacity: 0;
+        left:10px;
+    } 65% {
+        opacity: 0;
+        left:10px;
+    } 100% {
+        opacity: 1;
+        left:80px;
+    }
+}
+
+@keyframes afterContactTextFade {
+    0% {
+        opacity: 0;
+        pointer-events:none;
+    } 90% {
+        opacity: 0;
+        pointer-events:none;
+    } 100% {
+        opacity: 1;
+        pointer-events:all;
+    }
+}
