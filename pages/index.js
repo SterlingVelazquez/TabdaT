@@ -800,6 +800,13 @@ class Home extends React.Component {
   toggleSideMenu() {
     document.getElementById("navbar").classList.toggle("active");
     document.getElementById("sidemenubtn").classList.toggle("active");
+    if (document.getElementById("resetconfirmbox").className.includes("active"))
+      document.getElementById("resetconfirmbox").classList.toggle("active");
+    if (document.getElementById("savebox").className.includes("active")) {
+      document.getElementById("savebox").classList.toggle("active");
+      document.getElementById("saveconfirm").classList.toggle("active");
+      document.getElementById("shadow").classList.toggle("active");
+    }
   }
 
   render() {
@@ -1132,11 +1139,11 @@ class Home extends React.Component {
                 this.openAddLink();
               break;
             case 77: // M
-              if (document.activeElement.id === "")
+              if (document.activeElement.id !== "searchbar")
                 this.toggleSideMenu();
               break;
             case 79: // O
-              if (document.activeElement.id === "")
+              if (document.activeElement.id !== "searchbar")
                 this.toggleSideMenu();
               break;
             case 80: // P

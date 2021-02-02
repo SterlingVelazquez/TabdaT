@@ -64,6 +64,8 @@ export class Profile extends React.Component {
             document.getElementById("contacttext").classList.toggle("hide");
             document.getElementById("contactbutton1").classList.toggle("hide");
             document.getElementById("contactbutton2").classList.toggle("hide");
+            document.getElementById("loadercontact").classList.toggle("active");
+            document.getElementById("loadercontactdiv").classList.toggle("active");
             Email.send({ 
                 SecureToken: "730fe256-e76c-4515-be74-418c5debadf7", 
                 To: 'sterlingvelazquez@tabdat.app', 
@@ -72,19 +74,22 @@ export class Profile extends React.Component {
                 Body: "<html><p>Email: " + currEmail + "</p></br><p>" + this.state.message + "</p></br></br></html>", 
             }) 
             .then(function (message) {
-                console.log(message);
+                document.getElementById("loadercontact").classList.toggle("active");
+                document.getElementById("loadercontactdiv").classList.toggle("active");
                 document.getElementById("contactcheck").classList.toggle("active");
                 for (var i = 0; i < 8; i++) 
                     document.getElementsByClassName("contactCheckLine")[i].classList.toggle("active");
                 document.getElementById("submitcontacttext").classList.toggle("active");
                 document.getElementById("aftercontacttext").classList.toggle("active");
                 document.getElementById("submitcontactcancel").classList.toggle("active");
-                setTimeout(function(){ document.getElementById("profilewrapper").classList.toggle("contact")}, 3800);
+                setTimeout(function(){ document.getElementById("profilewrapper").classList.toggle("contact")}, 2800);
             }) 
         } else {
             document.getElementById("emailerror").className = "emailError active";
         }
     }
+
+    async viewShortcuts() { document.getElementById("profilewrapper").classList.toggle("shortcut"); }
 
     render() {
         return (
@@ -101,6 +106,10 @@ export class Profile extends React.Component {
                                     <img className="profileIcon" id="profileicon1" src="message.png"></img>
                                     <p className="profileText" id="profiletext1">Contact</p>
                                 </li>
+                                <li className="profileOption" id="profileoption2" onClick={e => this.viewShortcuts()}>
+                                    <img className="profileIcon" id="profileicon2" src="keyboard.png"></img>
+                                    <p className="profileText" id="profiletext2">Shortcuts</p>
+                                </li>
                             </ul>
                         </div>
                         <div className="contactDiv" id="contactdiv">
@@ -116,6 +125,14 @@ export class Profile extends React.Component {
                                 <button type="button" className="contactButton" id="contactbutton2" onClick={e => this.cancelContactForm()}>Cancel</button>
                             </form>
                             <div className="submitContactDiv" id="submitcontactdiv">
+                                <div className="loaderContactDiv" id="loadercontactdiv">
+                                    <div className="loaderContact" id="loadercontact">
+                                        <div className="dotContact"></div>
+                                        <div className="dotContact"></div>
+                                        <div className="dotContact"></div>
+                                        <div className="dotContact"></div>
+                                    </div>
+                                </div>
                                 <div className="contactCheck" id="contactcheck"></div>
                                 <div className="contactCheckEffects">
                                     <div className="contactCheckLine"></div>
@@ -130,6 +147,42 @@ export class Profile extends React.Component {
                                 <p className="submitContactText" id="submitcontacttext"><b>Message Sent!</b></p>
                                 <p className="afterContactText" id="aftercontacttext">Please allow a few minutes before attempting to send further messages.</p>
                                 <img className="submitContactCancel" id="submitcontactcancel" src="cancel.png" onClick={e => this.viewContactForm()}></img>
+                            </div>
+                        </div>
+                        <div className="shortcutDiv" id="shortcutdiv">
+                            <div className="shortcutHeader">
+                                <p className="shortcutHeaderText">Keyboard Shortcuts</p>
+                                <img className="shortcutCancel" src="cancel.png" onClick={e => this.viewShortcuts()}></img>
+                            </div>
+                            <div className="shortcutContainer">
+                                <ul className="keyboardList">
+                                    <li className="keyboard"><kbd>TAB</kbd></li>
+                                    <li className="keyboard"><kbd>`</kbd></li>
+                                    <li className="keyboard"><kbd>&#8594;</kbd></li>
+                                    <li className="keyboard"><kbd>&#8592;</kbd></li>
+                                    <li className="keyboard"><kbd>M</kbd>&nbsp;or&nbsp;<kbd>O</kbd></li>
+                                    <li className="keyboard"><kbd>P</kbd></li>
+                                    <li className="keyboard"><kbd>SHIFT</kbd> + <kbd>1</kbd></li>
+                                    <li className="keyboard"><kbd>L</kbd></li>
+                                    <li className="keyboard"><kbd>E</kbd></li>
+                                    <li className="keyboard"><kbd>R</kbd></li>
+                                    <li className="keyboard"><kbd>SPACE</kbd></li>
+                                    <li className="keyboard"><kbd>ESC</kbd></li>
+                                </ul>
+                                <ul className="shortcutList">
+                                    <li className="shortcut">Next Tab</li>
+                                    <li className="shortcut">Previous Tab</li>
+                                    <li className="shortcut">Next Link Page</li>
+                                    <li className="shortcut">Previous Link Page</li>
+                                    <li className="shortcut">Opens / Closes Menu</li>
+                                    <li className="shortcut">Opens / Closes Profile</li>
+                                    <li className="shortcut">Opens First Link<br/>(2 opens second link, etc.)</li>
+                                    <li className="shortcut">Add Link</li>
+                                    <li className="shortcut">Edit Mode</li>
+                                    <li className="shortcut">Remove Mode</li>
+                                    <li className="shortcut">Enter Search Bar</li>
+                                    <li className="shortcut">Exit Search Bar</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
