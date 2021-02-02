@@ -1950,7 +1950,7 @@ export var suggestions = [
     url: "arstechnica.com",
     image: "https://i.pinimg.com/474x/9e/25/1e/9e251eb41c78997829be12170ec36b17.jpg"},
     {name: "Android Authority",
-    url: "www.androidauthority.com",
+    url: "androidauthority.com",
     image: "https://i.pinimg.com/474x/a7/c3/32/a7c33243ea406f23067bd0dbd865dc36.jpg"},
     {name: "9to5 Mac",
     url: "9to5mac.com",
