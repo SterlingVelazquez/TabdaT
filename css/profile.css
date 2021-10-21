@@ -65,7 +65,7 @@
     transition:0.8s;
 }
 .profilePic {
-    position:fixed;
+    position:absolute;
     top:0px;
     right:0px;
     z-index:5;
