@@ -1630,7 +1630,7 @@ export var suggestions = [
     image: "https://i.pinimg.com/474x/07/a1/95/07a195c3518c1d06ee6d7f07cec88d49.jpg"},
     {name: "Anime Clothing",
     url: "animelife.us",
-    image:"https://i.pinimg.com/474x/29/61/eb/2961eb13d0e66043c89bf28ab9ecfcc1.jpg"},
+    image:"https://i.pinimg.com/474x/b8/04/20/b804203da95d4258c1fd85f351961cd5.jpg"},
     {name: "The GLD Shop",
     url: "thegldshop.com",
     image:"https://i.pinimg.com/474x/c4/85/35/c485355412e75442995ac9275ba97c80.jpg"},
@@ -1955,6 +1955,9 @@ export var suggestions = [
     {name: "9to5 Mac",
     url: "9to5mac.com",
     image: "https://i.pinimg.com/474x/27/dd/1a/27dd1a0ec68d4aad7dcf465607adc99f.jpg"},
+    {name: "Tiktok",
+    url:"tiktok.com",
+    image:"https://i.pinimg.com/474x/d4/ea/85/d4ea852d2595ad456ce71396d46e7a31.jpg"}
 ]
 
 /*
