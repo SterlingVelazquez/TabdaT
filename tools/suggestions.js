@@ -1955,7 +1955,7 @@ export var suggestions = [
     {name: "9to5 Mac",
     url: "9to5mac.com",
     image: "https://i.pinimg.com/474x/27/dd/1a/27dd1a0ec68d4aad7dcf465607adc99f.jpg"},
-    {name: "Tiktok",
+    {name: "TikTok",
     url:"tiktok.com",
     image:"https://i.pinimg.com/474x/d4/ea/85/d4ea852d2595ad456ce71396d46e7a31.jpg"}
 ]
