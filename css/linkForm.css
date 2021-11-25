@@ -11,12 +11,13 @@
     width: 300px;
     min-height:530px;
     left: calc(50% - 170px);
-    top: -600px;
+    top: -700px;
     background-color: rgb(246, 247, 253);
     box-shadow: 0 0 0 rgb(246, 247, 253);
     z-index: 11;
     border-radius: 10px;
     transition:box-shadow 0.8s ease-in 0.3s, top 0.5s, opacity 0.5s, background-color 1s;
+    transform:scale(1.5);
     opacity:0;
     font-family:'Noto Sans JP', sans-serif;
 }
@@ -357,11 +358,11 @@
     box-shadow:none;
     opacity:0;
 }
-.imgAddressInput:focus + .previewBox {
+.previewBox.active {
     margin-left:21rem;
     opacity:1;
 }
-.imgAddressInput:focus + .previewBox img {
+.previewBox.active img {
     opacity:1;
 }
 

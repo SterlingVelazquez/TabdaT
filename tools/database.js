@@ -66,7 +66,7 @@ class Database {
             newPref.theme = "/ThemeUltafedIgm";
             firebase.database().ref(user + "/Preferences").set(newPref);
         } else {
-            if (preferences.theme && !(preferences.theme.includes("https://i.pinimg.com/"))) {
+            if (preferences.theme && !(preferences.theme.includes("https://i.imgur.com/"))) {
                 newPref.theme = "/ThemeUltafedIgm";
             }
             firebase.database().ref(user + "/Preferences").set(newPref);

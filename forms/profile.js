@@ -158,30 +158,26 @@ export class Profile extends React.Component {
                                 <ul className="keyboardList">
                                     <li className="keyboard"><kbd>TAB</kbd></li>
                                     <li className="keyboard"><kbd>`</kbd></li>
-                                    <li className="keyboard"><kbd>&#8594;</kbd></li>
-                                    <li className="keyboard"><kbd>&#8592;</kbd></li>
                                     <li className="keyboard"><kbd>M</kbd>&nbsp;or&nbsp;<kbd>O</kbd></li>
                                     <li className="keyboard"><kbd>P</kbd></li>
-                                    <li className="keyboard"><kbd>SHIFT</kbd> + <kbd>1</kbd></li>
                                     <li className="keyboard"><kbd>L</kbd></li>
                                     <li className="keyboard"><kbd>E</kbd></li>
                                     <li className="keyboard"><kbd>R</kbd></li>
                                     <li className="keyboard"><kbd>SPACE</kbd></li>
                                     <li className="keyboard"><kbd>ESC</kbd></li>
+                                    <li className="keyboard"><kbd>SHIFT</kbd> + <kbd>1</kbd></li>
                                 </ul>
                                 <ul className="shortcutList">
                                     <li className="shortcut">Next Tab</li>
                                     <li className="shortcut">Previous Tab</li>
-                                    <li className="shortcut">Next Link Page</li>
-                                    <li className="shortcut">Previous Link Page</li>
                                     <li className="shortcut">Opens / Closes Menu</li>
                                     <li className="shortcut">Opens / Closes Profile</li>
-                                    <li className="shortcut">Opens First Link<br/>(2 opens second link, etc.)</li>
                                     <li className="shortcut">Add Link</li>
                                     <li className="shortcut">Edit Mode</li>
                                     <li className="shortcut">Remove Mode</li>
                                     <li className="shortcut">Enter Search Bar</li>
                                     <li className="shortcut">Exit Search Bar</li>
+                                    <li className="shortcut">Opens First Link<br/>(2 opens second link, etc.)</li>
                                 </ul>
                             </div>
                         </div>

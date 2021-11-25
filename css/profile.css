@@ -1,27 +1,31 @@
 .profileWrapper {
     position:fixed;
-    top:20px;
-    right:20px;
+    top:30px;
+    right:30px;
     transition:top 0.4s ease-in 0.1s, right 0.4s ease-out;
     z-index:7;
     animation:profileFade 5s;
     border-radius:30px;
 }
 .profileWrapper.active {
-    top:10px;
-    right:10px;
+    top:15px;
+    right:15px;
 }
 .profileWrapper.contact {
-    top:30px;
-    right:0px;
+    top:95px;
+    right:60px;
+}
+.profileWrapper.shortcut {
+    top:75px;
+    right:70px;
 }
 
 .profileRelative {
     position:relative;
-    width:50px;
-    height:50px;
-    border-radius:30px;
-    background:rgb(252, 253, 255);
+    width:80px;
+    height:80px;
+    border-radius:38px;
+    background:rgb(232, 238, 247);
     box-shadow:0 0 0px lightgray;
     transform: rotateY(0deg);
     transform-style: preserve-3d;
@@ -29,12 +33,12 @@
         box-shadow 1s ease-out, background-color 0.8s, transform 0.8s;
 }
 .profileWrapper.active .profileRelative {
-    width:180px;
-    height:160px;
+    width:270px;
+    height:240px;
     box-shadow: 0 0 5px rgb(93, 93, 93);
 }
 .profileWrapper.contact .profileRelative {
-    transform: rotateY(180deg) rotateZ(90deg);
+    transform: rotateY(180deg) rotateZ(90deg) scale(1.4);
     height:260px;
     width:290px;
 }
@@ -42,7 +46,7 @@
     display:none;
 }
 .profileWrapper.shortcut .profileRelative {
-    transform: rotateY(180deg);
+    transform: rotateY(180deg) scale(1.4);
     height:270px;
     width:240px;
 }
@@ -61,7 +65,7 @@
     overflow:hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border-radius:30px;
+    border-radius:38px;
     transition:0.8s;
 }
 .profilePic {
@@ -69,21 +73,17 @@
     top:0px;
     right:0px;
     z-index:5;
-    border-radius:30px;
+    border-radius:100px;
     box-shadow:none;
-    width:50px;
-    height:auto;
+    width:80px; height:auto;
     margin:0;
     box-shadow:0 0 0px lightgray;
     filter:contrast(0.4);
     transition: 0.4s;
 }
-.profilePic:hover {
-    transform:scale(1.1);
-}
 .profileWrapper.active .profilePic {
-    top:10px;
-    right:10px;
+    top:12px;
+    right:12px;
 }
 .profilePic.active {
     filter:contrast(1);
@@ -92,12 +92,10 @@
 
 .signInText {
     position:fixed;
-    text-align:center;
-    height:32px; width:80px;
-    padding:5px;
-    top:4px; left:-80px;
+    padding:10px;
+    top:10px; left:-120px;
     color:rgb(112, 112, 112);
-    font-size:14px;
+    font-size:22px;
     cursor:pointer;
     transition:0.4s;
     opacity:0;
@@ -108,13 +106,15 @@
     right:70px;
     pointer-events:all;
 }
+.profileDiv:hover .signInText {
+    letter-spacing:1.5px;
+}
 .signOutText {
-    text-align:center;
-    margin:18px 0 0 11px;
-    height:32px; width:80px;
+    text-align:left;
+    margin:30px 0 0 25px;
     padding:5px;
     color:rgb(122, 103, 103);
-    font-size:14px;
+    font-size:20px;
     cursor:pointer;
     opacity:0;
     transition:opacity 0.4s, color 0.8s;
@@ -129,7 +129,7 @@
     width:100%;
     height:200px;
     list-style: none;
-    margin-top:15px;
+    margin:36px 0 0 10px;
     white-space: nowrap;
     opacity:0;
     transition:0.4s;
@@ -141,7 +141,7 @@
 }
 .profileOption {
     width:100%;
-    height:40px;
+    height:55px;
     padding:10px 0 10px 18px;
     text-align:left;
     cursor:pointer;
@@ -152,23 +152,23 @@
     transform:scale(1.05);
 }
 .profileIcon {
-    height:100%;
+    height:30px;
     padding:0.5% 0;
     box-shadow:none;
     filter:contrast(0%) brightness(1.2);
     border-radius:0;
 }
 .profileIcon:nth-child(1) {
-    width:24px;
+    width:40px;
 }
 .profileText {
     display:inline-block;
-    width:80px;
     height:auto; margin:auto;
     color:rgb(136, 136, 136);
+    font-size:20px;
     transition:0.8s;
     text-align:left;
-    margin-left:8px;
+    margin-left:20px;
 }
 
 .contactDiv {
@@ -192,8 +192,8 @@
 .contactText {
     position:relative;
     height:auto;
-    margin-top:112px;
-    margin-left:125px;
+    margin:112px 0 0 125px;
+    padding:0 6px;
     width:90%;
     font-size:14px;
     font-weight:500;
@@ -224,6 +224,7 @@
     margin:0;
     text-align:left;
     font-size:13px;
+    padding-left:6px;
     color:rgb(119, 119, 119);
     transition:0.8s;
 }

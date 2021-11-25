@@ -126,7 +126,6 @@ class ColorConverter {
     // Brightness Slider
     shade(col, light) {
         light = parseInt(light) / 100;
-        console.log(light)
     
         var r = parseInt(col.substring(0, 2), 16);
         var g = parseInt(col.substring(2, 4), 16);

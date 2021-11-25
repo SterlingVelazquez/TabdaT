@@ -1,0 +1,47 @@
+.hotbarContainer {
+    position:relative;
+    width:100%;
+    height:228px;
+    text-align:center;
+    margin-top:50px;
+}
+.hotbar {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:780px; height:100%;
+    box-shadow: 7px 7px 7px rgb(200,212,229), -7px -7px 7px rgb(255, 255, 255);
+    border-radius:40px;
+}
+.hotbarIcons, .hotbarLinks {
+    position:relative;
+    text-align:center;
+    width:100%; height:50%;
+}
+.hotbarIcon {
+    position:relative;
+    box-shadow:none;
+    width:35px; height:35px;
+    margin:auto 40px;
+    top:50%; transform:translateY(-50%);
+    transform-origin:50% 0%;
+    box-shadow:none;
+    opacity:0.6;
+    cursor:pointer;
+    filter:sepia(80%) hue-rotate(180deg) brightness(105%);
+}
+.hotbarIcon:nth-child(1), .hotbarIcon:nth-child(3) {
+    width:40px;
+}
+.hotbarIcon.active {
+    transform:scale(1.8) translateY(-50%);
+    opacity:1;
+}
+.hotbarLink {
+    position:relative;
+    box-shadow:none;
+    width:80px; height:80px;
+    margin:auto 30px;
+    top:45%; transform:translateY(-50%);
+    border-radius:100%;
+}

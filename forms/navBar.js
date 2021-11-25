@@ -1,3 +1,6 @@
+import Visibility from "../react/visibility.js";
+import ColorViewer from "../react/colorviewer.js";
+import Sizes from "../react/sizes.js";
 import { colorConverter } from "../tools/colorConverter.js";
 
 var colorChanges = {
@@ -9,22 +12,26 @@ var colorChanges = {
     },
     upload = false,
     themeArr = [
-        "https://i.pinimg.com/originals/90/ce/32/90ce32d91e1117e54b5f8c9ed9dd2bdc.jpg",
-        "https://i.pinimg.com/originals/ae/34/8e/ae348ebc425e81c6b38cff441cdd68a6.jpg",
-        "https://i.pinimg.com/originals/ec/cc/0d/eccc0db3c688b39b401f13d127074620.jpg",
-        "https://i.pinimg.com/originals/86/27/13/862713796f1ab641eb5ffe749359f351.jpg",
-        "https://i.pinimg.com/originals/5c/88/d6/5c88d67220d3227812e0ab959ba7d624.jpg",
-        "https://i.pinimg.com/originals/14/de/93/14de934b421dc36178b331dd5a73307e.jpg",
-        "https://i.pinimg.com/originals/3e/4c/af/3e4caf442d2a63b5444443b96aff0815.jpg",
-        "https://i.pinimg.com/originals/6f/7a/98/6f7a9840860d66be5a8cdb7ed79facc6.jpg",
-        "https://i.pinimg.com/originals/cc/ae/d2/ccaed2c79d3e6af46e4389ef9d373189.png",
-        "https://i.pinimg.com/originals/45/d0/0c/45d00cc47826e23f792d5512d1a081c9.png",
-        "https://i.pinimg.com/originals/aa/37/26/aa372677c7c55886d68f6ba41adc9ce2.jpg",
-        "https://i.pinimg.com/originals/5a/f3/7d/5af37dd92340946eb909e7eec3b399a0.png",
-        "https://i.pinimg.com/originals/99/f5/b1/99f5b16ba177d6d5b9362502be60b394.png",
-        "https://i.pinimg.com/originals/7d/a5/52/7da552d01eb0072bee8b3af9305cbb10.jpg",
-        "https://i.pinimg.com/originals/52/8f/30/528f30c01ac723dc5dbacc8fe8467ef2.png",
-        "https://i.pinimg.com/originals/98/7d/7b/987d7bd1f7c904b5d0942b01b4857067.jpg"
+        "https://i.imgur.com/33eFS0u.jpg",
+        "https://i.imgur.com/NTfGYBb.jpg",
+        "https://i.imgur.com/xLKKEmm.jpg",
+        "https://i.imgur.com/NeR4gss.jpg",
+        "https://i.imgur.com/XNTZtGe.jpg",
+        "https://i.imgur.com/x6LhkSX.png",
+        "https://i.imgur.com/0YlAy11.jpg",
+        "https://i.imgur.com/e29cXoA.jpg",
+        "https://i.imgur.com/CNIp3Ib.jpg",
+        "https://i.imgur.com/gDGh3v7.jpg",
+        "https://i.imgur.com/e4PxWUZ.jpg",
+        "https://i.imgur.com/6c6NSfH.jpg",
+        "https://i.imgur.com/yhacYvl.jpg",
+        "https://i.imgur.com/uOf1kNl.jpg",
+        "https://i.imgur.com/sRdWu4R.jpg",
+        "https://i.imgur.com/V3mdyh9.jpg",
+        "https://i.imgur.com/4U18kZ3.jpg",
+        "https://i.imgur.com/rsDdQhK.jpg",
+        "https://i.imgur.com/13AH80q.jpg",
+        "https://i.imgur.com/jVblWqN.gif",
     ];
 
 export class NavBar extends React.Component {
@@ -58,35 +65,22 @@ export class NavBar extends React.Component {
     }
     hideAddLink() {
         var hidePreferences = this.state.preferences;
-        document.getElementById("erasebox").style.top = !hidePreferences.addLink ? "-2rem" : "0";
-        document.getElementById("editbox").style.top = !hidePreferences.addLink ? "-2rem" : "0";
-        document.getElementById("confirmerase").style.top = !hidePreferences.addLink ? "-2rem" : "0";
         hidePreferences.addLink = !hidePreferences.addLink;
         this.props.setPreferences(hidePreferences);
         this.comparePreferences();
     }
     hideEditBtn() {
-        if (document.getElementById("editbox").className === "modBox focus")
+        if (document.getElementById("editbox").className === "modContainer focus")
             this.props.editActive();
         var hidePreferences = this.state.preferences;
-        if (!hidePreferences.editBtn) {
-            document.getElementById("erasebox").style.marginLeft = "-4.1rem"
-        } else {
-            document.getElementById("erasebox").style.marginLeft = "1rem"
-        }
         hidePreferences.editBtn = !hidePreferences.editBtn;
         this.props.setPreferences(hidePreferences);
         this.comparePreferences();
     }
     hideRemoveBtn() {
-        if (document.getElementById("erasebox").className === "modBox active")
+        if (document.getElementById("erasebox").className === "modContainer active")
             this.props.eraseActive();
         var hidePreferences = this.state.preferences;
-        if (!hidePreferences.removeBtn) {
-            document.getElementById("editbox").style.marginLeft = "6.2rem"
-        } else {
-            document.getElementById("editbox").style.marginLeft = "1rem"
-        }
         hidePreferences.removeBtn = !hidePreferences.removeBtn;
         this.props.setPreferences(hidePreferences);
         this.comparePreferences();
@@ -268,22 +262,8 @@ export class NavBar extends React.Component {
     updateSlideNum(input, number) {
         document.getElementById(number).innerHTML = document.getElementById(input).value;
     }
-    setNumLinks(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider1").value);
-        if (newValue !== this.state.preferences.numLinks && toSave) {
-            var sizePreferences = this.state.preferences;
-            sizePreferences.numLinks = newValue;
-            this.props.setPreferences(sizePreferences);
-            this.comparePreferences();
-        } else if (!toSave) {
-            var sizePreferences = this.state.preferences;
-            sizePreferences.numLinks = this.state.oldPreferences.numLinks;
-            this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider1").value = this.state.oldPreferences.numLinks;
-        }
-    }
-    setGridSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider2").value);
+    setGridSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.gridSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.gridSize = newValue;
@@ -293,11 +273,11 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.gridSize = this.state.oldPreferences.gridSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider2").value = this.state.oldPreferences.gridSize;
+            document.getElementById(id).value = this.state.oldPreferences.gridSize;
         }
     }
-    setLinkImageSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider3").value);
+    setLinkImageSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.linkImageSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkImageSize = newValue;
@@ -307,11 +287,11 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkImageSize = this.state.oldPreferences.linkImageSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider3").value = this.state.oldPreferences.linkImageSize;
+            document.getElementById(id).value = this.state.oldPreferences.linkImageSize;
         }
     }
-    setLinkTextSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider4").value);
+    setLinkTextSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.linkTextSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkTextSize = newValue;
@@ -321,11 +301,11 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkTextSize = this.state.oldPreferences.linkTextSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider4").value = this.state.oldPreferences.linkTextSize;
+            document.getElementById(id).value = this.state.oldPreferences.linkTextSize;
         }
     }
-    setTabShadowSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider5").value);
+    setTabShadowSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.tabShadowSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.tabShadowSize = newValue;
@@ -335,11 +315,11 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.tabShadowSize = this.state.oldPreferences.tabShadowSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider5").value = this.state.oldPreferences.tabShadowSize;
+            document.getElementById(id).value = this.state.oldPreferences.tabShadowSize;
         }
     }
-    setImageShadowSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider6").value);
+    setImageShadowSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.imageShadowSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.imageShadowSize = newValue;
@@ -349,11 +329,11 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.imageShadowSize = this.state.oldPreferences.imageShadowSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider6").value = this.state.oldPreferences.imageShadowSize;
+            document.getElementById(id).value = this.state.oldPreferences.imageShadowSize;
         }
     }
-    setLinkShadowSize(toSave) {
-        var newValue = parseInt(document.getElementById("sizeslider7").value);
+    setLinkShadowSize(toSave, id) {
+        var newValue = parseInt(document.getElementById(id).value);
         if (newValue !== this.state.preferences.linkShadowSize && toSave) {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkShadowSize = newValue;
@@ -363,56 +343,49 @@ export class NavBar extends React.Component {
             var sizePreferences = this.state.preferences;
             sizePreferences.linkShadowSize = this.state.oldPreferences.linkShadowSize;
             this.props.setPreferences(sizePreferences);
-            document.getElementById("sizeslider7").value = this.state.oldPreferences.linkShadowSize;
+            document.getElementById(id).value = this.state.oldPreferences.linkShadowSize;
         }
     }
-    resetNumLinks() {
-        var sizePreferences = this.state.preferences;
-        sizePreferences.numLinks = 10;
-        this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider1").value = 10;
-        this.comparePreferences();
-    }
-    resetGridSize() {
+    resetGridSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.gridSize = 20;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider2").value = 20;
+        document.getElementById(id).value = 20;
         this.comparePreferences();
     }
-    resetLinkImageSize() {
+    resetLinkImageSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.linkImageSize = 50;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider3").value = 50;
+        document.getElementById(id).value = 50;
         this.comparePreferences();
     }
-    resetLinkTextSize() {
+    resetLinkTextSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.linkTextSize = 50;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider4").value = 50;
+        document.getElementById(id).value = 50;
         this.comparePreferences();
     }
-    resetTabShadowSize() {
+    resetTabShadowSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.tabShadowSize = 20;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider5").value = 20;
+        document.getElementById(id).value = 20;
         this.comparePreferences();
     }
-    resetImageShadowSize() {
+    resetImageShadowSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.imageShadowSize = 20;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider6").value = 20;
+        document.getElementById(id).value = 20;
         this.comparePreferences();
     }
-    resetLinkShadowSize() {
+    resetLinkShadowSize(id) {
         var sizePreferences = this.state.preferences;
         sizePreferences.linkShadowSize = 10;
         this.props.setPreferences(sizePreferences);
-        document.getElementById("sizeslider7").value = 10;
+        document.getElementById(id).value = 10;
         this.comparePreferences();
     }
 
@@ -589,20 +562,18 @@ export class NavBar extends React.Component {
             this.setTabTextShadowColor(false, true, true);
         if (this.state.preferences.buttonsColor !== this.state.oldPreferences.buttonsColor)
             this.setButtonsColor(false, true, true);
-        if (this.state.preferences.numLinks !== this.state.oldPreferences.numLinks)
-            this.setNumLinks(false);
         if (this.state.preferences.gridSize !== this.state.oldPreferences.gridSize)
-            this.setGridSize(false);
+            this.setGridSize(false, "sizeslider1");
         if (this.state.preferences.linkImageSize !== this.state.oldPreferences.linkImageSize)
-            this.setLinkImageSize(false);
+            this.setLinkImageSize(false, "sizeslider2");
         if (this.state.preferences.linkTextSize !== this.state.oldPreferences.linkTextSize)
-            this.setLinkTextSize(false);
+            this.setLinkTextSize(false, "sizeslider3");
         if (this.state.preferences.tabShadowSize !== this.state.oldPreferences.tabShadowSize)
-            this.setTabShadowSize(false);
+            this.setTabShadowSize(false, "sizeslider4");
         if (this.state.preferences.imageShadowSize !== this.state.oldPreferences.imageShadowSize)
-            this.setImageShadowSize(false);
+            this.setImageShadowSize(false, "sizeslider5");
         if (this.state.preferences.linkShadowSize !== this.state.oldPreferences.linkShadowSize)
-            this.setLinkShadowSize(false);
+            this.setLinkShadowSize(false, "sizeslider6");
         if (this.state.preferences.theme !== this.state.oldPreferences.theme) {
             var themePreferences = this.state.preferences;
             themePreferences.theme = this.state.oldPreferences.theme;
@@ -661,6 +632,7 @@ export class NavBar extends React.Component {
                             <img src="rocket.png" className="rocket" id="rocket"></img>
                             <img src="flame.png" className="flame" id="flame"></img>
                         </div>
+                        <div className="rocketBase"></div>
                         <p className="baseSignIn" id="basesignin"><b>Sign In</b> To Google To Unlock All Features</p>
                     </div>
                     <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
@@ -681,54 +653,11 @@ export class NavBar extends React.Component {
                                 <p className="sideHeader">Visibility</p>
                             </div>
                             <div className="sideOptions" id="hideoptions">
-                                <div className="sideOptionContainer">
-                                    <p className="option">Add Tab Button</p>
-                                    <button className={this.state.preferences.addTab ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer1" onClick={e => this.hideAddTab()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s, opacity 0.5s"}}>
-                                        <div className="switch" id="switch1"></div>
-                                    </button>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.1s"}}>Add Link Button</p>
-                                    <button className={this.state.preferences.addLink ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer2" onClick={e => this.hideAddLink()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s 0.1s, opacity 0.5s 0.1s"}}>
-                                        <div className="switch" id="switch2"></div>
-                                    </button>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.2s"}}>Edit Button</p>
-                                    <button className={this.state.preferences.editBtn ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer3" onClick={e => this.hideEditBtn()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s 0.2s, opacity 0.5s 0.2s"}} >
-                                        <div className="switch" id="switch3"></div>
-                                    </button>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.3s"}}>Remove Button</p>
-                                    <button className={this.state.preferences.removeBtn ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer4" onClick={e => this.hideRemoveBtn()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s 0.3s, opacity 0.5s 0.3s"}}>
-                                        <div className="switch" id="switch4"></div>
-                                    </button>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.4s"}}>Tab Arrows</p>
-                                    <button className={this.state.preferences.tabArrows ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer5" onClick={e => this.hideTabArrows()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s 0.4s, opacity 0.5s 0.4s"}}>
-                                        <div className="switch" id="switch5"></div>
-                                    </button>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.5s"}}>Link Arrows</p>
-                                    <button className={this.state.preferences.linkArrows ? "switchContainer active" : "switchContainer"} 
-                                        id="switchcontainer6" onClick={e => this.hideLinkArrows()} style={{pointerEvents: this.state.user === "default" ? "none" : "all", 
-                                        transition: "background-color 0.5s, box-shadow 0.5s, right 0.5s 0.5s, opacity 0.5s 0.5s"}}>
-                                        <div className="switch" id="switch6"></div>
-                                    </button>
-                                </div>
+                                <Visibility name="Add Tab Button" preference={this.state.preferences.addTab} index="1" user={this.state.user} transitionDelay="" hideElement={this.hideAddTab.bind(this)}></Visibility>
+                                <Visibility name="Add Link Button" preference={this.state.preferences.addLink} index="2" user={this.state.user} transitionDelay="0.1s" hideElement={this.hideAddLink.bind(this)}></Visibility>
+                                <Visibility name="Edit Button" preference={this.state.preferences.editBtn} index="3" user={this.state.user} transitionDelay="0.2s" hideElement={this.hideEditBtn.bind(this)}></Visibility>
+                                <Visibility name="Remove Button" preference={this.state.preferences.removeBtn} index="4" user={this.state.user} transitionDelay="0.3s" hideElement={this.hideRemoveBtn.bind(this)}></Visibility>
+                                <Visibility name="Tab Arrows" preference={this.state.preferences.tabArrows} index="5" user={this.state.user} transitionDelay="0.4s" hideElement={this.hideTabArrows.bind(this)}></Visibility>
                             </div>
                         </div>
 
@@ -739,181 +668,26 @@ export class NavBar extends React.Component {
                                 <p className="sideHeader">Colors</p>
                             </div>
                             <div className="sideOptions" id="linkoptions">
-                                <div className="sideOptionContainer">
-                                    <p className="option">Link Text</p>
-                                    <button className="colorViewer" id="colorviewer1" style={{background: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : 
-                                        (this.state.preferences.night ? "rgb(199, 199, 199)" : "rgb(82, 86, 92)")}} 
-                                        onClick={e => this.toggleColorView("colorviewer1", "colorbutton1", "customcolorpicker1", true, false)}></button>
-                                    <button className="colorBtn" id="colorbutton1a" onClick={e => this.setLinkTextColor(false, false, false)}>
-                                        <img className="colorCancel" src="cancel.png"></img></button>
-                                    <button className="colorBtn" id="colorbutton1b" onClick={e => this.setLinkTextColor(true, false, false)}>
-                                        <div className="colorCheck"></div></button>
-                                    <div className="customColorPicker" id="customcolorpicker1">
-                                        <p className="defaultColor" id="defaultcolor1" onClick={e => this.setDefaultLinkTextColor()} style={{opacity: this.state.preferences.linkTextColor ? "1" : "0.5", 
-                                            pointerEvents: this.state.preferences.linkTextColor ? "all" : "none"}}>Set to Default</p>
-                                        <p className="previewColor" onClick={e => this.setLinkTextColor(true, true, false)}>Preview</p>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "FF0000", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "FFA500", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "FFFF00", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "008000", "colortester1")}></div>
-                                        <br/>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "ADD8E6", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "0000FF", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "EE82EE", "colortester1")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput1", "4B0082", "colortester1")}></div>
-                                        <div className="colorInputDiv">
-                                            <div className="colorInputLabel"><p className="hashTag">#</p></div>
-                                            <input className="colorInput" id="colorinput1" spellCheck="false" defaultValue={this.state.preferences.linkTextColor ? this.state.preferences.linkTextColor : 
-                                                (this.state.preferences.night ? "C7C7C7" : "52565C")} onChange={e => this.setPreviewColor("colorinput1", "colortester1")}></input>
-                                        </div>
-                                        <input type="range" min="-100" max="100" defaultValue="0" className="brightnessSlider" id="brightnessslider1"
-                                            onChange={e => this.adjustBrightness("brightnessslider1", "colorinput1", "colortester1")}></input>
-                                        <input type="range" min="-50" max="50" defaultValue="0" className="hueSlider" id="hueslider1"
-                                            onChange={e => this.adjustHue("hueslider1", "colorinput1", "colortester1")}></input>
-                                        <div className="colorTester" id="colortester1" style={{background: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : 
-                                            (this.state.preferences.night ? "#C7C7C7" : "#52565C")}}></div>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.1s"}}>Link Shadow</p>
-                                    <button className="colorViewer" id="colorviewer2" style={{background: this.state.preferences.linkShadowColor ? '#' +  this.state.preferences.linkShadowColor : 
-                                        (this.state.preferences.night ? "rgb(14, 14, 14)" : "rgb(249, 251, 253)")}} 
-                                        onClick={e => this.toggleColorView("colorviewer2", "colorbutton2", "customcolorpicker2", true, false)}></button>
-                                    <button className="colorBtn" id="colorbutton2a" onClick={e => this.setLinkShadowColor(false, false, false)}>
-                                        <img className="colorCancel" src="cancel.png"></img></button>
-                                    <button className="colorBtn" id="colorbutton2b" onClick={e => this.setLinkShadowColor(true, false, false)}>
-                                        <div className="colorCheck"></div></button>
-                                    <div className="customColorPicker" id="customcolorpicker2">
-                                        <p className="defaultColor" id="defaultcolor2" onClick={e => this.setDefaultLinkShadowColor()} style={{opacity: this.state.preferences.linkShadowColor ? "1" : "0.5", 
-                                            pointerEvents: this.state.preferences.linkShadowColor ? "all" : "none"}}>Set to Default</p>
-                                        <p className="previewColor" onClick={e => this.setLinkShadowColor(true, true, false)}>Preview</p>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "FF0000", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "FFA500", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "FFFF00", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "008000", "colortester2")}></div>
-                                        <br/>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "ADD8E6", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "0000FF", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "EE82EE", "colortester2")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput2", "4B0082", "colortester2")}></div>
-                                        <div className="colorInputDiv">
-                                            <div className="colorInputLabel"><p className="hashTag">#</p></div>
-                                            <input className="colorInput" id="colorinput2" spellCheck="false" defaultValue={this.state.preferences.linkShadowColor ? this.state.preferences.linkShadowColor : 
-                                                (this.state.preferences.night ? "0E0E0E" : "F9FBFD")} onChange={e => this.setPreviewColor("colorinput2", "colortester2")}></input>
-                                        </div>
-                                        <input type="range" min="-100" max="100" defaultValue="0" className="brightnessSlider" id="brightnessslider2"
-                                            onChange={e => this.adjustBrightness("brightnessslider2", "colorinput2", "colortester2")}></input>
-                                        <input type="range" min="-50" max="50" defaultValue="0" className="hueSlider" id="hueslider2"
-                                            onChange={e => this.adjustHue("hueslider2", "colorinput2", "colortester2")}></input>
-                                        <div className="colorTester" id="colortester2" style={{background: this.state.preferences.linkShadowColor ? '#' + this.state.preferences.linkShadowColor : 
-                                            (this.state.preferences.night ? "#0E0E0E" : "#F9FBFD")}}></div>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.2s"}}>Image Shadow</p>
-                                    <button className="colorViewer" id="colorviewer3" style={{background: this.state.preferences.imageShadowColor ? '#' + this.state.preferences.imageShadowColor : 
-                                        (this.state.preferences.night ? "rgb(77, 77, 77)" : "rgb(182, 182, 182)")}} 
-                                        onClick={e => this.toggleColorView("colorviewer3", "colorbutton3", "customcolorpicker3", true, false)}></button>
-                                    <button className="colorBtn" id="colorbutton3a" onClick={e => this.setImageShadowColor(false, false, false)}>
-                                        <img className="colorCancel" src="cancel.png"></img></button>
-                                    <button className="colorBtn" id="colorbutton3b" onClick={e => this.setImageShadowColor(true, false, false)}>
-                                        <div className="colorCheck"></div></button>
-                                    <div className="customColorPicker" id="customcolorpicker3">
-                                        <p className="defaultColor" id="defaultcolor3" onClick={e => this.setDefaultImageShadowColor()} style={{opacity: this.state.preferences.imageShadowColor ? "1" : "0.5", 
-                                            pointerEvents: this.state.preferences.imageShadowColor ? "all" : "none"}}>Set to Default</p>
-                                        <p className="previewColor" onClick={e => this.setImageShadowColor(true, true, false)}>Preview</p>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "FF0000", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "FFA500", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "FFFF00", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "008000", "colortester3")}></div>
-                                        <br/>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "ADD8E6", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "0000FF", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "EE82EE", "colortester3")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput3", "4B0082", "colortester3")}></div>
-                                        <div className="colorInputDiv">
-                                            <div className="colorInputLabel"><p className="hashTag">#</p></div>
-                                            <input className="colorInput" id="colorinput3" spellCheck="false" defaultValue={this.state.preferences.imageShadowColor ? this.state.preferences.imageShadowColor : 
-                                                (this.state.preferences.night ? "4D4D4D" : "B6B6B6")} onChange={e => this.setPreviewColor("colorinput3", "colortester3")}></input>
-                                        </div>
-                                        <input type="range" min="-100" max="100" defaultValue="0" className="brightnessSlider" id="brightnessslider3"
-                                            onChange={e => this.adjustBrightness("brightnessslider3", "colorinput3", "colortester3")}></input>
-                                        <input type="range" min="-50" max="50" defaultValue="0" className="hueSlider" id="hueslider3"
-                                            onChange={e => this.adjustHue("hueslider3", "colorinput3", "colortester3")}></input>
-                                        <div className="colorTester" id="colortester3" style={{background: this.state.preferences.imageShadowColor ? '#' + this.state.preferences.imageShadowColor : 
-                                            (this.state.preferences.night ? "#4D4D4D" : "#B6B6B6")}}></div>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.3s"}}>Tab Text Shadow</p>
-                                    <button className="colorViewer" id="colorviewer4" style={{background: this.state.preferences.tabTextShadowColor ? '#' + this.state.preferences.tabTextShadowColor : 
-                                        (this.state.preferences.night ? "rgb(0, 0, 0)" : "rgb(128, 128, 128)")}} 
-                                        onClick={e => this.toggleColorView("colorviewer4", "colorbutton4", "customcolorpicker4", true, false)}></button>
-                                    <button className="colorBtn" id="colorbutton4a" onClick={e => this.setTabTextShadowColor(false, false, false)}>
-                                        <img className="colorCancel" src="cancel.png"></img></button>
-                                    <button className="colorBtn" id="colorbutton4b" onClick={e => this.setTabTextShadowColor(true, false, false)}>
-                                        <div className="colorCheck"></div></button>
-                                    <div className="customColorPicker" id="customcolorpicker4">
-                                        <p className="defaultColor" id="defaultcolor4" onClick={e => this.setDefaultTabTextShadowColor()} style={{opacity: this.state.preferences.tabTextShadowColor ? "1" : "0.5", 
-                                            pointerEvents: this.state.preferences.tabTextShadowColor ? "all" : "none"}}>Set to Default</p>
-                                        <p className="previewColor" onClick={e => this.setTabTextShadowColor(true, true, false)}>Preview</p>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "FF0000", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "FFA500", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "FFFF00", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "008000", "colortester4")}></div>
-                                        <br/>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "ADD8E6", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "0000FF", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "EE82EE", "colortester4")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput4", "4B0082", "colortester4")}></div>
-                                        <div className="colorInputDiv">
-                                            <div className="colorInputLabel"><p className="hashTag">#</p></div>
-                                            <input className="colorInput" id="colorinput4" spellCheck="false" defaultValue={this.state.preferences.tabTextShadowColor ? this.state.preferences.tabTextShadowColor : 
-                                                (this.state.preferences.night ? "000000" : "808080")} onChange={e => this.setPreviewColor("colorinput4", "colortester4")}></input>
-                                        </div>
-                                        <input type="range" min="-100" max="100" defaultValue="0" className="brightnessSlider" id="brightnessslider4"
-                                            onChange={e => this.adjustBrightness("brightnessslider4", "colorinput4", "colortester4")}></input>
-                                        <input type="range" min="-50" max="50" defaultValue="0" className="hueSlider" id="hueslider4"
-                                            onChange={e => this.adjustHue("hueslider4", "colorinput4", "colortester4")}></input>
-                                        <div className="colorTester" id="colortester4" style={{background: this.state.preferences.tabTextShadowColor ? '#' + this.state.preferences.tabTextShadowColor : 
-                                            (this.state.preferences.night ? "#000000" : "#808080")}}></div>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainer">
-                                    <p className="option" style={{transitionDelay: "0.4s"}}>Buttons</p>
-                                    <button className="colorViewer" id="colorviewer5" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : 
-                                        (this.state.preferences.night ? "rgb(49, 49, 49)" : "rgb(249, 251, 253)")}} 
-                                        onClick={e => this.toggleColorView("colorviewer5", "colorbutton5", "customcolorpicker5", true, false)}></button>
-                                    <button className="colorBtn" id="colorbutton5a" onClick={e => this.setButtonsColor(false, false, false)}>
-                                        <img className="colorCancel" src="cancel.png"></img></button>
-                                    <button className="colorBtn" id="colorbutton5b" onClick={e => this.setButtonsColor(true, false, false)}>
-                                        <div className="colorCheck"></div></button>
-                                    <div className="customColorPicker" id="customcolorpicker5">
-                                        <p className="defaultColor" id="defaultcolor5" onClick={e => this.setDefaultButtonsColor()} style={{opacity: this.state.preferences.buttonsColor ? "1" : "0.5", 
-                                            pointerEvents: this.state.preferences.buttonsColor ? "all" : "none"}}>Set to Default</p>
-                                        <p className="previewColor" onClick={e => this.setButtonsColor(true, true, false)}>Preview</p>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "FF0000", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "FFA500", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "FFFF00", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "008000", "colortester5")}></div>
-                                        <br/>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "ADD8E6", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "0000FF", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "EE82EE", "colortester5")}></div>
-                                        <div className="swatch" onClick={e => this.setInputColor("colorinput5", "4B0082", "colortester5")}></div>
-                                        <div className="colorInputDiv">
-                                            <div className="colorInputLabel"><p className="hashTag">#</p></div>
-                                            <input className="colorInput" id="colorinput5" spellCheck="false" defaultValue={this.state.preferences.buttonsColor ? this.state.preferences.buttonsColor : 
-                                                (this.state.preferences.night ? "313131" : "F9FBFD")} onChange={e => this.setPreviewColor("colorinput5", "colortester5")}></input>
-                                        </div>
-                                        <input type="range" min="-100" max="100" defaultValue="0" className="brightnessSlider" id="brightnessslider5"
-                                            onChange={e => this.adjustBrightness("brightnessslider5", "colorinput5", "colortester5")}></input>
-                                        <input type="range" min="-50" max="50" defaultValue="0" className="hueSlider" id="hueslider5"
-                                            onChange={e => this.adjustHue("hueslider5", "colorinput5", "colortester5")}></input>
-                                        <div className="colorTester" id="colortester5" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : 
-                                            (this.state.preferences.night ? "#313131" : "#F9FBFD")}}></div>
-                                    </div>
-                                </div>
+                                <ColorViewer name="Link Text" index="1" transitionDelay="" preferences={this.state.preferences.linkTextColor} night={this.state.preferences.night}
+                                    nightColor="rgb(199, 199, 199)" dayColor="rgb(82, 86, 92)" nightColorHex="#C7C7C7" dayColorHex="#52565C" setColor={this.setLinkTextColor.bind(this)}
+                                    setDefaultColor={this.setDefaultLinkTextColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} setInputColor={this.setInputColor.bind(this)}
+                                    setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}></ColorViewer>
+                                <ColorViewer name="Link Shadow" index="2" transitionDelay="0.1s" preferences={this.state.preferences.linkShadowColor} night={this.state.preferences.night}
+                                    nightColor="rgb(14, 14, 14)" dayColor="rgb(249, 251, 253)" nightColorHex="#0E0E0E" dayColorHex="#F9FBFD" setColor={this.setLinkShadowColor.bind(this)}
+                                    setDefaultColor={this.setDefaultLinkShadowColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} setInputColor={this.setInputColor.bind(this)}
+                                    setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}></ColorViewer>
+                                <ColorViewer name="Image Shadow" index="3" transitionDelay="0.2s" preferences={this.state.preferences.imageShadowColor} night={this.state.preferences.night}
+                                    nightColor="rgb(77, 77, 77)" dayColor="rgb(182, 182, 182)" nightColorHex="#4D4D4D" dayColorHex="#B6B6B6" setColor={this.setImageShadowColor.bind(this)}
+                                    setDefaultColor={this.setDefaultImageShadowColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} setInputColor={this.setInputColor.bind(this)}
+                                    setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}></ColorViewer>
+                                <ColorViewer name="Tab Text Shadow" index="4" transitionDelay="0.3s" preferences={this.state.preferences.tabTextShadowColor} night={this.state.preferences.night}
+                                    nightColor="rgb(0, 0, 0)" dayColor="rgb(128, 128, 128)" nightColorHex="#000000" dayColorHex="#808080" setColor={this.setTabTextShadowColor.bind(this)}
+                                    setDefaultColor={this.setDefaultTabTextShadowColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} setInputColor={this.setInputColor.bind(this)}
+                                    setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}></ColorViewer>
+                                <ColorViewer name="Buttons" index="5" transitionDelay="0.4s" preferences={this.state.preferences.buttonsColor} night={this.state.preferences.night}
+                                    nightColor="rgb(49, 49, 49)" dayColor="rgb(249, 251, 253)" nightColorHex="#313131" dayColorHex="#F9FBFD" setColor={this.setButtonsColor.bind(this)}
+                                    setDefaultColor={this.setDefaultButtonsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} setInputColor={this.setInputColor.bind(this)}
+                                    setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}></ColorViewer>
                             </div>
                         </div>
 
@@ -924,69 +698,18 @@ export class NavBar extends React.Component {
                                 <p className="sideHeader">Sizes</p>
                             </div>
                             <div className="sideOptions" id="hideoptions">
-                                <div className="sideOptionContainerSize">
-                                    <p className="option">Number of Links</p>
-                                    <div className="sizeSliderBox">
-                                        <img className={"resetSlider" + (this.state.preferences.numLinks !== 10 ? " active" : "")} id="resetslider1" src="reset.png" onClick={e => this.resetNumLinks()}></img>
-                                        <input type="range" min="10" max="100" defaultValue={this.state.preferences.numLinks} className="sizeSlider" id="sizeslider1" 
-                                            onChange={e => this.updateSlideNum("sizeslider1", "slidernumber1")} onMouseUp={e => this.setNumLinks(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber1">{this.state.preferences.numLinks}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.08s"}}>Grid</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay:"0.08s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.gridSize !== 20 ? " active" : "")} id="resetslider2" src="reset.png" onClick={e => this.resetGridSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.gridSize} className="sizeSlider" id="sizeslider2" 
-                                            onChange={e => this.updateSlideNum("sizeslider2", "slidernumber2")} onMouseUp={e => this.setGridSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber2">{this.state.preferences.gridSize}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.16s"}}>Link Image</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay: "0.16s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.linkImageSize !== 50 ? " active" : "")} id="resetslider3" src="reset.png" onClick={e => this.resetLinkImageSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkImageSize} className="sizeSlider" id="sizeslider3" 
-                                            onChange={e => this.updateSlideNum("sizeslider3", "slidernumber3")} onMouseUp={e => this.setLinkImageSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber3">{this.state.preferences.linkImageSize}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.24s"}}>Link Text</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay: "0.24s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.linkTextSize !== 50 ? " active" : "")} id="resetslider4" src="reset.png" onClick={e => this.resetLinkTextSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkTextSize} className="sizeSlider" id="sizeslider4" 
-                                            onChange={e => this.updateSlideNum("sizeslider4", "slidernumber4")} onMouseUp={e => this.setLinkTextSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber4">{this.state.preferences.linkTextSize}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.32s"}}>Tab Text Shadow</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay: "0.32s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.tabShadowSize !== 20 ? " active" : "")} id="resetslider5" src="reset.png" onClick={e => this.resetTabShadowSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.tabShadowSize} className="sizeSlider" id="sizeslider5" 
-                                            onChange={e => this.updateSlideNum("sizeslider5", "slidernumber5")} onMouseUp={e => this.setTabShadowSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber5">{this.state.preferences.tabShadowSize}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.4s"}}>Image Shadow</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay: "0.4s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.imageShadowSize !== 20 ? " active" : "")} id="resetslider6" src="reset.png" onClick={e => this.resetImageShadowSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.imageShadowSize} className="sizeSlider" id="sizeslider6" 
-                                            onChange={e => this.updateSlideNum("sizeslider6", "slidernumber6")} onMouseUp={e => this.setImageShadowSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber6">{this.state.preferences.imageShadowSize}</p>
-                                    </div>
-                                </div>
-                                <div className="sideOptionContainerSize">
-                                    <p className="option" style={{transitionDelay: "0.48s"}}>Link Shadow</p>
-                                    <div className="sizeSliderBox" style={{transitionDelay: "0.48s"}}>
-                                        <img className={"resetSlider" + (this.state.preferences.linkShadowSize !== 10 ? " active" : "")} id="resetslider7" src="reset.png" onClick={e => this.resetLinkShadowSize()}></img>
-                                        <input type="range" min="1" max="100" defaultValue={this.state.preferences.linkShadowSize} className="sizeSlider" id="sizeslider7" 
-                                            onChange={e => this.updateSlideNum("sizeslider7", "slidernumber7")} onMouseUp={e => this.setLinkShadowSize(true)}></input>
-                                        <p className="sliderNumber" id="slidernumber7">{this.state.preferences.linkShadowSize}</p>
-                                    </div>
-                                </div>
+                                <Sizes name="Grid" index="1" transitionDelay="" size={this.state.preferences.gridSize} benchmark={20} resetSize={this.resetGridSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setGridSize.bind(this)}></Sizes>
+                                <Sizes name="Link Image" index="2" transitionDelay="0.08s" size={this.state.preferences.linkImageSize} benchmark={50} resetSize={this.resetLinkImageSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setLinkImageSize.bind(this)}></Sizes>
+                                <Sizes name="Link Text" index="3" transitionDelay="0.16s" size={this.state.preferences.linkTextSize} benchmark={50} resetSize={this.resetLinkTextSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setLinkTextSize.bind(this)}></Sizes>
+                                <Sizes name="Tab Text Shadow" index="4" transitionDelay="0.24s" size={this.state.preferences.tabShadowSize} benchmark={20} resetSize={this.resetTabShadowSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setTabShadowSize.bind(this)}></Sizes>
+                                <Sizes name="Image Shadow" index="5" transitionDelay="0.32s" size={this.state.preferences.imageShadowSize} benchmark={20} resetSize={this.resetImageShadowSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setImageShadowSize.bind(this)}></Sizes>
+                                <Sizes name="Link Shadow" index="6" transitionDelay="0.4s" size={this.state.preferences.linkShadowSize} benchmark={10} resetSize={this.resetLinkShadowSize.bind(this)} 
+                                    updateSlideNum={this.updateSlideNum.bind(this)} setSize={this.setLinkShadowSize.bind(this)}></Sizes>
                             </div>
                         </div>
 
@@ -1009,38 +732,12 @@ export class NavBar extends React.Component {
                                     <p className="themeSelectText">Upload</p>
                                 </div>
                                 <div className="themeGrid active">
-                                    <img className={this.state.preferences.theme === themeArr[0] ? "themeImage active" : "themeImage"} id={themeArr[0]}
-                                        onClick={e => this.setChosenTheme(themeArr[0])} src="https://i.pinimg.com/474x/90/ce/32/90ce32d91e1117e54b5f8c9ed9dd2bdc.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[1] ? "themeImage active" : "themeImage"} id={themeArr[1]}
-                                        onClick={e => this.setChosenTheme(themeArr[1])} src="https://i.pinimg.com/474x/ae/34/8e/ae348ebc425e81c6b38cff441cdd68a6.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[2] ? "themeImage active" : "themeImage"} id={themeArr[2]}
-                                        onClick={e => this.setChosenTheme(themeArr[2])} src="https://i.pinimg.com/474x/ec/cc/0d/eccc0db3c688b39b401f13d127074620.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[3] ? "themeImage active" : "themeImage"} id={themeArr[3]}
-                                        onClick={e => this.setChosenTheme(themeArr[3])} src="https://i.pinimg.com/474x/86/27/13/862713796f1ab641eb5ffe749359f351.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[4] ? "themeImage active" : "themeImage"} id={themeArr[4]}
-                                        onClick={e => this.setChosenTheme(themeArr[4])} src="https://i.pinimg.com/474x/5c/88/d6/5c88d67220d3227812e0ab959ba7d624.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[5] ? "themeImage active" : "themeImage"} id={themeArr[5]}
-                                        onClick={e => this.setChosenTheme(themeArr[5])} src="https://i.pinimg.com/474x/14/de/93/14de934b421dc36178b331dd5a73307e.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[6] ? "themeImage active" : "themeImage"} id={themeArr[6]}
-                                        onClick={e => this.setChosenTheme(themeArr[6])} src="https://i.pinimg.com/474x/3e/4c/af/3e4caf442d2a63b5444443b96aff0815.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[7] ? "themeImage active" : "themeImage"} id={themeArr[7]}
-                                        onClick={e => this.setChosenTheme(themeArr[7])} src="https://i.pinimg.com/474x/6f/7a/98/6f7a9840860d66be5a8cdb7ed79facc6.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[8] ? "themeImage active" : "themeImage"} id={themeArr[8]}
-                                        onClick={e => this.setChosenTheme(themeArr[8])} src="https://i.pinimg.com/474x/cc/ae/d2/ccaed2c79d3e6af46e4389ef9d373189.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[9] ? "themeImage active" : "themeImage"} id={themeArr[9]}
-                                        onClick={e => this.setChosenTheme(themeArr[9])} src="https://i.pinimg.com/474x/45/d0/0c/45d00cc47826e23f792d5512d1a081c9.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[10] ? "themeImage active" : "themeImage"} id={themeArr[10]}
-                                        onClick={e => this.setChosenTheme(themeArr[10])} src="https://i.pinimg.com/474x/aa/37/26/aa372677c7c55886d68f6ba41adc9ce2.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[11] ? "themeImage active" : "themeImage"} id={themeArr[11]}
-                                        onClick={e => this.setChosenTheme(themeArr[11])} src="https://i.pinimg.com/474x/5a/f3/7d/5af37dd92340946eb909e7eec3b399a0.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[12] ? "themeImage active" : "themeImage"} id={themeArr[12]}
-                                        onClick={e => this.setChosenTheme(themeArr[12])} src="https://i.pinimg.com/474x/99/f5/b1/99f5b16ba177d6d5b9362502be60b394.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[13] ? "themeImage active" : "themeImage"} id={themeArr[13]}
-                                        onClick={e => this.setChosenTheme(themeArr[13])} src="https://i.pinimg.com/474x/7d/a5/52/7da552d01eb0072bee8b3af9305cbb10.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[14] ? "themeImage active" : "themeImage"} id={themeArr[14]}
-                                        onClick={e => this.setChosenTheme(themeArr[14])} src="https://i.pinimg.com/474x/52/8f/30/528f30c01ac723dc5dbacc8fe8467ef2.jpg"></img>
-                                    <img className={this.state.preferences.theme === themeArr[15] ? "themeImage active" : "themeImage"} id={themeArr[15]}
-                                        onClick={e => this.setChosenTheme(themeArr[15])} src="https://i.pinimg.com/474x/98/7d/7b/987d7bd1f7c904b5d0942b01b4857067.jpg"></img>
+                                    {
+                                        themeArr.map((each) => 
+                                            <img className={this.state.preferences.theme === each ? "themeImage active" : "themeImage"} id={each} key={each}
+                                                onClick={e => this.setChosenTheme(each)} src={each + "s"}></img>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>

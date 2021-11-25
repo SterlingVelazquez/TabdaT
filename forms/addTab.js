@@ -5,7 +5,7 @@ export class AddTab extends React.Component {
         super(props);
         this.state = { 
             name : "", 
-            color : "#000000",
+            color : "#8D9CB8",
             user: this.props.isUser,
             tabs: this.props.tabs,
             numTabs: this.props.tabs.length,
@@ -73,38 +73,30 @@ export class AddTab extends React.Component {
     }
 
     viewTab() {
-        document.getElementById("addtabdiv").classList.toggle("active");
-        document.getElementById("taberrmsg").style.display = "none";
-        document.getElementById("titletaberrmsg").style.display = "none";
-        document.getElementById("addtabform").reset();
-        if (!(document.getElementById("edittabdiv").className.includes("active"))) {
-            if (!this.state.preferences.addTab)
-                document.getElementById("addtabplus").classList.toggle("active");
-            document.getElementById("lefttabarrow").classList.toggle("active");
-            document.getElementById("righttabarrow").classList.toggle("active");
-          }
+        this.props.openTabAdd();
         window.formOpen = false;
         if (document.getElementById("container").className.includes("focus")) {
             this.setState({color:"#9C9C9C"})
         } else if (document.getElementById("container").className.includes("themes")) {
             this.setState({color:"#CCCCCC"})
         } else {
-            this.setState({color:"#000000"})
+            this.setState({color:"#8D9CB8"})
         }
     }
 
     render () {
+        var isLastIndex = this.state.tabIndex < Math.floor(this.state.numTabs / 4);
         return (
-            <div className="addTabDiv" id="addtabdiv" style={this.state.user === "default" ? {display:"none"} : {display:"inline-flex"}}>
-                <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}
-                    style={{marginLeft: this.state.numTabs % 4 === 0 ? "-8px" : "60px", display: this.state.tabIndex < Math.floor(this.state.numTabs / 4) ? "none" : "block"}}></img>
+            <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.color}}>
+                <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}></img>
                 <form className="addTabForm" id="addtabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>
-                    <p className="tabErrMsg" id="titletaberrmsg" style={{left:"3.5rem"}}>Name taken</p>
-                    <input className="tabInput" id="tabinput" type="text" placeholder="Tab Name" onChange={e => this.setName(e)} style={{color:this.state.color}} required></input>
+                    <p className="tabErrMsg" id="titletaberrmsg">Name taken</p>
+                    <input className="tabInput" id="tabinput" type="text" placeholder="Name..." onChange={e => this.setName(e)} style={{color:this.state.color}} required></input>
                     <input className="colorPicker" id="colorpicker" onChange={e => this.setColor()} type="color"></input>
-                    <button className="tabCancel" id="tabcancel" type="button" onClick={e => this.viewTab()}>Cancel</button>
-                    <button className="tabSubmit" id="tabsubmit" type="submit">Submit</button>
+                    <div className="colorPickerWrapper" style={{backgroundColor: this.state.color}}></div>
+                    <button className="tabCancel" id="tabcancel" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.png" id="tabcancelimg"></img></button>
+                    <button className="tabSubmit" id="tabsubmit" type="submit"><img className="submitTabImg" src="checkmark.png" id="tabsubmitimg"></img></button>
                 </form>
             </div>
         );
