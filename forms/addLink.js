@@ -1,6 +1,5 @@
 import React from 'react';
 import { database } from "../tools/database.js";
-import { suggestions } from "../tools/suggestions.js"
 
 var key = 0;
 
@@ -13,6 +12,7 @@ export class AddLink extends React.Component {
             image : null,
             imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
+            suggestions: [],
             suggestedTitle: [],
             suggestedLinks: [],
             uid : this.props.userId,
@@ -29,7 +29,8 @@ export class AddLink extends React.Component {
             uid : props.userId,
             selectedTab : props.currTab,
             tabs: props.tabs,
-            allLinks : props.allLinks
+            allLinks : props.allLinks,
+            suggestions: props.suggestions
         }
     }
 
@@ -42,19 +43,19 @@ export class AddLink extends React.Component {
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
                 })
             } else if (this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/doggo.png"
                 })
             } else {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                 })
             }
             for (var i = 0; i < this.state.allLinks.length; i++) {
@@ -90,11 +91,11 @@ export class AddLink extends React.Component {
             this.setState({suggestedTitle: []})
         if (!isDefault) {
             var count = 0;
-            for (var i = 0; i < suggestions.length; i++) {
-                if (event.target.value.includes(suggestions[i].url)) {
-                    this.setState({defaultImg: suggestions[i].image})
+            for (var i = 0; i < this.state.suggestions.length; i++) {
+                if (event.target.value.includes(this.state.suggestions[i].url)) {
+                    this.setState({defaultImg: this.state.suggestions[i].image})
                     count++;
-                    i = suggestions.length;
+                    i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
@@ -105,7 +106,7 @@ export class AddLink extends React.Component {
             }
             this.setState({
                 link: event.target.value,
-                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, true) : [],
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, true) : [],
             })
         } else {
             document.getElementById("addurl").value = isDefault.url;

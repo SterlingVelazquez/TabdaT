@@ -3,7 +3,7 @@ import React from 'react';
 class ColorViewer extends React.Component {
     render() {
         return (
-            <div className="sideOptionContainer">
+            <div className="sideOptionContainer" style={{display:this.props.display}}>
                 <p className="option" style={{ transitionDelay: this.props.transitionDelay }}>{this.props.name}</p>
                 <button className="colorViewer" id={"colorviewer" + this.props.index} style={{ background: this.props.preferences ? '#' + this.props.preferences : 
                     (this.props.night ? this.props.nightColor : this.props.dayColor)}}
@@ -28,7 +28,7 @@ class ColorViewer extends React.Component {
                     <div className="swatch" onClick={e => this.props.setInputColor("colorinput" + this.props.index, "EE82EE", "colortester" + this.props.index)}></div>
                     <div className="swatch" onClick={e => this.props.setInputColor("colorinput" + this.props.index, "4B0082", "colortester" + this.props.index)}></div>
                     <div className="colorInputDiv">
-                        <div className="colorInputLabel"><p className="hashTag">#</p></div>
+                        <div className="colorInputLabel"><p className="hashTag" id="hashtag">#</p></div>
                         <input className="colorInput" id={"colorinput" + this.props.index} spellCheck="false" defaultValue={this.props.preferences ? this.props.preferences :
                             (this.props.night ? this.props.nightColorHex : this.props.dayColorHex)} onChange={e => this.props.setPreviewColor("colorinput" + this.props.index, "colortester" + this.props.index)}></input>
                     </div>

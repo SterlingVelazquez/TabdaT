@@ -9,6 +9,7 @@ export class AddTab extends React.Component {
             user: this.props.isUser,
             tabs: this.props.tabs,
             numTabs: this.props.tabs.length,
+            displayedTabs: this.props.displayedTabs,
             tabIndex: this.props.tabIndex,
             preferences: this.props.preferences,
         };
@@ -20,6 +21,7 @@ export class AddTab extends React.Component {
             user : props.isUser,
             tabs: props.tabs,
             numTabs: props.tabs.length,
+            displayedTabs: props.displayedTabs,
             tabIndex: props.tabIndex,
             preferences: props.preferences,
         }
@@ -73,21 +75,21 @@ export class AddTab extends React.Component {
     }
 
     viewTab() {
-        this.props.openTabAdd();
+        this.props.openAddTab();
         window.formOpen = false;
-        if (document.getElementById("container").className.includes("focus")) {
+        if (document.getElementById("container").className.includes("night")) {
             this.setState({color:"#9C9C9C"})
         } else if (document.getElementById("container").className.includes("themes")) {
-            this.setState({color:"#CCCCCC"})
+            this.setState({color:"#EBEBEB"})
         } else {
             this.setState({color:"#8D9CB8"})
         }
     }
 
     render () {
-        var isLastIndex = this.state.tabIndex < Math.floor(this.state.numTabs / 4);
+        var isLastIndex = this.state.tabIndex < Math.floor(this.state.numTabs / this.state.displayedTabs);
         return (
-            <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.color}}>
+            <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex || this.state.preferences.addTab ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.color}}>
                 <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}></img>
                 <form className="addTabForm" id="addtabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>

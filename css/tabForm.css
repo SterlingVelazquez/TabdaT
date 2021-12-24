@@ -1,6 +1,6 @@
 .addTabDiv {
   position:relative;
-  width:50px;
+  width:180px;
   height:77px;
   font-size:15px;
   margin-left:11px;
@@ -8,18 +8,19 @@
   z-index:0;
   font-family:'Noto Sans JP', sans-serif;
   border:3px solid rgba(181, 193, 215, 0.705);
-  border-top-right-radius:30px;
-  border-top-left-radius:30px;
+  border-top-right-radius:20px;
+  border-top-left-radius:20px;
+  transform:translateY(12px);
   transition:width 0.5s, opacity 0.5s, transform 0.5s;
   pointer-events:none;
 }
 .addTabDiv.active {
-  width:180px;
+  transform:translateY(0px);
   pointer-events:all;
   opacity:1;
 }
 .addTabDiv:hover {
-  width:180px;
+  transform:translateY(0px);
 }
 .addTabDiv.hide {
   pointer-events:none;
@@ -28,22 +29,22 @@
 
 .addTabPlus {
   position:absolute;
-  padding:16px 11px 52px 11px;
+  padding:10px 80px 62px 80px;
   width:auto;
-  cursor:none;
-  pointer-events:none;
-  transition:1s;
-  transform:translateY(100%) translateX(-50%);
+  pointer-events:all;
+  cursor:pointer;
+  transition:0.8s;
+  transform:translateY(0%) translateX(-50%);
   filter:brightness(0.3) sepia(100%) hue-rotate(180deg) opacity(0.55);
 }
 .addTabPlus:focus,
 .addTabPlus:hover {
   outline:none;
 }
-.addTabPlus.active {
-  transform:translateY(0) translateX(-50%);
-  pointer-events:all;
-  cursor:pointer;
+.addTabDiv.active .addTabPlus {
+  transform:translateY(100%) translateX(-50%);
+  cursor:none;
+  pointer-events:none;
 }
 .addTab.hideAddTab {
   top:79px;
@@ -104,7 +105,7 @@
 
 .tabSubmit, .tabCancel {
   position:absolute;
-  left:0; top:8px;
+  left:100px; top:8px;
   height:32px; width:32px;
   padding:5px 10px;
   color: rgb(95, 95, 95);
@@ -121,12 +122,12 @@
 .addTabDiv.active .tabSubmit, .editTabWrapper.active .tabSubmit {
   opacity:1;
   pointer-events:all;
-  transform:translateX(185px) rotateZ(-720deg);
+  transform:translateX(85px) rotateZ(-720deg);
 }
 .addTabDiv.active .tabCancel, .editTabWrapper.active .tabCancel {
   opacity:1;
   pointer-events:all;
-  transform:translateX(230px) rotateZ(-720deg);
+  transform:translateX(130px) rotateZ(-720deg);
 }
 .submitTabImg {
   position:absolute;
@@ -169,7 +170,7 @@
 .editTabDiv {
   position:absolute;
   pointer-events:none;
-  top:-12px; left:-1px;
+  top:-26px; left:-1px;
   width:180px; height:110%;
   border-top-right-radius:15px;
   border-top-left-radius:15px;
@@ -184,6 +185,9 @@
 }
 .editTabWrapper.active .editTabDiv {
   opacity:1;
+}
+.editTabDiv:hover {
+  transform:translateY(12px);
 }
 .editTabWrapper.active .addTabForm {
   pointer-events:all;

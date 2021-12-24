@@ -3,7 +3,7 @@ import React from 'react';
 class Visibility extends React.Component {
     render() {
         return (
-            <div className="sideOptionContainer">
+            <div className="sideOptionContainer" style={{display:this.props.display}}>
                 <p className="option" style={{transitionDelay: this.props.transitionDelay}}>{this.props.name}</p>
                 <button className={this.props.preference ? "switchContainer active" : "switchContainer"}
                     id={"switchcontainer" + this.props.index} onClick={e => this.props.hideElement()} style={{

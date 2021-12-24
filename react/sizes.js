@@ -3,7 +3,7 @@ import React from 'react';
 class Sizes extends React.Component {
     render() {
         return (
-            <div className="sideOptionContainerSize">
+            <div className="sideOptionContainerSize" style={{display:this.props.display}}>
                 <p className="option" style={{ transitionDelay: this.props.transitionDelay }}>{this.props.name}</p>
                 <div className="sizeSliderBox" style={{ transitionDelay: this.props.transitionDelay }}>
                     <img className={"resetSlider" + (this.props.size !== this.props.benchmark ? " active" : "")} id={"resetslider" + this.props.index} src="reset.png" 

@@ -118,7 +118,7 @@
 .previewColor {
     position:relative;
     display:inline;
-    margin-left:2.5rem;
+    margin-left:60px;
     top:8px;
     font-size:13px;
     color:rgba(74, 84, 95, 0.842);
@@ -207,7 +207,7 @@
 }
 .hashTag {
     position:absolute;
-    margin:0.05rem 0.1rem 0.1rem 0.26rem;
+    margin:1px 0 0 10px;
     padding:auto;
     width:auto;
     height:auto;

@@ -9,8 +9,8 @@ img {
     height:90px;
     margin:auto;
     cursor:pointer;
-    transition:0.5s;
     border-radius:10px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    transition: transform 0.5s;
 }

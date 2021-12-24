@@ -132,7 +132,7 @@ export class Import extends React.Component {
                         <li className="step">Click the button below and locate the file you saved in the previous step</li>
                     </ol>
                     <input className="openFile" id="openfile" onClick={e => this.openSteps()} type="file" accept=".html"></input>
-                    <button className="openFileButton">Upload Your Bookmark File</button>
+                    <button className="openFileButton">Upload Your Bookmarks</button>
                 </div>
                 <div className="submitImportContainer" id="submitimportcontainer">
                     <div className="info" id="info" style={{display:"none"}}></div>

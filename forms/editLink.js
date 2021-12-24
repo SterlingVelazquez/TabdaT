@@ -1,6 +1,5 @@
 import React from 'react';
 import { database } from "../tools/database.js";
-import { suggestions } from "../tools/suggestions.js"
 
 var key=0;
 
@@ -12,8 +11,9 @@ export class EditLink extends React.Component {
                 name : this.props.currLink.name, 
                 link : this.props.currLink.link, 
                 image : this.props.currLink.image,
-                defaultImg: "ultafedIgm/doggo.png",
+                defaultImg: this.props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestions: this.props.suggestions,
                 suggestedTitle: [],
                 suggestedLinks: [],
                 tabs: this.props.tabs,
@@ -28,12 +28,14 @@ export class EditLink extends React.Component {
                 image : "",
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestions: this.props.suggestions,
                 suggestedTitle: [],
                 suggestedLinks: [],
                 tabs: this.props.tabs,
                 currTab: this.props.currTab,
                 newTab: null,
-                allLinks : this.props.allLinks
+                allLinks : this.props.allLinks,
+                suggestions: props.suggestions,
             }
         }
         this.submitForm = this.submitForm.bind(this);
@@ -46,11 +48,12 @@ export class EditLink extends React.Component {
                     name: props.currLink.name,
                     link: props.currLink.link,
                     image: "arrow.png",
-                    defaultImg: props.currLink.image,
+                    defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             } else if (typeof props.currLink.ref !== "undefined") {
                 return {
@@ -62,6 +65,7 @@ export class EditLink extends React.Component {
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             } else {
                 return {
@@ -73,6 +77,7 @@ export class EditLink extends React.Component {
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             }
         }
@@ -88,19 +93,19 @@ export class EditLink extends React.Component {
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
                 })
             } else if (this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/doggo.png"
                 })
             } else {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                 })
             }
             for (var i = 0; i < this.state.allLinks.length; i++) {
@@ -136,11 +141,11 @@ export class EditLink extends React.Component {
             this.setState({suggestedTitle: []})
         if (!isDefault) {
             var count = 0;
-            for (var i = 0; i < suggestions.length; i++) {
-                if (event.target.value.includes(suggestions[i].url)) {
-                    this.setState({defaultImg: suggestions[i].image})
+            for (var i = 0; i < this.state.suggestions.length; i++) {
+                if (event.target.value.includes(this.state.suggestions[i].url)) {
+                    this.setState({defaultImg: this.state.suggestions[i].image})
                     count++;
-                    i = suggestions.length;
+                    i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
@@ -151,7 +156,7 @@ export class EditLink extends React.Component {
             }
             this.setState({
                 link: event.target.value,
-                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, true) : [],
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, true) : [],
             })
         } else {
             document.getElementById("editurl").value = isDefault.url;
@@ -360,9 +365,9 @@ export class EditLink extends React.Component {
 
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg2" className={this.state.image === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
-                            <div className="defaultImg">
-                                <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
-                            </div>
+                        <div className="defaultImg">
+                            <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
+                        </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 

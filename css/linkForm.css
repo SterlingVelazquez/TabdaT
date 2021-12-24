@@ -11,25 +11,26 @@
     width: 300px;
     min-height:530px;
     left: calc(50% - 170px);
-    top: -700px;
+    top: 50%;
     background-color: rgb(246, 247, 253);
-    box-shadow: 0 0 0 rgb(246, 247, 253);
+    box-shadow: 0px 0px 20px rgb(114, 114, 114);
     z-index: 11;
     border-radius: 10px;
-    transition:box-shadow 0.8s ease-in 0.3s, top 0.5s, opacity 0.5s, background-color 1s;
-    transform:scale(1.5);
+    transition:transform 0.5s, opacity 0.5s, background-color 1s;
+    transform:scale(1.45) translateY(-150%);
     opacity:0;
+    pointer-events:none;
     font-family:'Noto Sans JP', sans-serif;
 }
 .addForm.active {
-    top: calc(50% - 265px);
+    pointer-events:all;
+    transform:scale(1.6) translateY(calc(-50% + 104px));
     opacity: 1;
-    box-shadow: 0px 0px 20px rgb(114, 114, 114);
 }
 
 .addForm h1 {
     padding-top:20px;
-    margin-bottom:40px;
+    margin-bottom:10px;
     font-size:30px;
     color:rgb(141, 152, 172);
     letter-spacing:0.5px;
@@ -37,8 +38,8 @@
 }
 
 .selectTab {
-    position:absolute;
-    top:4.5rem;
+    position:relative;
+    top:0;
     left:0;
     width:100%;
 }
@@ -69,16 +70,15 @@
     display:inline-table;
     width:8px;
     height:8px;
-    top:-0.2rem;
-    left:0.7rem;
+    top:-4px;
+    left:12px;
     border-bottom:2px solid rgb(132, 140, 160);
     border-right:2px solid rgb(132, 140, 160);
     transform:rotateZ(45deg);
     transition:0.5s;
 }
 .selectTab.active .selectTabArrow {
-    top:0.05rem;
-    transform:rotateZ(225deg);
+    transform:translateY(5px) rotateZ(225deg);
 }
 .selectTabChosen:hover .selectTabArrow {
     border-bottom:2px solid rgb(91, 120, 146);
@@ -91,12 +91,15 @@
     animation: moveArrowUp 1s linear infinite;
 }
 .selectTabDrop {
+    position:absolute;
     margin:auto;
-    margin-top:0.3rem;
+    margin-top:5px;
+    left:50%; transform:translateX(-50%);
     width:50%;
     white-space:nowrap;
 }
 .selectTabList {
+    position:relative;
     background-color: rgb(246, 250, 255);
     box-shadow: 0 0 10px rgb(216, 237, 255);
     width:100%;
@@ -108,7 +111,9 @@
     overflow-y:auto;
     transition:0.5s;
 }
-.selectTab.active .selectTabList {max-height:150px}
+.selectTab.active .selectTabList {
+    max-height:150px
+}
 .selectTabItem {
     color:rgb(126, 133, 151);
     font-size:16px;
@@ -145,13 +150,20 @@
     right:0px;
     box-shadow:none;
     padding:20px;
-    width:3.4rem;
+    width:54px;
     height:auto;
 }
 .addLinkCancel:hover {
-    width:3.6rem;
+    transform:scale(1.3);
 }
 
+.addForm label {
+    color:rgb(141, 152, 172);
+    margin-left: 2%;
+    float:left;
+    transition:1s;
+    letter-spacing:0.5px;
+}
 .addForm input[type=text] {
     width: 95%;
     padding: 8px;
@@ -162,30 +174,19 @@
     font-size: large;
     color:rgba(86, 95, 110, 0.8);
 }
-
 .addForm input:focus {
     outline:none;
 }
-
 .errMsg {
     position:absolute;
     display:none;
     color:rgb(141, 0, 0);
-    top:5.6rem;
+    top:102px;
     right:0rem;
     width:220px;
     font-size:13px;
     pointer-events:none;
 }
-
-.addForm label {
-    color:rgb(141, 152, 172);
-    margin-left: 2%;
-    float:left;
-    transition:1s;
-    letter-spacing:0.5px;
-}
-
 .suggestionList {
     position:absolute;
     background-color: rgb(246, 247, 253);
@@ -204,7 +205,7 @@
     line-height:40px;
     color:rgb(89, 96, 109);
     border-bottom: thin solid rgba(141, 152, 172, 0.328);
-    padding: 0.4rem 0;
+    padding: 6px 0;
     padding-right:45px;
     width:90%;
     transition:0.5s;
@@ -218,7 +219,6 @@
 .suggestionTitle:focus,
 .suggestionTitle:hover {
     color:rgb(85, 114, 168);
-    letter-spacing:0.5px;
 }
 .suggestionImg {
     position:absolute;
@@ -228,7 +228,7 @@
     width:30px;
     height:30px;
     margin-top:5px;
-    right:0.2rem;
+    right:3px;
 }
 .suggestionTitle:hover .suggestionImg,
 .suggestionLink:hover .suggestionImg {
@@ -285,8 +285,8 @@
 }
 .clearImg {
     position:absolute;
-    margin-left:-2.9rem;
-    margin-top:-1.3rem;
+    margin-left:-42px;
+    margin-top:-21px;
     font-size:14px;
     letter-spacing:0.5px;
     padding:4px;
@@ -348,8 +348,8 @@
     background-color: rgb(246, 247, 253);
     box-shadow: 0 0 10px rgb(246, 247, 253);
     border-radius:10px;
-    margin-left:25rem;
-    margin-top:-6rem;
+    margin-left:390px;
+    margin-top:-95px;
     opacity:0;
     transition:0.5s;
     z-index:-1;
@@ -359,7 +359,7 @@
     opacity:0;
 }
 .previewBox.active {
-    margin-left:21rem;
+    margin-left:335px;
     opacity:1;
 }
 .previewBox.active img {
@@ -380,28 +380,28 @@
 
 @keyframes moveArrow {
     0% {
-        top:-0.2rem;
+        transform:translateY(0) rotateZ(45deg);
     } 25% {
-        top:-0.35rem;
+        transform:translateY(-2px) rotateZ(45deg);
     } 50% {
-        top:-0.2rem;
+        transform:translateY(0) rotateZ(45deg);
     } 75% {
-        top:-0.05rem;
+        transform:translateY(2px) rotateZ(45deg);
     } 100% {
-        top:-0.2rem;
+        transform:translateY(0) rotateZ(45deg);
     }
 }
 
 @keyframes moveArrowUp {
     0% {
-        top:0.05rem;
+        transform:translateY(5px) rotateZ(225deg);
     } 25% {
-        top:-0.1rem;
+        transform:translateY(7px) rotateZ(225deg);
     } 50% {
-        top:0.05rem;
+        transform:translateY(5px) rotateZ(225deg);
     } 75% {
-        top:0.2rem;
+        transform:translateY(3px) rotateZ(225deg);
     } 100% {
-        top:0.05rem;
+        transform:translateY(5px) rotateZ(225deg);
     }
 }
