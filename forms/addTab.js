@@ -5,7 +5,8 @@ export class AddTab extends React.Component {
         super(props);
         this.state = { 
             name : "", 
-            color : "#8D9CB8",
+            color : this.props.preferences.theme ? "#FFFFFF" : this.props.preferences.night ? "#7B7B7B" : "#8D9CB8",
+            defaultColor : this.props.preferences.theme ? "#FFFFFF" : this.props.preferences.night ? "#7B7B7B" : "#8D9CB8",
             user: this.props.isUser,
             tabs: this.props.tabs,
             numTabs: this.props.tabs.length,
@@ -19,6 +20,7 @@ export class AddTab extends React.Component {
     static getDerivedStateFromProps(props) {
         return {
             user : props.isUser,
+            defaultColor : props.preferences.theme ? "#FFFFFF" : props.preferences.night ? "#7B7B7B" : "#8D9CB8",
             tabs: props.tabs,
             numTabs: props.tabs.length,
             displayedTabs: props.displayedTabs,
@@ -78,9 +80,9 @@ export class AddTab extends React.Component {
         this.props.openAddTab();
         window.formOpen = false;
         if (document.getElementById("container").className.includes("night")) {
-            this.setState({color:"#9C9C9C"})
+            this.setState({color:"#7B7B7B"})
         } else if (document.getElementById("container").className.includes("themes")) {
-            this.setState({color:"#EBEBEB"})
+            this.setState({color:"#FFFFFF"})
         } else {
             this.setState({color:"#8D9CB8"})
         }
@@ -89,7 +91,7 @@ export class AddTab extends React.Component {
     render () {
         var isLastIndex = this.state.tabIndex < Math.floor(this.state.numTabs / this.state.displayedTabs);
         return (
-            <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex || this.state.preferences.addTab ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.color}}>
+            <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex || this.state.preferences.addTab ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.defaultColor}}>
                 <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}></img>
                 <form className="addTabForm" id="addtabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>
