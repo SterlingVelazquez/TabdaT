@@ -1,57 +1,65 @@
 .profileWrapper {
     position:fixed;
-    top:20px;
-    right:20px;
-    transition:top 0.4s ease-in 0.1s, right 0.4s ease-out;
+    top:30px;
+    right:30px;
+    height:80px;
+    width:80px;
+    transition:top 0.4s ease-in 0.1s, right 0.4s ease-out, height 0.8s, width 0.8s;
     z-index:7;
-    animation:profileFade 5s;
     border-radius:30px;
 }
 .profileWrapper.active {
-    top:10px;
-    right:10px;
+    top:25px;
+    right:30px;
+    width:270px;
+    height:240px;
 }
 .profileWrapper.contact {
+    top:50px;
+    right:10px;
+    height:364px;
+    width:406px;
+}
+.profileWrapper.shortcut {
     top:30px;
-    right:0px;
+    right:30px;
+    height:378px;
+    width:336px;
 }
 
 .profileRelative {
     position:relative;
-    width:50px;
-    height:50px;
-    border-radius:30px;
-    background:rgb(252, 253, 255);
+    width:100%;
+    height:100%;
+    border-radius:38px;
+    background:rgb(232, 238, 247);
     box-shadow:0 0 0px lightgray;
-    transform: rotateY(0deg);
+    transform: rotateY(0deg) rotateZ(0deg) scale(1);
     transform-style: preserve-3d;
     transition:height 0.4s ease-in 0.1s, width 0.4s ease-out,
         box-shadow 1s ease-out, background-color 0.8s, transform 0.8s;
 }
 .profileWrapper.active .profileRelative {
-    width:180px;
-    height:160px;
-    box-shadow: 0 0 5px rgb(93, 93, 93);
+    box-shadow: 7px 7px 7px rgb(200,212,229), -7px -7px 7px rgb(255, 255, 255);
 }
 .profileWrapper.contact .profileRelative {
     transform: rotateY(180deg) rotateZ(90deg);
-    height:260px;
-    width:290px;
-}
-.profileWrapper.contact .shortcutDiv {
-    display:none;
 }
 .profileWrapper.shortcut .profileRelative {
     transform: rotateY(180deg);
-    height:270px;
-    width:240px;
 }
-.profileWrapper.shortcut .contactDiv {
+.profileWrapper.contact .shortcutDiv, .profileWrapper.shortcut .contactDiv {
     display:none;
 }
 .profileWrapper.contact .profileIcon,
 .profileWrapper.shortcut .profileIcon {
     opacity:0;
+}
+.profileWrapper.contact .profileOption, .profileWrapper.shortcut .profileOption,
+.profileWrapper.contact .profilePic, .profileWrapper.shortcut .profilePic,
+.profileWrapper.contact #signouttext, .profileWrapper.shortcut #signouttext,
+.profileWrapper.contact .profileDiv, .profileWrapper.shortcut .profileDiv {
+    pointer-events:none;
 }
 
 .profileDiv {
@@ -61,7 +69,7 @@
     overflow:hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border-radius:30px;
+    border-radius:38px;
     transition:0.8s;
 }
 .profilePic {
@@ -69,36 +77,33 @@
     top:0px;
     right:0px;
     z-index:5;
-    border-radius:30px;
+    border-radius:100px;
     box-shadow:none;
-    width:50px;
-    height:auto;
+    width:80px; height:auto;
     margin:0;
     box-shadow:0 0 0px lightgray;
-    filter:contrast(0.4);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    filter:contrast(0.4) sepia(100%) hue-rotate(180deg) brightness(1.5);
     transition: 0.4s;
 }
-.profilePic:hover {
-    transform:scale(1.1);
-}
 .profileWrapper.active .profilePic {
-    top:10px;
-    right:10px;
+    top:12px;
+    right:12px;
 }
 .profilePic.active {
-    filter:contrast(1);
+    filter:none;
     box-shadow: 0 0 5px lightgray;
 }
 
 .signInText {
     position:fixed;
-    text-align:center;
-    height:32px; width:80px;
-    padding:5px;
-    top:4px; left:-80px;
-    color:rgb(112, 112, 112);
-    font-size:14px;
+    padding:10px;
+    top:10px; left:-120px;
+    color: rgb(126, 143, 173);
+    font-size:22px;
     cursor:pointer;
+    white-space:nowrap;
     transition:0.4s;
     opacity:0;
     pointer-events:none;
@@ -108,16 +113,21 @@
     right:70px;
     pointer-events:all;
 }
+.profileDiv:hover .signInText {
+    letter-spacing:1.5px;
+}
 .signOutText {
-    text-align:center;
-    margin:18px 0 0 11px;
-    height:32px; width:80px;
+    position:relative;
+    text-align:left;
+    white-space:nowrap;
+    margin:30px 0 0 25px;
     padding:5px;
     color:rgb(122, 103, 103);
-    font-size:14px;
+    font-size:20px;
     cursor:pointer;
     opacity:0;
     transition:opacity 0.4s, color 0.8s;
+    letter-spacing:1px;
     pointer-events:none;
 }
 .profileWrapper.active .signOutText {
@@ -129,7 +139,7 @@
     width:100%;
     height:200px;
     list-style: none;
-    margin-top:15px;
+    margin:36px 0 0 10px;
     white-space: nowrap;
     opacity:0;
     transition:0.4s;
@@ -141,34 +151,38 @@
 }
 .profileOption {
     width:100%;
-    height:40px;
+    height:55px;
     padding:10px 0 10px 18px;
     text-align:left;
     cursor:pointer;
-    transition:0.3s;
+    transition:transform 0.3s;
+    transform:scale(1);
     transform-origin: 0;
 }
 .profileOption:hover {
     transform:scale(1.05);
 }
 .profileIcon {
-    height:100%;
+    height:30px;
     padding:0.5% 0;
     box-shadow:none;
-    filter:contrast(0%) brightness(1.2);
+    filter:contrast(0) sepia(100%) hue-rotate(180deg);
     border-radius:0;
+    transition:opacity 0.5s;
 }
 .profileIcon:nth-child(1) {
-    width:24px;
+    width:40px;
 }
 .profileText {
     display:inline-block;
-    width:80px;
     height:auto; margin:auto;
-    color:rgb(136, 136, 136);
-    transition:0.8s;
+    color:rgb(132, 143, 163);
+    font-size:20px;
+    transform:translateY(-7px);
+    transition:color 0.8s;
     text-align:left;
-    margin-left:8px;
+    margin-left:20px;
+    overflow:visible;
 }
 
 .contactDiv {
@@ -176,7 +190,7 @@
     display:block;
     width:100%;
     height:100%;
-    margin:10px;
+    margin:14px;
     overflow:hidden;
     transform:rotateY(180deg);
     opacity:0;
@@ -192,22 +206,24 @@
 .contactText {
     position:relative;
     height:auto;
-    margin-top:112px;
-    margin-left:125px;
+    margin:152px 0 0 175px;
+    padding:0 9px;
     width:90%;
-    font-size:14px;
+    font-size:20px;
     font-weight:500;
     text-align:left;
     transform:rotate(90deg);
     opacity: 1;
     pointer-events: all;
+    color: rgb(93, 104, 126);
+    white-space:nowrap;
     transition:opacity 0.3s, color 0.8s;
 }
 .contactForm {
     position:relative;
     transform:rotate(90deg);
-    margin-left:-50px;
-    margin-top:-83px;
+    margin-left:-70px;
+    margin-top:-108px;
     opacity: 1;
     pointer-events: all;
     transition:0.3s;
@@ -223,24 +239,25 @@
     height:auto;
     margin:0;
     text-align:left;
-    font-size:13px;
-    color:rgb(119, 119, 119);
+    font-size:18px;
+    color: rgb(119, 131, 153);
     transition:0.8s;
 }
 .contactEmail {
     position:relative;
-    border-bottom:thin solid rgb(119, 119, 119);
-    margin: 5px 0 15px -109px;
-    width:215px;
-    color: rgb(52, 56, 63);
+    border-bottom:thin solid rgb(127, 139, 163);
+    font-size:19px;
+    margin: 9px 0 21px -152px;
+    width:301px;
+    color: rgb(88, 98, 119);
     transition:0.8s;
 }
 .emailError {
     position:absolute;
-    font-size:12px;
+    font-size:17px;
     color:rgb(139, 98, 98);
-    right:80px;
-    top:40px;
+    right:168px;
+    top:63px;
     opacity:0;
     transition:opacity 0.2s, color 0.8s;
 }
@@ -249,22 +266,24 @@
 }
 .contactMessage {
     position:relative;
-    border:thin solid rgb(83, 83, 83);
+    border:thin solid rgb(127, 139, 163);
     height:auto;
-    width:215px;
-    height:70px;
-    margin: 10px 109px 0 0;
+    width:301px;
+    height:98px;
+    margin: 14px 152px 0 0;
+    font-size:18px;
     resize: none;
-    border-radius:5px;
-    padding: 5px; 
-    color: rgb(52, 56, 63);
+    border-radius:7px;
+    padding: 7px;
+    color: rgb(112, 121, 136);
     transition:0.8s;
 }
 .contactButton {
     position:relative;
-    padding: 12px;
-    right:9px;
-    color:rgb(119, 119, 119);
+    padding: 18px;
+    right:15px;
+    font-size:21px;
+    color: rgb(93, 104, 126);
     cursor:pointer;
     transition:transform 0.3s, color 0.8s, opacity 0.3s;
     opacity: 1;
@@ -282,124 +301,119 @@
 }
 .submitContactDiv {
     position:absolute;
-    top: 20px; left: 48px;
-    width:220px;
-    height:200px;
+    top: 28px; left: 67px;
+    width:308px;
+    height:280px;
     transform:rotateZ(90deg);
     pointer-events:none;
 }
 .contactCheck {
-    position:relative;
-    display:inline-table;
-    width:25px;
-    height:48px;
-    margin-right:10px;
-    transform:rotateZ(35deg);
-    border-bottom:8px solid rgb(63, 80, 117);
-    border-right: 8px solid rgb(63, 80, 117);
-    left:-25%; top:30%;
-    z-index:100;
-    animation: contactCheckPulse 2s;
+    position:absolute;
     display:none;
+    width:70px; height:50px;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    transform-origin:0% 0%;
+    filter:saturate(300%) brightness(0.45);
+    animation: contactCheckPulse 2s;
     transition:0.8s;
 }
-.contactCheck.active {
-    display:inline-table;
+.submitContactDiv.active .contactCheck {
+    display:block;
+    transform:translate(-180%, -50%);
 }
 .contactCheckEffects {
     position:absolute;
-    width:130px; height:130px;
+    width:182px; height:182px;
     border-radius:100%;
     left:20%; top:11%;
 }
 .contactCheckLine {
     position:absolute;
-    height:1px; width:1px;
+    height:1.5px; width:1.5px;
     background:black;
-    border-bottom:15px solid  rgb(42, 42, 42);
+    border-bottom:21px solid  rgb(63, 80, 117);
     display:none;
     transition:0.8s;
 }
-.contactCheckLine.active {
+.submitContactDiv.active .contactCheckLine {
     display:block;
 }
 .contactCheckLine:nth-child(1) {
-    top:5%; left:30%;
+    top:12%; left:30%;
     transform:rotateZ(-22.5deg) scaleY(0);
     animation: contactCheckLine1 2s;
 }
 .contactCheckLine:nth-child(2) {
-    top:5%; left:70%;
+    top:15%; left:70%;
     transform:rotateZ(22.5deg) scaleY(0);
     animation: contactCheckLine2 2s;
 }
 .contactCheckLine:nth-child(3) {
-    top:28%; left:8%;
+    top:38%; left:8%;
     transform:rotateZ(-67.5deg) scaleY(0);
     animation: contactCheckLine3 2s;
 }
 .contactCheckLine:nth-child(4) {
-    top:28%; left:92%;
+    top:38%; left:92%;
     transform:rotateZ(67.5deg) scaleY(0);
     animation: contactCheckLine4 2s;
 }
 .contactCheckLine:nth-child(5) {
-    top:62%; left:10%;
+    top:72%; left:10%;
     transform:rotateZ(-112.5deg) scaleY(0);
     animation: contactCheckLine5 2s;
 }
 .contactCheckLine:nth-child(6) {
-    top:62%; left:90%;
+    top:72%; left:90%;
     transform:rotateZ(112.5deg) scaleY(0);
     animation: contactCheckLine6 2s;
 }
 .contactCheckLine:nth-child(7) {
-    top:83%; left:30%;
+    top:93%; left:30%;
     transform:rotateZ(-157.5deg) scaleY(0);
     animation: contactCheckLine7 2s;
 }
 .contactCheckLine:nth-child(8) {
-    top:83%; left:70%;
+    top:93%; left:70%;
     transform:rotateZ(157.5deg) scaleY(0);
     animation: contactCheckLine8 2s;
 }
 .submitContactText {
-    position:relative;
-    display:inline-table;
-    height:auto; width:120px;
-    margin:0;
-    padding:0;
-    font-size:18px;
+    position:absolute;
+    width:100%;
+    font-size:25px;
     color:rgb(63, 80, 117);
-    margin-bottom:20px;
-    top:30px; left:80px;
+    top:50%; left:50%;
+    transform:translate(-35%, -50%);
     animation: submitContactTextFade 2s;
     display:none;
     transition:0.8s;
 }
-.submitContactText.active {
+.submitContactDiv.active .submitContactText {
     display:block;
 }
 .afterContactText {
-    position:relative;
-    height:auto; width:auto;
-    margin:0;
-    padding:0;
-    top:50px;
+    position:absolute;
+    top:80%; left:50%;
+    width:100%;
+    transform:translateX(-50%);
+    font-size:20px;
     animation:afterContactTextFade 3.5s;
     display:none;
+    color:rgb(118, 132, 158);
     transition:0.8s;
 }
-.afterContactText.active {
+.submitContactDiv.active .afterContactText {
     display:block;
 }
 .submitContactCancel {
     position:absolute;
-    top:-40px;
-    right:-20px;
+    top:-56px;
+    right:-28px;
     box-shadow:none;
-    padding:20px;
-    width:3.6rem;
+    padding:28px;
+    width:5rem;
     height:auto;
     cursor:pointer;
     display:none;
@@ -407,9 +421,9 @@
     animation:afterContactTextFade 3.5s;
 }
 .submitContactCancel:hover {
-    width:3.6rem;
+    transform:scale(1.3);
 }
-.submitContactCancel.active {
+.submitContactDiv.active .submitContactCancel {
     display:block;
     pointer-events:all;
 }
@@ -425,8 +439,8 @@
     display:none;
     top:42%;
     left:43%;
-    width:40px;
-    height:40px;
+    width:56px;
+    height:56px;
     transform-origin:33% 33%;
     grid-template-columns:1fr 1fr;
     animation: loader 2s infinite;
@@ -459,119 +473,139 @@
     pointer-events:all;
 }
 .shortcutHeader {
-    position:fixed;
+    position:relative;
     width:100%;
-    height:120px;
+    height:63px;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
+    transition:color 0.8s;
 }
 .shortcutHeaderText {
     position:absolute;
     margin:0; padding:0;
     width:auto; height:auto;
-    top:18px; left:20px;
-    font-size:18px;
-    transition:0.8s;
+    top:26px; left:28px;
+    font-size:25px;
+    transition:color 0.8s;
+    color: rgb(93, 104, 126);
 }
 .shortcutCancel {
     position:absolute;
-    top:-4px;
-    right:-4px;
+    top:-6px;
+    right:-6px;
     box-shadow:none;
-    padding:22px;
-    width:3.6rem;
+    padding:31px;
+    width:5rem;
     height:auto;
     cursor:pointer;
 }
 .shortcutContainer {
     position:absolute;
-    left:10px;
+    left:14px;
     width:100%;
-    height:205px;
+    height:286px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     display:grid;
     grid-template-columns: 23% 77%;
-    top:65px;
     overflow-y:scroll;
+}
+.shortcutContainerShadow {
+    position:fixed;
+    top:63px; left:0;
+    width:90%; height:39px;
+    background:linear-gradient(to bottom,rgb(232,238,247),rgba(232, 238, 247, 0));
+}
+#shortcutBottom {
+    top:auto; bottom:24px; left:2px;
+    height:28px;
+    border-bottom-left-radius: 25px;
+    background:linear-gradient(to top,rgb(232,238,247),rgba(232, 238, 247, 0));
 }
 .keyboardList {
     text-align:right;
     list-style: none;
+    margin-top:28px;
 }
 .keyboard {
-    margin-bottom:10.8px;
-    font-size:14px;
+    margin-bottom:15px;
+    font-size:19px;
 }
 .shortcutList {
     list-style: none;
     text-align:left;
-    margin-left:15px;
+    margin:28px 0 0 22px;
 }
 .shortcut {
     margin:0; padding: 0;
     height: auto;
-    margin:3px 0 14.8px 0;
-    font-size:12px;
-    color:rgb(73, 73, 73);
+    margin:4px 0 22px 0;
+    font-size:16px;
+    color:rgb(118, 132, 158);
     transition:0.8s;
     font-family:'Noto Sans JP', sans-serif;
 }
 kbd {
     background-color: #eee;
     border-radius: 3px;
-    border: 1px solid #b4b4b4;
+    border: 1.5px solid #b4b4b4;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
-    color: #333;
+    color: rgb(84, 99, 124);
     display: inline-block;
-    font-size: .85em;
+    font-size: 0.85em;
     font-weight: 700;
     line-height: 1;
-    padding: 2px 4px;
+    margin-bottom:1.3px;
+    padding: 3px 5px;
     white-space: nowrap;
     transition:0.8s;
 }
-
-@keyframes profileFade {
-    0% {
-      opacity:0;
-      pointer-events:none;
-    } 52% {
-      opacity:0;
-      pointer-events:none;
-    } 100% {
-      opacity:1;
-      pointer-events:all;
-    }
+#altkeyshortcut {
+    margin-top:17px;
+}
+.shortcutContainer::-webkit-scrollbar {
+    width:63px; 
+    border-radius:50px;
+    background:none;
+}
+.shortcutContainer::-webkit-scrollbar-track {
+    background:none;
+    border: 24px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: rgb(196, 211, 233);
+}
+.shortcutContainer::-webkit-scrollbar-thumb {
+    border: 28px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: white;
 }
 
 @keyframes contactCheckPulse {
     0% {
-        transform:scale(0) rotateZ(35deg);
-        left:2%;
+        transform:scale(0) translate(-50%, -50%);
     } 30% {
-        transform:scale(1.3) rotateZ(35deg);
-        left:2%;
+        transform:scale(1.3) translate(-50%, -50%);
     } 40% {
-        transform:scale(1) rotateZ(35deg);
-        left:2%;
+        transform:scale(1) translate(-50%, -50%);
     } 45% {
-        left:2%
+        transform:scale(1) translate(-50%, -50%);
     } 100% {
-        left:-26%;
+        transform:scale(1) translate(-180%, -50%);
     }
 }
 
 @keyframes submitContactTextFade {
     0% {
         opacity: 0;
-        left:10px;
+        transform:translate(-55%, -50%);
     } 65% {
         opacity: 0;
-        left:10px;
+        transform:translate(-55%, -50%);
     } 100% {
         opacity: 1;
-        left:80px;
+        transform:translate(-35%, -50%);
     }
 }
 

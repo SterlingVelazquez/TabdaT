@@ -39,604 +39,551 @@
     transform:translateX(-40%);
   }
 
-  .container.focus {
-    background:rgb(14, 14, 14);
+  .container.night {
+    background:rgb(19, 19, 19);
+  }
+  .container.night p {
+    color:rgb(204, 204, 204);
+  }
+  .container.night ::-webkit-scrollbar-track {
+    background-color: rgb(54, 54, 54);
+  }
+  .container.night ::-webkit-scrollbar-thumb {
+    background-color: rgb(20, 20, 20);
   }
 
-  .container.focus ::-webkit-scrollbar-track {
-    background:rgb(68, 68, 68);
+  .container.night .title {
+    background:rgb(19, 19, 19);
   }
-  .container.focus ::-webkit-scrollbar-thumb {
-    background:linear-gradient(rgb(100, 100, 100) 0%, rgb(165, 165, 165) 100%);
-  }
-
-  .container.focus .letter {
+  .container.night .letter {
     color:rgb(219, 219, 219);
     text-shadow:0px 0px 3px rgb(219, 219, 219);
   }
 
-  .container.focus .profileRelative {
-    background:rgb(31, 31, 31);
+  .container.night .profileRelative {
+    background:rgb(19, 19, 19);
+    box-shadow: 0px 0px 0px rgb(32, 32, 32), 0px 0px 0px rgb(0, 0, 0);
   }
-  .container.focus .profileWrapper.active .profileRelative {
+  .container.night .profileWrapper.active .profileRelative {
+    box-shadow: 5px 5px 7px rgb(32, 32, 32), -5px -5px 7px rgb(0, 0, 0);
+  }
+  .container.night .profilePic.active {
     box-shadow: 0 0 5px rgb(0, 0, 0);
   }
-  .container.focus .profileDiv {
+  .container.night .signOutText {
+    color:rgb(175, 136, 136);
+  }
+  .container.night .profileIcon {
+    filter:contrast(0);
+  }
+
+  .container.night .contactEmail {
+    border-bottom:thin solid rgb(204, 204, 204);
+    color:rgb(204, 204, 204);
+  }
+  .container.night .emailError {
+    color:rgb(175, 136, 136);
+  }
+  .container.night .contactMessage {
+    border:thin solid rgb(204, 204, 204);
+  }
+  .container.night .contactButton {
+    color:rgb(204, 204, 204);
+  }
+  .container.night .contactButton:nth-child(8) {
+    color:rgb(175, 136, 136);
+  }
+  .container.night .contactCheck {
+    filter:grayscale(100%) brightness(1.25);
+  }
+  .container.night .contactCheckLine {
+    border-bottom:15px solid  rgb(204, 204, 204);
+  }
+  .container.night .submitContactCancel {
+    filter:contrast(0);
+  }
+  .container.night .afterContactText {
+    color: rgb(151, 151, 151);
+  }
+
+  .container.night .shortcut {
+    color:rgb(197, 197, 197);
+  }
+  .container.night kbd {
+    background-color: rgb(26, 26, 26);
+    border: 1.5px solid #4d4d4d;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 0 0 rgba(0, 0, 0, 0.7) inset;
+    color: rgb(221, 221, 221);
+  }
+  .container.night .shortcutCancel {
+    filter:contrast(0);
+  }
+  .container.night .shortcutContainerShadow {
+    background:linear-gradient(to bottom,rgb(19, 19, 19),rgba(19, 19, 19, 0));
+  }
+  .container.night #shortcutBottom {
+    background:linear-gradient(to top,rgb(19, 19, 19),rgba(19, 19, 19, 0));
+  }
+  
+  .container.night .navBar {
     background-color:rgb(31, 31, 31);
     box-shadow:0px 0px 0px rgb(0, 0, 0);
   }
-  .container.focus .profileDiv.active {
-    box-shadow:0px 0px 8px rgb(0, 0, 0);
+  .container.night .navBar.active {
+    left:0px;
+    box-shadow:3px 0px 5px rgb(0, 0, 0);
   }
-  .container.focus .profilePic.active {
-    box-shadow: 0 0 5px rgb(0, 0, 0);
-  }
-  .container.focus .signOutText {
-    color:rgb(175, 136, 136);
-    text-shadow:0 0 5px black;
-  }
-  .container.focus .profileText {
-    color:rgb(204, 204, 204);
-  }
-  .container.focus .contactEmail {
-    border-bottom:thin solid rgb(204, 204, 204);
-    color: rgb(173, 183, 199);
-  }
-  .container.focus .emailError {
-    color:rgb(175, 136, 136);
-  }
-  .container.focus .contactMessage {
-    border:thin solid rgb(204, 204, 204);
-    color: rgb(173, 183, 199);
-  }
-  .container.focus .contactButton {
-    color:rgb(204, 204, 204);
-  }
-  .container.focus .contactButton:nth-child(8) {
-    color:rgb(175, 136, 136);
-  }
-  .container.focus .contactCheck {
-    border-bottom:8px solid rgb(111, 125, 156);
-    border-right: 8px solid rgb(111, 125, 156);
-  }
-  .container.focus .contactCheckLine {
-    border-bottom:15px solid  rgb(111, 125, 156);
-  }
-  .container.focus .submitContactText {
-    color:rgb(187, 194, 207);
-  }
-  .container.focus  .shortcut {
-      color:rgb(197, 197, 197);
-  }
-  .container.focus kbd {
-      background-color: rgb(26, 26, 26);
-      border: 1px solid #4d4d4d;
-      box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 0 0 rgba(0, 0, 0, 0.7) inset;
-      color: rgb(221, 221, 221);
-  }
-
-  .container.focus .navBar {
+  .container.night .baseNavBar {
     background-color:rgb(31, 31, 31);
     box-shadow:0px 0px 0px rgb(95, 95, 95);
   }
-  .container.focus .navBar.active {
+  .container.night .baseNavBar.active {
     left:0px;
     box-shadow:3px 0px 5px rgb(95, 95, 95);
   }
-  .container.focus .baseNavBar {
-    background-color:rgb(31, 31, 31);
-    box-shadow:0px 0px 0px rgb(95, 95, 95);
+  .container.night .importText {
+    color:rgb(204, 204, 204);
   }
-  .container.focus .baseNavBar.active {
-    left:0px;
-    box-shadow:3px 0px 5px rgb(95, 95, 95);
-  }
-  .container.focus .importImage {
+  .container.night .importImage {
     filter:brightness(115%);
   }
-  .container.focus .sideContainerHeader {
+  .container.night .sideContainerHeader {
     text-shadow:0 0 1px rgb(199, 199, 199);
   }
-  .container.focus .sideMenuBtn {
-    background-color:rgb(14, 14, 14);
+  .container.night .sideMenuBtn {
+    background:rgb(19, 19, 19);
   }
-  .container.focus .sideMenuBtn.active {
-    background-color:rgb(31, 31, 31);
+  .container.night .sideMenuBtn.active {
+    background:rgb(31, 31, 31);
   }
-  .container.focus .switchContainer {
+  .container.night .switchContainer {
     background-color:rgb(78, 78, 78);
     box-shadow:0px 0px 10px rgb(78, 78, 78);
   }
-  .container.focus .switch {
+  .container.night .switch {
     background-color:rgb(226, 226, 226);
   }
-  .container.focus .switchContainer.active {
+  .container.night .switchContainer.active {
     background-color:rgb(61, 61, 61);
     box-shadow:0px 0px 0px rgb(61, 61, 61);
   }
-  .container.focus .switchContainer.active .switch {
+  .container.night .switchContainer.active .switch {
     background-color:rgb(204, 204, 204);
+  } 
+
+  .container.night .sideContainer.active #sidecontainerheader1 .sideHeader, .container.night #sidecontainerheader1:hover .sideHeader {
+    color: rgb(149, 213, 218);
+    text-shadow: 0 0 4px rgb(149, 213, 218);
+  }
+  .container.night .sideContainer.active #sidecontainerheader2 .sideHeader, .container.night #sidecontainerheader2:hover .sideHeader {
+    color: rgb(152, 120, 152);
+    text-shadow: 0 0 4px rgb(152, 120, 152);
+  }
+  .container.night .sideContainer.active #sidecontainerheader3 .sideHeader, .container.night #sidecontainerheader3:hover .sideHeader {
+    color: rgb(167, 223, 188);
+    text-shadow: 0 0 4px rgb(167, 223, 188);
+  }
+  .container.night .sideContainer.active #sidecontainerheader4 .sideHeader, .container.night #sidecontainerheader4:hover .sideHeader {
+    color: rgb(207, 197, 152);
+    text-shadow: 0 0 4px rgb(207, 197, 152);
   }
 
-  .container.focus .sideContainer.active .optionImage1 {
-    filter:sepia(100%) hue-rotate(140deg) drop-shadow(0 0 2px rgb(149, 213, 218));
+  .container.night .sideContainer.active #optionimage1 {
+    filter:brightness(1) sepia(100%) hue-rotate(140deg) drop-shadow(0 0 2px rgb(149, 213, 218));
   }
-  .container.focus .sideContainer.active .optionImage2 {
-    filter:sepia(100%) hue-rotate(250deg) drop-shadow(0 0 2px rgb(128, 106, 136));
+  .container.night .sideContainer.active #optionimage2 {
+    filter:brightness(1) sepia(100%) hue-rotate(250deg) drop-shadow(0 0 2px rgb(128, 106, 136));
   }
-  .container.focus .sideContainer.active .optionImage3 {
-    filter:sepia(100%) hue-rotate(100deg) drop-shadow(0 0 2px rgb(167, 223, 188));
+  .container.night .sideContainer.active #optionimage3 {
+    filter:brightness(1) sepia(100%) hue-rotate(100deg) drop-shadow(0 0 2px rgb(167, 223, 188));
   }
-  .container.focus .sideContainer.active .optionImage4 {
-    filter:sepia(100%) drop-shadow(0 0 2px rgb(207, 197, 152));
-  }
-
-  .container.focus .sideContainer.active .optionDecor1 {
-    filter: drop-shadow(0 0 5px rgb(149, 213, 218));
-  }
-  .container.focus .sideContainer.active .optionDecor2 {
-    filter: drop-shadow(0 0 5px rgb(128, 106, 136));
-  }
-  .container.focus .sideContainer.active .optionDecor3 {
-    filter: drop-shadow(0 0 5px rgb(167, 223, 188));
-  }
-  .container.focus .sideContainer.active .optionDecor4 {
-    filter: drop-shadow(0 0 5px rgb(207, 197, 152));
+  .container.night .sideContainer.active #optionimage4 {
+    filter:brightness(1) sepia(100%) hue-rotate(0deg) drop-shadow(0 0 2px rgb(207, 197, 152));
   }
 
-  .container.focus .colorViewer {
+  .container.night .sideContainer.active #optiondecor1 {
+    box-shadow:0 0 5px rgb(149, 213, 218);
+  }
+  .container.night .sideContainer.active #optiondecor2 {
+    box-shadow:0 0 5px rgb(128, 106, 136);
+  }
+  .container.night .sideContainer.active #optiondecor3 {
+    box-shadow:0 0 5px rgb(167, 223, 188);
+  }
+  .container.night .sideContainer.active #optiondecor4 {
+    box-shadow:0 0 5px rgb(207, 197, 152);
+  }
+
+  .container.night .colorViewer {
     border: thin solid rgb(109, 109, 109);
   }
-  .container.focus .customColorPicker {
+  .container.night .customColorPicker {
     background-color:rgb(49, 49, 49);
     box-shadow:0px 0px 10px rgb(49, 49, 49);
   }
-  .container.focus .defaultColor:hover,
-  .container.focus .previewColor:hover {
+  .container.night .defaultColor:hover,
+  .container.night .previewColor:hover {
     color:rgb(173, 173, 173);
   }
-  .container.focus .swatch {
+  .container.night .swatch {
     border:thin solid rgb(92, 92, 92);
   }
-  .container.focus .colorInputLabel {
+  .container.night .colorInputLabel {
     background:rgb(70, 70, 70);
     box-shadow:inset 0 0 5px rgb(59, 59, 59);
   }
-  .container.focus .hashTag {
+  .container.night .hashTag {
     color:rgb(213, 215, 219);
   }
-  .container.focus .colorInput {
+  .container.night .colorInput {
     border: thin solid rgb(51, 51, 51);
     background:rgb(73, 73, 73);
     color: rgb(211, 211, 211);
   }
 
-  .container.focus .brightnessSlider,
-  .container.focus .hueSlider {
+  .container.night .brightnessSlider,
+  .container.night .hueSlider {
     border:thin solid rgb(77, 77, 77);
   }
-  .container.focus .colorTester {
+  .container.night .colorTester {
     border:thin solid rgb(68, 68, 68);
     box-shadow:0 0 10px rgb(90, 90, 90);
   }
 
-  .container.focus .sizeSlider {
+  .container.night .sizeSlider {
     background:linear-gradient(to right, rgb(231, 246, 248) 0%, rgb(189, 189, 189) 50%, rgb(87, 87, 87) 100%);
   }
-  .container.focus .sizeSlider::-webkit-slider-thumb {
+  .container.night .sizeSlider::-webkit-slider-thumb {
     background: radial-gradient(rgb(231, 246, 248) 0%, rgb(158, 231, 144) 100%);
     border: thin solid rgb(65, 65, 65);
     box-shadow:0 0 10px rgb(158, 231, 144);
   }
-  .container.focus .sliderNumber {
+  .container.night .sliderNumber {
     color: rgb(175, 175, 175);
   }
 
-  .container.focus .themeGrid {
+  .container.night .themeGrid {
     box-shadow:0 0 10px rgb(44, 44, 44);
   }
-  .container.focus .themeImage {
+  .container.night .themeImage {
     box-shadow:0 0 10px rgb(88, 88, 88);
   }
-  .container.focus .themeSelect {
+  .container.night .themeSelect {
     border:1px solid rgb(90, 90, 90);
   }
-
-  .container.focus .saveBtn {
-    background:rgb(46, 46, 46);
-    box-shadow:0px 0px 7px rgb(46, 46, 46);
+  .container.night .themeContainer.active .themeSelectText {
+    color: rgb(113, 154, 207);
   }
-  .container.focus .saveBox:hover .saveBtn {
-    background:rgb(66, 66, 66);
+  .container.night .themeGrid::-webkit-scrollbar-track {
+    background: rgb(119, 119, 119);
   }
-  .container.focus .saveText {
-    color:rgb(204, 204, 204);
-    background-color:rgb(14, 14, 14);
-  }
-  .container.focus .saveImg {
-    filter:brightness(175%) grayscale(200%);
+  .container.night .themeGrid::-webkit-scrollbar-thumb {
+    background: rgb(20, 20, 20);
   }
 
-  .container.focus .saveConfirm {
+  .container.night .saveBox, .container.night .resetPreferences  {
+    box-shadow: 2px 2px 7px rgb(8, 8, 8), -2px -2px 7px rgb(34, 34, 34);
+  }
+  .container.night .saveBox:hover .saveText, .container.night .resetPreferences:hover {
+    color: rgb(134, 174, 207);
+  }
+
+  .container.night .saveConfirm {
     background-color: rgb(41, 41, 41);
     box-shadow: 0 0 10px rgb(49, 49, 49);
     border:2px solid rgb(29, 29, 29);
   }
-  .container.focus .saveConfirmBtn:nth-child(2):hover {
+  .container.night .saveConfirmBtn:nth-child(2):hover {
     background-color:rgb(73, 59, 59);
   }
-  .container.focus .saveConfirmBtn:nth-child(3):hover {
+  .container.night .saveConfirmBtn:nth-child(3):hover {
     background-color:rgb(44, 54, 44);
   }
-  .container.focus .saveConfirmBtn:nth-child(3) {
+  .container.night .saveConfirmBtn:nth-child(3) {
     border-left:thin solid rgb(67, 69, 73);
   }
   
-  .container.focus .sideNightContainer {
+  .container.night .sideNightContainer {
     background-color:rgb(31, 31, 31);
     box-shadow:0px 0px 30px -25px lightgray;
   }
 
-  .container.focus .searchBar {
+  .container.night .hotbar {
+    box-shadow: 5px 5px 7px rgb(32, 32, 32), -5px -5px 7px rgb(0, 0, 0);
+  }
+  .container.night .hotbarIcon {
+    filter:brightness(2) opacity(0.5);
+  }
+  .container.night .hotbarIconTooltip {
+    color:rgb(255, 255, 255);  
+  }
+  .container.night .hotbarLink {
+    box-shadow: 4px 4px 5px rgb(0, 0, 0);
+  }
+
+  .container.night .searchBar {
     color: rgb(194, 194, 194);
-    background-color:rgb(51, 51, 51);
-    box-shadow:3px 3px 20px rgb(0, 0, 0);
+    box-shadow: 5px 5px 7px rgb(32, 32, 32), -5px -5px 7px rgb(0, 0, 0);
   }
-  .container.focus .searchBar:focus {
-    box-shadow:0px 0px 10px rgb(59, 59, 59);
-  }
-
-  .container.focus .searchBar:focus .buttonNav {
-    background-color:black;
+  .container.night .searchBar:focus {
+    box-shadow: 5px 5px 7px rgb(0, 0, 0), -5px -5px 7px rgb(32, 32, 32);
   }
 
-  .container.focus ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  .container.night ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgb(156, 156, 156);
     opacity: 1; /* Firefox */
   }
-  
-  .container.focus :-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: rgb(194, 194, 194);
+  .container.night :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(156, 156, 156);
+  }
+  .container.night ::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(156, 156, 156);
   }
 
-  .container.focus ::-ms-input-placeholder { /* Microsoft Edge */
-    color: rgb(194, 194, 194);
+  .container.night .dropTabBox {
+    background:linear-gradient(to right, rgb(19, 19, 19) 0%,rgb(46, 46, 46) 100%);
   }
-
-  .container.focus .navBtns {
-    text-shadow:0 0 3px black;
-  }
-
-  .container.focus .navBtnBottom {
-    box-shadow: 0px -6px 15px rgb(255, 255, 255);
-  }
-
-  .container.focus img {
-    box-shadow:none;
-  }
-  .container.focus .linkNames {
-    text-shadow: 0 0 3px rgb(14, 14, 14);
-  }
-
-  .container.focus .dropTabBox {
-    background:linear-gradient(to right, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%);
-  }
-  .container.focus .dropTabText {
+  .container.night .dropTabText {
     color: rgb(168, 168, 168);
   }
-  .container.focus .dropLinkBox {
-    background:linear-gradient(to right, rgb(14, 14, 14) 0%,rgb(37, 37, 37) 100%);
+  .container.night .dropLinkBox {
+    background:linear-gradient(to right, rgb(19, 19, 19) 0%,rgb(37, 37, 37) 100%);
   }
-  .container.focus .dropLinkText {
-    color: rgb(168, 168, 168);
-  }
-
-  .container.focus .linkBox img {
-    box-shadow: 0 0 20px rgb(77, 77, 77);
+  .container.night .dropLinkText {
+    color: rgb(0, 0, 0);
   }
 
-  .container.focus .grid.active .linkBox:hover img {
-    box-shadow:0px 0px 20px rgb(255, 155, 155);
+  .container.night .navBtns {
+    background-color:rgba(56, 56, 56, 0.363);
+  }
+  .container.night .navBtns.active {
+    background-color:rgba(0, 0, 0, 0.363);
+  }
+  .container.night .leftTabArrow, .container.night .rightTabArrow {
+    box-shadow: 5px 5px 7px rgb(0, 0, 0), -5px -5px 7px rgb(32, 32, 32);
+    filter:grayscale(100%);
   }
 
-  .container.focus p {
-    color:rgb(199, 199, 199);
+  .container.night .grid {
+    background:rgb(19, 19, 19);
+    box-shadow: 4px 4px 10px rgb(32, 32, 32), -4px -4px 10px rgb(0, 0, 0);
+  }
+  .container.night .grid.erase .linkBox:hover .linkImg {
+    filter:drop-shadow(0 0 0px rgb(131, 60, 60));
+  }
+  .container.night .addLinkGrid {
+    border:3px solid rgb(65, 65, 65);
+  }
+  .container.night .addLinkGridImage {
+    filter:contrast(0);
   }
 
-  .container.focus .addContainer {
-    color:rgb(199, 199, 199);
-  }
-  .container.focus .addLink {
-    box-shadow:none;
-    color: rgb(194, 194, 194);
-    background:rgb(49, 49, 49);
-    box-shadow:0px 0px 5px rgb(63, 63, 63);
-    letter-spacing:0.8px;
-  }
-  .container.focus .addSlider {
-    box-shadow:0px 0px 5px rgb(63, 63, 63);
-    background: rgb(61, 61, 61);
-  }
-  .container.focus .addSlider img {
-    box-shadow:none;
-    color:white;
-  }
-  .container.focus .addContainer:hover .addSlider {
-    background:rgb(77, 77, 77);
-  }
-  .container.focus .plusImage {
-    filter:brightness(135%) grayscale(200%);
+  .container.night .modContainer, .container.night .modBoxConfirm {
+    box-shadow:5px 5px 5px rgba(0, 0, 0, 0.678);
   }
 
-  .container.focus .modBtn {
-    background:rgb(49, 49, 49);
-    box-shadow:0px 0px 5px rgb(63, 63, 63);
-  }
-  .container.focus .modBox:nth-child(12):hover .modBtn {
-    background:rgb(77, 91, 107);
-    box-shadow:0px 0px 10px rgb(64, 80, 98), inset 0 0 40px rgb(57, 86, 121)
-  }
-  .container.focus .modBox:nth-child(13):hover .modBtn {
-    background:rgb(102, 83, 83);
-    box-shadow:0px 0px 10px rgb(97, 70, 70), inset 0 0 40px rgb(73, 49, 49);
-  }
-  .container.focus .modText {
-    color: rgb(194, 194, 194);
-  }
-  .container.focus .modText:hover {
-    font-size:15px;
-    color:rgb(30, 91, 235);
-  }
-  .container.focus .modImg {
-    filter:brightness(135%) grayscale(200%);
-  }
+  .container.night .dot:nth-child(1) { background-color:rgb(139, 139, 139)}
+  .container.night .dot:nth-child(2) { background-color:rgb(139, 139, 139)}
+  .container.night .dot:nth-child(3) { background-color:rgb(139, 139, 139)}
+  .container.night .dot:nth-child(4) { background-color:rgb(139, 139, 139)}
 
-  .container.focus .modBtnConfirm {
-    background:rgb(49, 49, 49);
-    box-shadow:0px 0px 5px rgb(63, 63, 63);
-  }
-  .container.focus .modBoxConfirm:hover .modBtnConfirm {
-    background:rgb(56, 70, 56);
-    box-shadow:0px 0px 10px rgb(56, 70, 56), inset 0 0 40px rgb(45, 58, 45);
-  }
-  .container.focus .modBoxConfirm.active .modImgConfirm {
-    border-bottom:4.2px solid rgb(194, 194, 194);
-    border-right:4.2px solid rgb(194, 194, 194);
-  }
-  .container.focus .modTextConfirm {
-    color:rgb(194, 194, 194);
-  }
-
-  .container.focus .dot:nth-child(1) { background-color:rgb(139, 139, 139)}
-  .container.focus .dot:nth-child(2) { background-color:rgb(139, 139, 139)}
-  .container.focus .dot:nth-child(3) { background-color:rgb(139, 139, 139)}
-  .container.focus .dot:nth-child(4) { background-color:rgb(139, 139, 139)}
-
-  .container.focus .tabEraseConfirm {
+  .container.night .tabEraseConfirm {
     background-color: rgb(41, 41, 41);
-    box-shadow: 0 0 10px rgb(49, 49, 49);
+    box-shadow: 0 0 10px rgb(0, 0, 0);
     border:2px solid rgb(29, 29, 29);
   }
-  .container.focus .tabEraseConfirmBtn:nth-child(2):hover {
+  .container.night .tabEraseConfirmBtn:nth-child(2):hover {
     background-color:rgb(73, 59, 59);
   }
-  .container.focus .tabEraseConfirmBtn:nth-child(3):hover {
+  .container.night .tabEraseConfirmBtn:nth-child(3):hover {
     background-color:rgb(44, 54, 44);
   }
-  .container.focus .tabEraseConfirmBtn:nth-child(3) {
+  .container.night .tabEraseConfirmBtn:nth-child(3) {
     border-left:thin solid rgb(67, 69, 73);
   }
-  .container.focus .sk-chase-dot:before {
+  .container.night .sk-chase-dot:before {
     background-color: rgb(173, 173, 173);
     box-shadow:0 0 12px rgb(173, 173, 173);
   }
 
-  .container.focus .nightContainer {
+  .container.night .nightContainer {
     box-shadow:0px 0px 5px white;
   }
 
-  .container.focus .addForm {
+  .container.night .addForm {
     background-color: rgb(34, 34, 34);
     box-shadow: 0px 0px 20px rgb(0, 0, 0);
   }
 
-  .container.focus .addForm h1 {
+  .container.night .addForm h1 {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 10px black;
   }
 
-  .container.focus .selectTabText {
+  .container.night .selectTabText {
     color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
-  .container.focus .selectTabArrow {
+  .container.night .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
+  .container.night .selectTabArrow {
       border-bottom:2px solid rgba(248, 248, 248, 0.781);
       border-right:2px solid rgba(248, 248, 248, 0.781);
   }
-  .container.focus .selectTabChosen:hover .selectTabArrow {
+  .container.night .selectTabChosen:hover .selectTabArrow {
       border-bottom:2px solid rgb(175, 189, 201);
       border-right:2px solid rgb(175, 189, 201);
   }
-  .container.focus .selectTab.active .selectTabChosen:hover .selectTabArrow {
+  .container.night .selectTab.active .selectTabChosen:hover .selectTabArrow {
       border-bottom:2px solid rgb(175, 189, 201);
       border-right:2px solid rgb(175, 189, 201);
   }
-  .container.focus .selectTabList {
+  .container.night .selectTabList {
       background-color: rgb(51, 51, 51);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.623);
   }
-  .container.focus .selectTabItem {
+  .container.night .selectTabItem {
       color:rgba(248, 248, 248, 0.781);
       border-bottom:thin solid rgb(98, 98, 98);
   }
-  .container.focus .selectTab.active .selectTabItem:hover {
+  .container.night .selectTab.active .selectTabItem:hover {
       color:rgb(160, 160, 160);
   }
-  .container.focus .selectTabList::-webkit-scrollbar-track {
+  .container.night .selectTabList::-webkit-scrollbar-track {
       background:rgb(75, 75, 75);
   }
-  .container.focus .selectTabList::-webkit-scrollbar-thumb {
+  .container.night .selectTabList::-webkit-scrollbar-thumb {
       background:rgb(29, 29, 29);
   }
 
-  .container.focus .addForm input[type=text] {
+  .container.night .addForm input[type=text] {
     border-bottom:1px solid rgba(248, 248, 248, 0.781);
     color:rgba(248, 248, 248, 0.781);
   }
 
-  .container.focus .addForm label {
+  .container.night .addForm label {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 4px black;
   }
 
-  .container.focus .defaultImg {
+  .container.night .defaultImg {
     box-shadow: 0px 0px 10px rgb(0, 0, 0);
   }
-  .container.focus .imgContainer .imgLabel {
+  .container.night .imgContainer .imgLabel {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 4px black;
   }
-  .container.focus .imgContainer.active .imgLabel {
+  .container.night .imgContainer.active .imgLabel {
     color:rgba(87, 125, 190, 0.8);
     border-bottom:thin solid rgba(87, 125, 190, 0.8);
   }
-  .container.focus .imageAddress.active {
+  .container.night .imageAddress.active {
     color:rgba(87, 125, 190, 0.8);
   }
-
-  .container.focus .clearImg {
+  .container.night .clearImg {
     color:rgb(189, 189, 189);
   }
-
-  .container.focus .previewBox {
+  .container.night .previewBox {
     background-color: rgb(34, 34, 34);
     box-shadow:0px 0px 15px rgb(0, 0, 0);
   }
-
-  .container.focus .imgAddressInput:focus + .previewBox {
+  .container.night .imgAddressInput:focus + .previewBox {
     margin-left:21rem;
     opacity:1;
   }
-
-  .container.focus .addForm button.submit {
+  .container.night .addForm button.submit {
     background: rgba(248, 248, 248, 0.781);
     color: rgb(68, 75, 87);
     box-shadow:0px 0px 10px rgba(0, 0, 0, 0.781);
   }
-
-  .container.focus .addForm button.submit:hover {
+  .container.night .addForm button.submit:hover {
     background: rgba(250, 250, 250, 0.781);
     letter-spacing:1px;
     color: rgb(26, 51, 122);
   }
-
-  .container.focus .addForm img {
+  .container.night .addLinkCancel {
     box-shadow:none;
+    filter:contrast(0);
   }
 
-  .container.focus .suggestionList {
+  .container.night .suggestionList {
     background-color: rgb(34, 34, 34);
     box-shadow:0px 0px 15px rgb(46, 46, 46);
   }
-  .container.focus  .suggestionLink {
+  .container.night  .suggestionLink {
       color:rgb(206, 206, 206);
   }
-  .container.focus .suggestionLink:focus,
-  .container.focus .suggestionLink:hover {
+  .container.night .suggestionLink:focus,
+  .container.night .suggestionLink:hover {
       color:rgb(85, 114, 168);
       font-size:18px;
   }
-  .container.focus .suggestionTitle {
+  .container.night .suggestionTitle {
     color:rgb(206, 206, 206);
   }
-  .container.focus .suggestionTitle:focus,
-  .container.focus .suggestionTitle:hover {
+  .container.night .suggestionTitle:focus,
+  .container.night .suggestionTitle:hover {
       color:rgb(85, 114, 168);
       font-size:18px;
   }
 
-  .container.focus .addTabPlus {
-    box-shadow:none;
+  .container.night .addTabPlus {
+    filter:contrast(0) brightness(1.5);
   }
-  .container.focus .addTabPlus:focus,
-  .container.focus .addTabPlus:hover {
-    font-size:20px;
+  .container.night .tabCancel, .container.night .tabSubmit {
+    filter:grayscale(100%);
+    box-shadow: 4px 4px 4px rgb(0, 0, 0), -4px -4px 4px rgb(32, 32, 32);
   }
-
-  .container.focus .tabCancel {
-    color: rgb(163, 163, 163);
-  }
-  .container.focus .tabCancel:hover {
-    color:rgb(115, 153, 235);
+  .container.night .editTabDiv {
+    background:rgb(12, 12, 12);
   }
 
-  .container.focus .tabSubmit {
-    color: rgb(163, 163, 163);
-  }
-  .container.focus .tabSubmit:hover {
-    color:rgb(115, 153, 235);
-  }
-
-  .tabInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: rgb(165, 165, 165);
-  }
-
-  .tabInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: rgb(165, 165, 165);
-  }
-
-  .tabInput::-ms-input-placeholder { /* Microsoft Edge */
-    color: rgb(165, 165, 165);
-  }
-
-  .container.focus .bookmarkBox {
+  .container.night .bookmarkBox {
     background-color: rgb(34, 34, 34);
-    box-shadow:0px 0px 20px rgba(179, 183, 189, 0.8);
+    box-shadow:0px 0px 20px rgb(0, 0, 0);
   }
-  .container.focus .bookmarkHead {
+  .container.night .bookmarkHead {
     color:rgba(248, 248, 248, 0.781);
+  }
+  .container.night .openFileButton {
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.356), -4px -4px 4px rgb(32, 32, 32);
   }
 
-  .container.focus .selectAll {
+  .container.night .selectAll {
     color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .selectAll:hover {
+  .container.night .selectAll:hover {
     color:rgba(190, 197, 209, 0.8);
   }
-  .container.focus .confirmBookmark {
+  .container.night .confirmBookmark {
     color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .confirmBookmark:hover {
+  .container.night .confirmBookmark:hover {
     color:rgba(190, 197, 209, 0.8);
   }
 
-  .container.focus .itemContainer {
+  .container.night .itemContainer {
     color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .itemContainer:hover .bookmarkItem {
+  .container.night .itemContainer:hover .bookmarkItem {
     color:rgba(143, 174, 224, 0.8);
   }
 
-  .container.focus .bookmarkBox::-webkit-scrollbar-thumb {
+  .container.night .bookmarkBox::-webkit-scrollbar-thumb {
     background:rgba(200, 207, 221, 0.8);
     border-radius:20px;
   }
-  .container.focus .bookmarkBox::-webkit-scrollbar-track {
+  .container.night .bookmarkBox::-webkit-scrollbar-track {
     background:rgb(105, 105, 105);
   }
 
-  .container.focus .teachHeader {
+  .container.night .teachHeader {
     color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .teachHeaderLine {
+  .container.night .teachHeaderLine {
     background-color:rgba(248, 248, 248, 0.781);
   }
-  .container.focus .teachSteps {
+  .container.night .teachSteps {
     color: rgba(248, 248, 248, 0.781);
   }
-  .container.focus .openFileButton {
+  .container.night .openFileButton {
     color: rgba(248, 248, 248, 0.781);
   }
-
-
-

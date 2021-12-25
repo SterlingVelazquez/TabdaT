@@ -1,6 +1,5 @@
 import React from 'react';
 import { database } from "../tools/database.js";
-import { suggestions } from "../tools/suggestions.js"
 
 var key = 0;
 
@@ -13,6 +12,7 @@ export class AddLink extends React.Component {
             image : null,
             imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
+            suggestions: [],
             suggestedTitle: [],
             suggestedLinks: [],
             uid : this.props.userId,
@@ -29,7 +29,8 @@ export class AddLink extends React.Component {
             uid : props.userId,
             selectedTab : props.currTab,
             tabs: props.tabs,
-            allLinks : props.allLinks
+            allLinks : props.allLinks,
+            suggestions: props.suggestions
         }
     }
 
@@ -42,19 +43,19 @@ export class AddLink extends React.Component {
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
                 })
             } else if (this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/doggo.png"
                 })
             } else {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                 })
             }
             for (var i = 0; i < this.state.allLinks.length; i++) {
@@ -78,11 +79,11 @@ export class AddLink extends React.Component {
             this.setState({
                 name: isDefault.name,
                 link: isDefault.url,
-                defaultImg: isDefault.image,
+                imageAddress: isDefault.image,
                 suggestedTitle: [],
             })
             document.getElementById("addtitle").focus();
-            this.toggleDefault(true);
+            this.toggleURL();
         }
     }
     async setLink(event, isDefault) {
@@ -90,11 +91,11 @@ export class AddLink extends React.Component {
             this.setState({suggestedTitle: []})
         if (!isDefault) {
             var count = 0;
-            for (var i = 0; i < suggestions.length; i++) {
-                if (event.target.value.includes(suggestions[i].url)) {
-                    this.setState({defaultImg: suggestions[i].image})
+            for (var i = 0; i < this.state.suggestions.length; i++) {
+                if (event.target.value.includes(this.state.suggestions[i].url)) {
+                    this.setState({defaultImg: this.state.suggestions[i].image})
                     count++;
-                    i = suggestions.length;
+                    i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
@@ -105,17 +106,17 @@ export class AddLink extends React.Component {
             }
             this.setState({
                 link: event.target.value,
-                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, true) : [],
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, true) : [],
             })
         } else {
             document.getElementById("addurl").value = isDefault.url;
             this.setState({
                 link: isDefault.url,
-                defaultImg: isDefault.image,
+                imageAddress: isDefault.image,
                 suggestedLinks: [],
             })
             document.getElementById("addurl").focus();
-            this.toggleDefault(true)
+            this.toggleURL()
         }
     }
     setImage(event) {
@@ -128,7 +129,7 @@ export class AddLink extends React.Component {
                 }
                 this.setState({image: files[0]})
                 reader.readAsDataURL(files[0])
-                if (document.getElementById("uploadimg").className !== "imgContainer active")
+                if (!document.getElementById("uploadimg").className.includes("active"))
                     this.toggleDefault();
             }
         })
@@ -143,26 +144,30 @@ export class AddLink extends React.Component {
     }
 
     toggleDefault(isDefault) {
-        if (document.getElementById("imageaddress").className === "imageAddress active")
+        if (document.getElementById("imageaddress").className === "imageAddress active") {
+            document.getElementById("previewbox").classList.toggle("active");
             document.getElementById("imageaddress").classList.toggle("active")
+        }
         if (isDefault) {
-            if (document.getElementById("defaultimg").className !== "imgContainer active")
+            if (!document.getElementById("defaultimg").className.includes("active"))
                 document.getElementById("defaultimg").classList.toggle("active")
-            if (document.getElementById("uploadimg").className === "imgContainer active")
+            if (document.getElementById("uploadimg").className.includes("active"))
                 document.getElementById("uploadimg").classList.toggle("active")
         } else {
-            if (document.getElementById("defaultimg").className === "imgContainer active")
+            if (document.getElementById("defaultimg").className.includes("active"))
                 document.getElementById("defaultimg").classList.toggle("active")
-            if (document.getElementById("uploadimg").className !== "imgContainer active")
+            if (!document.getElementById("uploadimg").className.includes("active"))
                 document.getElementById("uploadimg").classList.toggle("active")
         }
     }
     toggleURL() {
-        if (document.getElementById("imageaddress").className !== "imageAddress active")
+        if (!document.getElementById("imageaddress").className.includes("active")) {
+            document.getElementById("previewbox").classList.toggle("active");
             document.getElementById("imageaddress").classList.toggle("active")
-        if (document.getElementById("defaultimg").className === "imgContainer active")
+        }
+        if (document.getElementById("defaultimg").className.includes("active"))
             document.getElementById("defaultimg").classList.toggle("active")
-        if (document.getElementById("uploadimg").className === "imgContainer active")
+        if (document.getElementById("uploadimg").className.includes("active"))
             document.getElementById("uploadimg").classList.toggle("active")
     }
     toggleTabActive(e) { 
@@ -188,17 +193,12 @@ export class AddLink extends React.Component {
         var newLink = {
             name: this.state.name,
             link: this.state.link,
-            image: this.state.image,
+            image: document.getElementById("uploadimg").className.includes("active") && this.state.image !== "arrow.png" ? this.state.image : (
+                document.getElementById("imageaddress").className.includes("active") && this.state.imageAddress !== "" ? this.state.imageAddress : this.state.defaultImg),
             tab: this.state.newTab !== null ? this.state.newTab : this.state.selectedTab
         };
         if (!(this.state.link.includes("https://")) && !(this.state.link.includes("http://")))
             newLink.link = "http://" + newLink.link;
-        if (document.getElementById("defaultimg").className === "imgContainer active" || this.state.image === null) {
-            newLink.image = this.state.defaultImg;
-        }
-        if (document.getElementById("imageaddress").className === "imageAddress active" && this.state.imageAddress !== "") {
-            newLink.image = this.state.imageAddress;
-        }
         if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
             || newLink.name.includes('[') || newLink.name.includes(']')) {
             document.getElementById("errmsg").style.display = "block";
@@ -211,6 +211,7 @@ export class AddLink extends React.Component {
             if (count !== 0) {
                 document.getElementById("titleerrmsg").style.display = "block"
             } else {
+                document.getElementById("imageaddressinput").value = "";
                 this.props.addLink(newLink);
                 this.closeAddForm();
             }
@@ -315,10 +316,10 @@ export class AddLink extends React.Component {
                     <br/>
                     <label style={{float:"none"}}><b>OR</b></label>
                     <br/>
-                    <label className="imageAddress" id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
-                    <input type="text" className="imgAddressInput" id="imageaddressinput" name="link" onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
+                    <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
+                    <input type="text" className="imgAddressInput" id="imageaddressinput" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
 
-                    <div className="previewBox">
+                    <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox">
                         <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
                     </div>
                     <button className="clearImg" id="clearimg" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>

@@ -1,51 +1,53 @@
 .addTabDiv {
   position:relative;
-  display:inline-block;
-  max-width:0px;
-  max-height:100px;
+  width:180px;
+  height:77px;
   font-size:15px;
-  opacity:1;
-  z-index:4;
+  margin-left:11px;
+  opacity:0.6;
+  z-index:0;
   font-family:'Noto Sans JP', sans-serif;
-  transition:1s;
+  border:3px solid rgba(181, 193, 215, 0.705);
+  border-top-right-radius:20px;
+  border-top-left-radius:20px;
+  transform:translateY(12px);
+  transition:width 0.5s, opacity 0.5s, transform 0.5s;
   pointer-events:none;
 }
 .addTabDiv.active {
-  max-width:180px;
-  margin:11px 0px 11px 20px;
+  transform:translateY(0px);
   pointer-events:all;
+  opacity:1;
+}
+.addTabDiv:hover {
+  transform:translateY(0px);
+}
+.addTabDiv.hide {
+  pointer-events:none;
+  transform:translateY(100%);
 }
 
-.addTabPlus {  
+.addTabPlus {
   position:absolute;
-  top:30px;
-  padding:0.5rem;
-  height:30px;
-  border-radius:100%;
-  margin-top:0px;
-  margin-left:-8px;
+  padding:10px 80px 62px 80px;
   width:auto;
-  box-shadow:none;
-  cursor:none;
-  pointer-events:none;
-  opacity:0;
-  transition:0.5s;
+  pointer-events:all;
+  cursor:pointer;
+  transition:0.8s;
+  transform:translateY(0%) translateX(-50%);
+  filter:brightness(0.3) sepia(100%) hue-rotate(180deg) opacity(0.55);
 }
 .addTabPlus:focus,
 .addTabPlus:hover {
   outline:none;
-  color:blue;
-  font-size:20px;
-  transform:scale(1.2);
 }
-.addTabPlus.active {
-  margin-top:4px;
-  opacity:1;
-  pointer-events:all;
-  cursor:pointer;
+.addTabDiv.active .addTabPlus {
+  transform:translateY(100%) translateX(-50%);
+  cursor:none;
+  pointer-events:none;
 }
 .addTab.hideAddTab {
-  opacity:0;
+  top:79px;
 }
 
 .addTabDiv label {
@@ -53,109 +55,140 @@
 }
 
 .tabInput {
-  border-bottom:thin solid gray;
-  font-size:15px;
-  width:85%;
-  margin-top:40px;
-  padding-right:15%;
-  text-shadow:1px 1px 2px gray;
+  border-bottom:none;
+  font-size:19px;
+  width:58%;
+  margin-top:17px;
+  padding:0 32% 0 10%;
   opacity:0;
   pointer-events:none;
   transition:margin-top 0.5s, opacity 0.5s;
   box-sizing: content-box;
 }
-.addTabDiv.active .tabInput {
+.addTabDiv.active .tabInput, .editTabWrapper.active .tabInput {
   pointer-events:all;
-  margin-top:3px;
   opacity:1;
 }
+.tabInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgb(164, 175, 196);
+  opacity: 1; /* Firefox */
+}
+.tabInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgb(164, 175, 196);
+}
+.tabInput::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgb(164, 175, 196);
+}
 
-.colorPicker {
+.colorPicker, .colorPickerWrapper {
   position:absolute;
-  right:0;
-  top:40px;
+  right:17px; top:8px;
   opacity:0;
-  width:20px;
+  width:30px; height:35px;
+  cursor:pointer;
+  pointer-events:none;
+  transition:opacity 0.5s;
+}
+.colorPickerWrapper {
+  pointer-events:none;
+  width:25px; height:25px;
+  top:13px;
   border-radius:100%;
-  cursor:pointer;
-  pointer-events:none;
-  transition:top 0.5s linear 0.2s, opacity 0.5s linear 0.2s;
+  border: 3px solid rgba(177, 177, 177, 0.849);
 }
-.addTabDiv.active .colorPicker {
+.addTabDiv.active .colorPicker, .editTabWrapper.active .colorPicker {
   pointer-events:all;
-  top:0;
+}
+.addTabDiv.active .colorPickerWrapper, .editTabWrapper.active .colorPickerWrapper {
   opacity:1;
 }
 
-.tabCancel {
+.tabSubmit, .tabCancel {
   position:absolute;
-  left:0;
-  top:65px;
+  left:100px; top:8px;
+  height:32px; width:32px;
   padding:5px 10px;
   color: rgb(95, 95, 95);
   letter-spacing:1px;
   cursor:pointer;
   pointer-events:none;
+  border-radius:100%;
+  box-shadow: 4px 4px 4px rgb(200,212,229), -4px -4px 4px rgb(255, 255, 255);
+  transform:translateX(0, 0) rotateZ(0deg);
   opacity:0;
-  transition:top 0.5s linear 0.4s, opacity 0.5s linear 0.4s, color 0.5s, letter-spacing 0.5s;
+  transition:0.8s;
+  z-index:-1;
 }
-.tabCancel:hover {
-  color:rgb(115, 153, 235);
-  letter-spacing:0px;
-}
-.addTabDiv.active .tabCancel {
-  pointer-events:all;
-  top:25px;
+.addTabDiv.active .tabSubmit, .editTabWrapper.active .tabSubmit {
   opacity:1;
+  pointer-events:all;
+  transform:translateX(85px) rotateZ(-720deg);
 }
-
-.tabSubmit {
+.addTabDiv.active .tabCancel, .editTabWrapper.active .tabCancel {
+  opacity:1;
+  pointer-events:all;
+  transform:translateX(130px) rotateZ(-720deg);
+}
+.submitTabImg {
   position:absolute;
-  right:0;
-  top:65px;
-  padding:5px 10px;
-  color: rgb(95, 95, 95);
-  letter-spacing:1px;
-  cursor:pointer;
-  pointer-events:none;
-  opacity:0;
-  transition:top 0.5s linear 0.6s, opacity 0.5s linear 0.6s, color 0.5s, letter-spacing 0.5s;
+  top:50%; left:50%;
+  transform:translate(-50%, -50%);
+  height:60%; width:60%;
+  filter:brightness(1.2);
 }
-.tabSubmit:hover {
-  color:rgb(115, 153, 235);
-  letter-spacing:0px;
-}
-.addTabDiv.active .tabSubmit {
-  pointer-events:all;
-  top:25px;
-  opacity:1;
+#tabsubmitimg {
+  height:45%; width:60%;
+  filter:brightness(1);
 }
 
-.tabErrMsg {
+.tabErrMsg, .tabErrMsgEdit {
   position:absolute;
   display:none;
   color:rgb(141, 0, 0);
   margin-top:-1.4rem;
-  margin-left:-0.6rem;
+  margin-left:48px;
   font-size:13px;
   pointer-events:none;
 }
 .tabErrMsg.active {
   display:block;
 }
-
-.tabInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: rgb(165, 165, 165);
-  opacity: 1; /* Firefox */
-  text-shadow:none;
+#taberrmsg, #taberrmsg2, .tabErrMsgEdit {
+  margin-left:20px;
 }
 
-.tabInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: rgb(165, 165, 165);
-  text-shadow:none;
+.editTabWrapper {
+  position:relative;
+  pointer-events:none;
+  cursor:pointer;
+  margin:0;
+  transition:0.5s;
 }
-
-.tabInput::-ms-input-placeholder { /* Microsoft Edge */
-  color: rgb(165, 165, 165);
-  text-shadow:none;
+.buttonNav.edit .editTabWrapper {
+  pointer-events:all;
+}
+.editTabDiv {
+  position:absolute;
+  pointer-events:none;
+  top:-26px; left:-1px;
+  width:180px; height:110%;
+  border-top-right-radius:15px;
+  border-top-left-radius:15px;
+  border:3px solid;
+  background:rgb(232, 238, 247);
+  opacity:0;
+  transition:opacity 0.5s;
+}
+.editTabWrapper.active {
+  pointer-events:none;
+  margin-right:80px;
+}
+.editTabWrapper.active .editTabDiv {
+  opacity:1;
+}
+.editTabDiv:hover {
+  transform:translateY(12px);
+}
+.editTabWrapper.active .addTabForm {
+  pointer-events:all;
 }

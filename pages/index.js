@@ -9,29 +9,34 @@ import { EditLink } from "../forms/editLink.js"
 import { EditTab } from "../forms/editTab.js"
 import { Import } from "../forms/import.js"
 import { NavBar } from "../forms/navBar.js"
+import { Hotbar } from "../react/hotbar.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
+var resize;
 
 class Home extends React.Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       user: "default",
       uid: "default",
       output: [],
-      tabs : [],
-      selectedTab : "",
-      inputText : "",
-      links : [],
-      linkIndex : 0,
-      tabIndex : 0,
+      tabs: [],
+      numTabs: 4,
+      selectedTab: "",
+      inputText: "",
+      links: [],
+      trendingLinks: [],
+      recentLinks: [],
+      popularLinks: [],
+      tabIndex: 0,
       suggestedTitleIndex: -1,
       suggestedIndex: -1,
       tabToErase: null,
-      allLinks : [],
+      allLinks: [],
       bookmarks: [],
       preferences: [],
       oldPreferences: [],
@@ -40,28 +45,30 @@ class Home extends React.Component {
         addTab: false,
         buttonsColor: false,
         editBtn: false,
-        gridSize:20,
+        gridWidth: 20,
+        gridHeight: 20,
         imageShadowColor: false,
-        imageShadowSize:20,
-        linkArrows: false,
-        linkImageSize:50,
+        imageShadowSize: 20,
+        linkImageSize: 50,
         linkShadowColor: false,
-        linkShadowSize:10,
+        linkShadowSize: 10,
+        linkText: false,
         linkTextColor: false,
-        linkTextSize:50,
+        linkTextSize: 50,
         night: false,
-        numLinks:10,
         removeBtn: false,
         tabArrows: false,
-        tabShadowSize:20,
+        tabShadowSize: 1,
         tabTextShadowColor: false,
         theme: false,
       },
-      currTab : {
+      suggestions: [],
+      themes: [],
+      currTab: {
         name: "",
-        color : "",
+        color: "",
       },
-      selectedLink : { 
+      selectedLink: {
         name: "",
         link: "",
         image: "",
@@ -74,54 +81,42 @@ class Home extends React.Component {
     this.editTabCallback = this.editTabCallback.bind(this);
     this.editActive = this.editActive.bind(this);
     this.eraseActive = this.eraseActive.bind(this);
+    this.openAddTab = this.openAddTab.bind(this);
+    this.checkAddTab = this.checkAddTab.bind(this);
+    this.closeActiveEdit = this.closeActiveEdit.bind(this);
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
     this.setPreferences = this.setPreferences.bind(this);
     this.savePreferences = this.savePreferences.bind(this);
+    this.updateShortcutCount = this.updateShortcutCount.bind(this);
   }
 
   async componentDidMount() {
-    firebase.auth().onAuthStateChanged(async function(user) {
-      if (user) {
-        if (!(document.getElementById("sidesignin").className.includes("active")))
-          document.getElementById("sidesignin").classList.toggle("active");
-        document.getElementById("signintext").classList.toggle("active");
-        document.getElementById("profilepic").classList.toggle("active");
-        this.setInitialPreferences(await database.getPreferences(user.uid), user.uid);
-        this.setState({
-          user:user,
-          uid:user.uid,
-        }, async function() {
-          this.setState({tabs : await database.getTabs(this.state.uid)})
-          if (this.state.tabs.length !== 0) {
-            this.setState({
-              selectedTab : this.state.tabs[0].name,
-              allLinks: await database.getAllLinks(this.state.uid),
-            });
-            this.setState({links : await this.getLinks(this.state.tabs[0].name)});
-          } else {
-            this.setState({allLinks: await database.getAllLinks(this.state.uid)});
-            this.setState({links : await this.getLinks([])});
-          }
-          this.getImages();
-        })
-      } else {
-        this.setInitialPreferences(await database.getPreferences("default"));
-        this.setState({tabs : await database.getTabs(this.state.uid)})
-        if (this.state.tabs.length !== 0) {
-          this.setState({
-            selectedTab : this.state.tabs[0].name,
-            allLinks: await database.getAllLinks(this.state.uid),
-          })
-          this.setState({links : await this.getLinks(this.state.tabs[0].name)});
-        } else {
-          this.setState({allLinks: await database.getAllLinks(this.state.uid)})
-          this.setState({links : await this.getLinks([])});
-        }
-        this.getImages();
-      }
+    firebase.auth().onAuthStateChanged(async function (user) {
+      var uid = user ? user.uid : "default";
+      var preferences = await database.getPreferences(uid, this.state.defaultPreferences);
+      var tabs = await database.getTabs(uid);
+      var allLinks = await database.getAllLinks(uid);
+      // var isDone = await database.imageUploads();
+      this.setState({
+        user: user ? user : "default",
+        uid: uid,
+        preferences: preferences,
+        oldPreferences: JSON.parse(JSON.stringify(preferences)),
+        tabs: tabs,
+        numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
+        selectedTab: tabs[0].name,
+        allLinks: allLinks,
+        links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks),
+        trendingLinks: await database.getTrendingLinks(),
+        popularLinks: user ? await this.getShortcutLinks(true, allLinks) : [],
+        recentLinks: user ? await this.getShortcutLinks(false, allLinks) : [],
+        suggestions: user ? await database.getSuggestions() : [],
+        themes: user ? await database.getThemes() : [],
+      })
     }.bind(this))
     this.getKeyPresses();
+    this.getResizeTabs();
   }
 
   async spinAnimation() {
@@ -131,192 +126,154 @@ class Home extends React.Component {
   }
 
   async get() {
-    this.setState({tabs : await database.getTabs(this.state.uid)})
-    if (this.state.tabs.length !== 0) {
-      this.setState({
-        selectedTab : this.state.tabs[0].name,
-        allLinks: await database.getAllLinks(this.state.uid),
-        linkIndex: 0,
-        tabIndex: 0
-      })
-      this.setState({links : await this.getLinks(this.state.tabs[0].name)});
-      this.getImages();
-    } else {
-      this.setState({
-        allLinks: await database.getAllLinks(this.state.uid),
-        linkIndex: 0,
-        tabIndex: 0
-      })
-      this.setState({links : await this.getLinks([])});
-      this.getImages();
-    }
+    var tabs = await database.getTabs(this.state.uid);
+    var allLinks = await database.getAllLinks(this.state.uid);
+    this.setState({
+      tabs: tabs,
+      selectedTab: tabs.length !== 0 ? tabs[0].name : "",
+      allLinks: allLinks,
+      linkIndex: 0,
+      tabIndex: 0,
+      links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks)
+    })
   }
 
-  async getLinks(selectedTab) {
+  async getLinks(selectedTab, allLinks) {
+    if (typeof allLinks === "undefined")
+      allLinks = this.state.allLinks;
     var links = [];
-    for (var i = 0; i < this.state.allLinks.length; i++) {
-      if (selectedTab === this.state.allLinks[i].tab)
-        links.push(this.state.allLinks[i])
+    for (var i = 0; i < allLinks.length; i++) {
+      if (selectedTab === allLinks[i].tab)
+        links.push(allLinks[i])
     }
     return links;
   }
 
-  async getImages() {
-    var list = this.state.allLinks;
-    var count = 0;
-    this.spinAnimation();
-    length = document.getElementsByClassName("loader").length;
-    if (length > 0)
-      for (var i = 0; i < length; i++) {
-        document.getElementsByClassName("loader")[i].style.display = "grid"
-      }
-    for (var i = 0; i < list.length; i++) {
-      if (typeof list[i].ref !== "undefined") {
-        await firebase.storage().ref(list[i].ref).getDownloadURL().then((res) => {
-          list[i].image = res;
-          count++;
-        })
+  async getShortcutLinks(isPopular, allLinks) {
+    var shortcutLinks = [];
+    var newLinks = allLinks.slice(0);
+    newLinks.sort(function (a, b) {
+      return isPopular ? b.clicks - a.clicks : b.time - a.time
+    })
+    for (var i = 0; i < newLinks.length && shortcutLinks.length < 5; i++) {
+      if (isPopular) {
+        if (typeof newLinks[i].clicks !== "undefined" && newLinks[i].clicks !== 0)
+          shortcutLinks.push(newLinks[i])
+      } else {
+        if (typeof newLinks[i].time !== "undefined")
+          shortcutLinks.push(newLinks[i])
       }
     }
-    if (length > 0)
-      for (var i = 0; i < length; i++) {
-        document.getElementsByClassName("loader")[i].style.display = "none"
+    return shortcutLinks;
+  }
+  async updateShortcutCount(linkName) {
+    for (var i = 0; i < this.state.allLinks.length; i++)
+      if (document.getElementById("buttonnav").className === "buttonNav" && this.state.allLinks[i].name === linkName) {
+        var count = typeof this.state.allLinks[i].clicks !== "undefined" ? this.state.allLinks[i].clicks + 1 : 1;
+        var time = Date.now();
+        var newLinks = this.state.allLinks.slice(0);
+        newLinks[i].clicks = count;
+        newLinks[i].time = time;
+        this.setState({
+          allLinks: newLinks,
+          popularLinks: await this.getShortcutLinks(true, newLinks),
+          recentLinks: await this.getShortcutLinks(false, newLinks),
+        })
+        firebase.database().ref(this.state.uid + '/Links/' + linkName + '/clicks').set(count);
+        firebase.database().ref(this.state.uid + '/Links/' + linkName + '/time').set(time);
+        break;
       }
-    if (count !== 0)
-      this.setState({links: this.state.links})
   }
 
-  async setInitialPreferences(preferences, user) {
-    this.setState({preferences: preferences, oldPreferences: JSON.parse(JSON.stringify(preferences))})
-    if (preferences.addLink && document.getElementById("addcontainer").className !== "addContainer active") {
-      document.getElementById("erasebox").style.top = "-3rem";
-      document.getElementById("editbox").style.top = "-3rem";
-      document.getElementById("confirmerase").style.top = "-3rem";
+  async setDefaultPreferences() {
+    if (preferences.editBtn && document.getElementById("editbox").className !== "modContainer hide") {
+      document.getElementById("editbox").classList.toggle("hide");
     }
-    if (preferences.editBtn && document.getElementById("editbox").className !== "modBox hide") {
-      document.getElementById("erasebox").style.marginLeft = "-4.1rem"
+    if (preferences.removeBtn && document.getElementById("erasebox").className !== "modContainer hide") {
+      document.getElementById("erasebox").classList.toggle("hide");
+      document.getElementById("confirmerase").classList.toggle("hide");
     }
-    if (preferences.removeBtn && document.getElementById("erasebox").className !== "modBox hide") {
-      document.getElementById("editbox").style.marginLeft = "6.2rem";
+    if (preferences.tabArrows && document.getElementById("lefttabarrow").className !== "leftTabArrow hide") {
+      document.getElementById("lefttabarrow").classList.toggle("hide");
+      document.getElementById("righttabarrow").classList.toggle("hide");
+    }
+    if (preferences.linkArrows && document.getElementById("leftarrow").className !== "leftLinkArrow hide") {
+      document.getElementById("leftarrow").classList.toggle("hide");
+      document.getElementById("rightarrow").classList.toggle("hide");
     }
     if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
       document.getElementById("resetbox").classList.toggle("active");
-    if (this.state.preferences.theme) {
-      if (this.state.preferences.theme === "/ThemeUltafedIgm") {
-        document.getElementById("themecontainer2").classList.toggle("active");
-        await firebase.storage().ref(user + "/ThemeUltafedIgm").getDownloadURL().then((res) => {
-          var newPreferences = preferences;
-          newPreferences.theme = res;
-          this.setState({
-            preferences: newPreferences,
-            oldPreferences: JSON.parse(JSON.stringify(newPreferences))
-          })
-          document.getElementById("themeuploadimage").src = res;
-        })
-      }
-      document.getElementById("theme").style.display = "block";
-    } else {
-      document.getElementById("themecontainer1").classList.toggle("active");
-    }
-  }
-  async setDefaultPreferences() {
-  if (preferences.editBtn && document.getElementById("editbox").className !== "modBox hide") {
-    document.getElementById("editbox").classList.toggle("hide");
-  }
-  if (preferences.removeBtn && document.getElementById("erasebox").className !== "modBox hide") {
-    document.getElementById("erasebox").classList.toggle("hide");
-    document.getElementById("confirmerase").classList.toggle("hide");
-  }
-  if (preferences.tabArrows && document.getElementById("lefttabarrow").className !== "leftTabArrow hide") {
-    document.getElementById("lefttabarrow").classList.toggle("hide");
-    document.getElementById("righttabarrow").classList.toggle("hide");
-  }
-  if (preferences.linkArrows && document.getElementById("leftarrow").className !== "leftLinkArrow hide") {
-    document.getElementById("leftarrow").classList.toggle("hide");
-    document.getElementById("rightarrow").classList.toggle("hide");
-  }
-  if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
-    document.getElementById("resetbox").classList.toggle("active");
   }
   async setPreferences(pref) {
-    this.setState({preferences: pref})
+    this.setState({
+      numTabs: 550 + (pref.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (pref.gridWidth * 20)) / 220),
+      preferences: pref,
+    })
   }
   savePreferences(isUpload) {
-    database.setPreferences(isUpload, this.state.preferences, this.state.uid)
-    this.setState({oldPreferences: JSON.parse(JSON.stringify(this.state.preferences))})
+    database.setPreferences(isUpload, this.state.preferences, this.state.oldPreferences, this.state.uid)
+    this.setState({ oldPreferences: JSON.parse(JSON.stringify(this.state.preferences)) })
+  }
+  checkAddTab(isArrows) {
+    if (document.getElementById("addtabdiv").className.includes("active"))
+      this.openAddTab();
+    var max = Math.floor(this.state.tabs.length / this.state.numTabs);
+    if ((!isArrows && !this.state.preferences.addTab && this.state.tabIndex === max && this.state.tabs.length % this.state.numTabs === 0) ||
+      (isArrows && !this.state.preferences.tabArrows && this.state.tabIndex === max && this.state.tabs.length % this.state.numTabs === 0))
+      this.changeTabs(-1);
   }
 
   async signIn() {
-    this.setState({user : await firebase.auth().signInWithPopup(provider)});
+    this.setState({ user: await firebase.auth().signInWithPopup(provider) });
     if (this.state.user !== "default") {
-      console.log("hello");
-      if (!(document.getElementById("sidesignin").className.includes("active")))
-        document.getElementById("sidesignin").classList.toggle("active");
-      document.getElementById("signintext").className = "signInText";
-      document.getElementById("profilepic").className = "profilePic active";
       this.setState({
-        uid : this.state.user.user.uid,
+        uid: this.state.user.user.uid,
       })
       this.get();
     }
   }
 
   async signOut() {
-    if (document.getElementById("erasebox").className.includes("active"))
+    if (document.getElementById("addtabdiv").className.includes("active"))
+      this.openAddTab();
+    if (document.getElementById("buttonnav").className.includes("erase"))
       this.eraseActive();
-    else if (document.getElementById("editbox").className.includes("focus"))
+    else if (document.getElementById("buttonnav").className.includes("edit"))
       this.editActive();
-    if (document.getElementById("edittabdiv").className === "addTabDiv active")
-      this.openTabEdit(this.state.currTab);
     if (document.getElementById("savebox").className.includes("active"))
       document.getElementById("savebox").classList.toggle("active");
     if (document.getElementById("profilewrapper").className.includes("active"))
       document.getElementById("profilewrapper").classList.toggle("active");
-    document.getElementById("sidesignin").classList.toggle("active");
-    document.getElementById("signintext").classList.toggle("active");
-    document.getElementById("profilepic").classList.toggle("active");
     this.setState({
       user: "default",
       uid: "default",
     })
     await firebase.auth().signOut();
-    this.setPreferences({preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences))});
+    this.setPreferences({ preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences)) });
     this.get();
-    if (document.getElementById("container").className.includes("focus"))
+    if (document.getElementById("container").className.includes("night"))
       this.toggleNightMode();
-    document.getElementById("theme").style.display = "none";
   }
 
   async setInputText(event) {
-    this.setState({inputText: event.target.value}, async function() {
+    this.setState({ inputText: event.target.value }, async function () {
       if (this.state.inputText !== '') {
-        this.setState({links: await database.stringSearch(this.state.inputText, JSON.parse(JSON.stringify(this.state.allLinks)), 0.75, false)});
+        this.setState({ links: await database.stringSearch(this.state.inputText, JSON.parse(JSON.stringify(this.state.allLinks)), 0.75, false) });
       } else {
-        this.setState({links : await this.getLinks(this.state.selectedTab)})
+        this.setState({ links: await this.getLinks(this.state.selectedTab) })
       }
     });
   }
 
-  async updateTabs(each) {
+  async updateTabs(e, each) {
+    e.stopPropagation();
     if (each.name !== this.state.selectedTab) {
       this.setState({
-        selectedTab : await each.name,
-        links : await this.getLinks(each.name),
+        selectedTab: await each.name,
+        links: await this.getLinks(each.name),
         linkIndex: 0,
       });
       this.spinAnimation();
-    }
-  }
-
-  async getDisplayedLinks(name) {
-    var links = [];
-    for (var i = this.state.linkIndex * this.state.preferences.numLinks; i < this.state.linkIndex * this.state.preferences.numLinks + this.state.preferences.numLinks; i++) {
-      if (typeof this.state.links[i] !== "undefined")
-        links.push(this.state.links[i].name)
-    }
-    if (!(links.includes(name))) {
-      await this.changeLinks(1);
-      this.getDisplayedLinks(name); 
     }
   }
 
@@ -330,38 +287,36 @@ class Home extends React.Component {
     var newTab = this.state.tabs;
     newTab.push(tab);
     this.setState({
-      tabs : newTab,
-      selectedTab : tab.name,
-      links : await this.getLinks(tab.name)
+      tabs: newTab,
+      selectedTab: tab.name,
+      links: await this.getLinks(tab.name)
     })
   }
 
   linkCallback = async (link) => {
-    document.getElementById("uploadlinkloader").style.display = "block";
-    if (link.tab !== this.state.selectedTab)
-      while (link.tab !== this.state.selectedTab)
-        await this.switchToNextTab();
+    document.getElementById("uploadlinkloader").classList.toggle("active");
+    while (link.tab !== this.state.selectedTab)
+      await this.switchToNextTab();
     if (this.state.links.length !== 0) {
       link.pos = this.state.links[this.state.links.length - 1].pos + 1;
     } else {
       link.pos = 0;
     }
-    await database.addLink(link, this.state.uid);
-    if (typeof link.image === "object")
-      await firebase.storage().ref(this.state.uid + '/' + link.name).getDownloadURL().then((res) => {
-        link.image = res;
-      })
+    if (typeof link.image === "object") {
+      await firebase.storage().ref(this.state.uid).child(link.name).put(link.image);
+      await firebase.storage().ref(this.state.uid).child(link.name).getDownloadURL().then((res) => { link.image = res })
+    }
+    await database.addLinks([link], this.state.uid);
     var newLinks = this.state.allLinks;
     newLinks.push(link);
-    this.setState({allLinks: newLinks})
-    this.setState({links : await this.getLinks(this.state.selectedTab)})
-    await this.getDisplayedLinks(link.name);
+    this.setState({ allLinks: newLinks })
+    this.setState({ links: await this.getLinks(this.state.selectedTab) })
     this.spinAnimation();
-    document.getElementById("uploadlinkloader").style.display = "none";
+    document.getElementById("uploadlinkloader").classList.toggle("active");
   }
 
   multipleLinkCallback = async (links) => {
-    document.getElementById("uploadlinkloader").style.display = "block";
+    document.getElementById("uploadlinkloader").classList.toggle("active");
     await database.addLinks(links, this.state.uid);
     var newArr = this.state.allLinks;
     for (var i = 0; i < links.length; i++)
@@ -370,50 +325,42 @@ class Home extends React.Component {
       allLinks: newArr,
       linkIndex: 0
     })
-    for (var j = 0; j < this.state.tabs.length; j++) {
-      if (this.state.tabs[j].name === links[0].tab) {
-        break;
-      } else if ((j + 1) % 4 === 0 && j > 0) {
-        this.changeTabs(1);
-      }
-    }
-    this.setState({links : await this.getLinks("My Bookmarks")})
+    while (this.state.selectedTab !== "My Bookmarks")
+      await this.switchToNextTab();
+    this.setState({ links: await this.getLinks("My Bookmarks") })
     this.spinAnimation();
-    document.getElementById("uploadlinkloader").style.display = "none";
+    document.getElementById("uploadlinkloader").classList.toggle("active");
   }
 
   editActive() {
-    if (document.getElementById("trashimg").src.includes("cancel"))
+    if (document.getElementById("buttonnav").className.includes("erase"))
       this.eraseActive();
-    if (document.getElementById("edittabdiv").className === "addTabDiv active")
-      this.openTabEdit(this.state.currTab);
-    document.getElementById("editbox").classList.toggle("focus");
-    document.getElementById("grid").classList.toggle("focus");
-    document.getElementById("buttonnav").classList.toggle("focus");
-    if (document.getElementById("editimg").src.includes("edit")) {
-      document.getElementById("editimg").src = "cancel.png"
+    document.getElementById("buttonnav").classList.toggle("edit");
+    document.getElementById("grid").classList.toggle("edit");
+
+    if (document.getElementById("buttonnav").className.includes("edit")) {
+      document.getElementById("editimg").src = "cancel.png";
+      document.getElementById("trashimg").src = "trash.png";
     } else {
-      document.getElementById("editimg").src = "edit.png"
-      document.getElementById("trashimg").src = "trash.png"
+      document.getElementById("editimg").src = "edit.png";
+      this.openTabEdit(null, true, null);
     }
   }
 
   editLinkCallback = async (link, close) => {
     if (close) {
-      this.setState({selectedLink: { 
-        name: "",
-        link: "",
-        image: "",
-      }})
+      this.setState({
+        selectedLink: {
+          name: "",
+          link: "",
+          image: "",
+        }
+      })
     } else {
-      document.getElementById("uploadlinkloader").style.display = "block";
+      document.getElementById("uploadlinkloader").classList.toggle("active");
       var selectedLink = this.state.selectedLink;
       link.pos = selectedLink.pos;
-      await database.editLink(link, this.state.uid, selectedLink.ref, [selectedLink.name]);
-      if (typeof link.image === "object")
-        await firebase.storage().ref(this.state.uid + '/' + link.name).getDownloadURL().then((res) => {
-          link.image = res;
-        })
+      await database.editLink(link, this.state.uid, selectedLink);
       var newLinks = this.state.allLinks;
       for (var i = 0; i < this.state.allLinks.length; i++) {
         if (selectedLink.name === this.state.allLinks[i].name) {
@@ -421,57 +368,46 @@ class Home extends React.Component {
           break;
         }
       }
-      this.setState({allLinks: newLinks});
-      this.setState({links : await this.getLinks(this.state.selectedTab)});
-      document.getElementById("uploadlinkloader").style.display = "none";
+      this.setState({ allLinks: newLinks });
+      this.setState({ links: await this.getLinks(this.state.selectedTab) });
+      document.getElementById("uploadlinkloader").classList.toggle("active");
     }
   }
 
-  editTabCallback = async (tab, close) => {
-    if (close) {
-      this.setState({currTab: {
-        name: "",
-        color: ""
-      }})
-    } else {
-      var currTab = this.state.currTab;
-      var allLinks = this.state.allLinks;
-      tab.pos = currTab.pos;
-      await database.editTab(tab, this.state.uid, currTab.name);
-      for (var i = 0; i < allLinks.length; i++)
-        if (allLinks[i].tab === currTab.name) {
-          allLinks[i].tab = tab.name;
-          break;
-        }
-      var newTabs = this.state.tabs;
-      for (var j = 0; j < this.state.tabs.length; j++)
-        if (currTab.name === this.state.tabs[j].name) {
-          newTabs.splice(j, 1, tab);
-          break;
-        }
-      this.setState({
-        tabs : newTabs,
-        selectedTab : tab.name,
-        allLinks: allLinks,
-      })
-      this.setState({links : await this.getLinks(tab.name)});
-    }
+  editTabCallback = async (tab, currTab) => {
+    var allLinks = this.state.allLinks;
+    tab.pos = currTab.pos;
+    await database.editTab(tab, this.state.uid, currTab.name);
+    for (var i = 0; i < allLinks.length; i++)
+      if (allLinks[i].tab === currTab.name) {
+        allLinks[i].tab = tab.name;
+        break;
+      }
+    var newTabs = this.state.tabs;
+    for (var j = 0; j < this.state.tabs.length; j++)
+      if (currTab.name === this.state.tabs[j].name) {
+        newTabs.splice(j, 1, tab);
+        break;
+      }
+    this.setState({
+      tabs: newTabs,
+      selectedTab: tab.name,
+      allLinks: allLinks,
+    })
+    this.setState({ links: await this.getLinks(tab.name) });
   }
 
   eraseActive() {
-    if (document.getElementById("editimg").src.includes("cancel"))
+    if (document.getElementById("buttonnav").className.includes("edit"))
       this.editActive();
-    if (document.getElementById("edittabdiv").className === "addTabDiv active")
-      this.openTabEdit(this.state.currTab);
-    document.getElementById("erasebox").classList.toggle("active");
+    document.getElementById("grid").classList.toggle("erase");
+    document.getElementById("buttonnav").classList.toggle("erase");
     document.getElementById("confirmerase").classList.toggle("active");
-    document.getElementById("grid").classList.toggle("active");
-    document.getElementById("buttonnav").classList.toggle("active");
-    if (document.getElementById("trashimg").src.includes("trash")) {
+    if (document.getElementById("buttonnav").className.includes("erase")) {
       document.getElementById("trashimg").src = "cancel.png"
+      document.getElementById("editimg").src = "edit.png"
     } else {
       document.getElementById("trashimg").src = "trash.png"
-      document.getElementById("editimg").src = "edit.png"
     }
   }
 
@@ -483,10 +419,10 @@ class Home extends React.Component {
       if (selectedLinks[i].checked)
         toErase.push({
           name: selectedLinks[i].value,
-          ref: selectedLinks[i].name,
+          image: selectedLinks[i].name,
         })
     }
-    if (toErase.length !== 0) { 
+    if (toErase.length !== 0) {
       await database.eraseLinks(this.state.uid, toErase);
       var newArr = this.state.allLinks;
       for (var j = 0; j < toErase.length; j++)
@@ -495,10 +431,8 @@ class Home extends React.Component {
             newArr.splice(k, 1);
             break;
           }
-      this.setState({allLinks: newArr})
-      this.setState({links : await this.getLinks(this.state.selectedTab)})
-      if (this.state.links.length > 1 && this.state.links.length % this.state.preferences.numLinks === 0)
-        this.changeLinks(-1);
+      this.setState({ allLinks: newArr })
+      this.setState({ links: await this.getLinks(this.state.selectedTab) })
       this.spinAnimation();
     } else {
       this.eraseActive();
@@ -508,7 +442,7 @@ class Home extends React.Component {
 
   async confirmTabBox(e, tab) {
     e.stopPropagation();
-    this.setState({tabToErase: tab})
+    this.setState({ tabToErase: tab })
     document.getElementById("taberaseconfirm").classList.toggle("active");
     document.getElementById("shadow").classList.toggle("active");
   }
@@ -529,13 +463,15 @@ class Home extends React.Component {
       }
     this.setState({
       tabs: tabs,
-      allLinks: links,
+      allLinks: links
     })
     if (this.state.tabToErase === this.state.selectedTab && this.state.tabs.length > 0) {
-        this.setState({
-          selectedTab: this.state.tabs[0].name,
-          links: await this.getLinks(this.state.tabs[0].name)
-        })
+      this.setState({
+        linkIndex: 0,
+        tabIndex: 0,
+        selectedTab: this.state.tabs[0].name,
+        links: await this.getLinks(this.state.tabs[0].name)
+      })
     } else {
       this.setState({
         links: await this.getLinks(this.state.selectedTab)
@@ -551,7 +487,7 @@ class Home extends React.Component {
     var name = tab.slice(0, tab.indexOf('/'));
     if (tab.slice(tab.indexOf('/') + 1, tab.length) === "tab" && this.state.user !== "default") {
       if (moveFront && name !== this.state.tabs[0].name) {
-        await firebase.database().ref(this.state.uid + '/Tabs/' + name).update({pos: this.state.tabs[0].pos - 1})
+        firebase.database().ref(this.state.uid + '/Tabs/' + name).update({ pos: this.state.tabs[0].pos - 1 })
         var newArr = this.state.tabs;
         for (var i = 0; i < this.state.tabs.length; i++) {
           if (name === this.state.tabs[i].name) {
@@ -567,10 +503,10 @@ class Home extends React.Component {
             tabIndex: 0,
           })
         } else {
-          this.setState({tabs: newArr})
+          this.setState({ tabs: newArr })
         }
       } else if (!moveFront && name !== this.state.tabs[this.state.tabs.length - 1].name) {
-        await firebase.database().ref(this.state.uid + '/Tabs/' + name).update({pos: this.state.tabs[this.state.tabs.length - 1].pos + 1})
+        firebase.database().ref(this.state.uid + '/Tabs/' + name).update({ pos: this.state.tabs[this.state.tabs.length - 1].pos + 1 })
         var newArr = this.state.tabs;
         for (var i = 0; i < this.state.tabs.length; i++) {
           if (name === this.state.tabs[i].name) {
@@ -583,10 +519,10 @@ class Home extends React.Component {
         if (name === this.state.selectedTab) {
           this.setState({
             tabs: newArr,
-            tabIndex: this.state.tabs.length % 4 === 0  && this.state.tabs.length > 0 ? Math.floor(this.state.tabs.length / 4) - 1 : Math.floor(this.state.tabs.length / 4),
+            tabIndex: this.state.tabs.length % this.state.numTabs === 0 && this.state.tabs.length > 0 ? Math.floor(this.state.tabs.length / this.state.numTabs) - 1 : Math.floor(this.state.tabs.length / this.state.numTabs),
           })
         } else {
-          this.setState({tabs: newArr})
+          this.setState({ tabs: newArr })
         }
       }
     }
@@ -597,32 +533,32 @@ class Home extends React.Component {
     var name = link.slice(0, link.indexOf('/'));
     if (link.slice(link.indexOf('/') + 1, link.length) === "link" && this.state.user !== "default") {
       if (moveFront && name !== this.state.links[0].name) {
-        await firebase.database().ref(this.state.uid + '/Links/' + name).update({pos: this.state.links[0].pos - 1})
+        firebase.database().ref(this.state.uid + '/Links/' + name).update({ pos: this.state.links[0].pos - 1 })
         for (var i = 0; i < this.state.allLinks.length; i++) {
           if (name === this.state.allLinks[i].name) {
             var newArr = this.state.allLinks;
             var elem = newArr.splice(i, 1)[0];
             elem.pos = this.state.links[0].pos - 1;
             newArr.unshift(elem);
-            this.setState({allLinks: newArr})
+            this.setState({ allLinks: newArr })
             break;
           }
         }
-        this.setState({links: await this.getLinks(this.state.selectedTab)})
+        this.setState({ links: await this.getLinks(this.state.selectedTab) })
         this.spinAnimation();
       } else if (!moveFront && name !== this.state.links[this.state.links.length - 1].name) {
-        await firebase.database().ref(this.state.uid + '/Links/' + name).update({pos: this.state.links[this.state.links.length - 1].pos + 1})
+        firebase.database().ref(this.state.uid + '/Links/' + name).update({ pos: this.state.links[this.state.links.length - 1].pos + 1 })
         for (var i = 0; i < this.state.allLinks.length; i++) {
           if (name === this.state.allLinks[i].name) {
             var newArr = this.state.allLinks;
             var elem = newArr.splice(i, 1)[0];
             elem.pos = this.state.links[this.state.links.length - 1].pos + 1;
             newArr.push(elem);
-            this.setState({allLinks: newArr})
+            this.setState({ allLinks: newArr })
             break;
           }
         }
-        this.setState({links: await this.getLinks(this.state.selectedTab)})
+        this.setState({ links: await this.getLinks(this.state.selectedTab) })
         this.spinAnimation();
       }
     }
@@ -632,73 +568,74 @@ class Home extends React.Component {
     var link = e.dataTransfer.getData("text");
     var name = link.slice(0, link.indexOf('/'));
     if (link.slice(link.indexOf('/') + 1, link.length) === "link" && newTab !== this.state.selectedTab && this.state.user !== "default") {
-      await firebase.database().ref(this.state.uid + '/Links/' + name).update({tab: newTab});
+      firebase.database().ref(this.state.uid + '/Links/' + name).update({ tab: newTab });
       for (var i = 0; i < this.state.allLinks.length; i++) {
         if (name === this.state.allLinks[i].name) {
           var update = this.state.allLinks;
           update[i].tab = newTab;
-          this.setState({allLinks: update})
+          this.setState({ allLinks: update })
           break;
         }
       }
-      this.setState({links: await this.getLinks(this.state.selectedTab)})
+      this.setState({ links: await this.getLinks(this.state.selectedTab) })
       this.spinAnimation();
     }
   }
 
-  async changeLinks(num) {
-    var max = Math.ceil(this.state.links.length / this.state.preferences.numLinks) - 1;
-    var result = this.state.linkIndex + num;
-    if (result > max) {
-      this.setState({linkIndex : 0})
-    } else if (result < 0) {
-      this.setState({linkIndex : max})
-    } else {
-      this.setState({linkIndex : result})
-    }
-    this.spinAnimation();
-  }
-
   async changeTabs(num) {
-    var max = Math.floor(this.state.tabs.length / 4);
-    var result;
-    if (this.state.tabIndex + num === -1) {
-      result = max;
-    } else {
-      result = Math.abs((this.state.tabIndex + num) % (max + 1));
-    }
-    if (result === 0) {
-      this.setState({
-        linkIndex : 0,
-        tabIndex : 0,
-        selectedTab: this.state.tabs[0].name,
-        links: await this.getLinks(this.state.tabs[0].name)
-      })
-    } else if (result === max) {
-      if (this.state.tabs.length % 4 === 0) {
+    this.closeActiveEdit();
+    var max = Math.floor(this.state.tabs.length / this.state.numTabs);
+    var result = (this.state.tabIndex + num) % (max + 1);
+    if (document.getElementById("buttonnav").className.includes("erase"))
+      document.getElementById("confirmerase").className = "modBoxConfirm active";
+
+    if (result === max) {
+      if (this.state.tabs.length % this.state.numTabs === 0 && this.state.preferences.addTab) {
         this.setState({
-          linkIndex : 0,
-          tabIndex : max,
-          selectedTab: [],
-          links: await this.getLinks([])
+          linkIndex: 0,
+          tabIndex: 0,
+          selectedTab: this.state.tabs[0].name,
+          links: await this.getLinks(this.state.tabs[0].name)
         })
       } else {
+        if (this.state.tabs.length % this.state.numTabs === 0)
+          document.getElementById("confirmerase").className = "modBoxConfirm";
         this.setState({
-          linkIndex : 0,
-          tabIndex : max,
-          selectedTab: this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name,
-          links: await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % 4)].name)
+          linkIndex: 0,
+          tabIndex: max,
+          selectedTab: this.state.tabs.length % this.state.numTabs === 0 ? [] : this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name,
+          links: this.state.tabs.length % this.state.numTabs === 0 ? await this.getLinks([]) : await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name)
+        })
+      }
+    } else if (result === -1) {
+      if (this.state.tabs.length % this.state.numTabs === 0 && this.state.preferences.addTab) {
+        this.setState({
+          linkIndex: 0,
+          tabIndex: max - 1,
+          selectedTab: this.state.tabs[this.state.tabs.length - this.state.numTabs].name,
+          links: await this.getLinks(this.state.tabs[this.state.tabs.length - this.state.numTabs].name)
+        })
+      } else {
+        if (this.state.tabs.length % this.state.numTabs === 0)
+          document.getElementById("confirmerase").className = "modBoxConfirm";
+        this.setState({
+          linkIndex: 0,
+          tabIndex: max,
+          selectedTab: this.state.tabs.length % this.state.numTabs === 0 ? [] : this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name,
+          links: this.state.tabs.length % this.state.numTabs === 0 ? await this.getLinks([]) : await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name)
         })
       }
     } else {
       this.setState({
-        linkIndex : 0,
-        tabIndex : result,
-        selectedTab: this.state.tabs[result * 4].name,
-        links: await this.getLinks(this.state.tabs[result * 4].name)
+        linkIndex: 0,
+        tabIndex: result,
+        selectedTab: this.state.tabs[result * this.state.numTabs].name,
+        links: await this.getLinks(this.state.tabs[result * this.state.numTabs].name)
       })
     }
-    this.spinAnimation();
+
+    if (!((result === max || result === -1) && this.state.tabs.length % this.state.numTabs === 0 && this.state.preferences.addTab))
+      this.spinAnimation();
   }
 
   async switchToNextTab() {
@@ -706,16 +643,16 @@ class Home extends React.Component {
       if (this.state.tabs[i].name === this.state.selectedTab) {
         if (i === this.state.tabs.length - 1) {
           this.setState({
-            linkIndex : 0,
-            tabIndex : 0,
+            linkIndex: 0,
+            tabIndex: 0,
             selectedTab: this.state.tabs[0].name,
             links: await this.getLinks(this.state.tabs[0].name)
           })
-        } else if ((i + 1) % 4 === 0) {
+        } else if ((i + 1) % this.state.numTabs === 0) {
           this.changeTabs(1)
         } else {
           this.setState({
-            linkIndex : 0,
+            linkIndex: 0,
             selectedTab: this.state.tabs[i + 1].name,
             links: await this.getLinks(this.state.tabs[i + 1].name)
           })
@@ -731,21 +668,21 @@ class Home extends React.Component {
       if (this.state.tabs[i].name === this.state.selectedTab) {
         if (i === 0) {
           this.setState({
-            linkIndex : 0,
-            tabIndex : this.state.tabs.length % 4 !== 0 ? Math.floor(this.state.tabs.length / 4) : Math.floor(this.state.tabs.length / 4) - 1,
+            linkIndex: 0,
+            tabIndex: this.state.tabs.length % this.state.numTabs !== 0 ? Math.floor(this.state.tabs.length / this.state.numTabs) : Math.floor(this.state.tabs.length / this.state.numTabs) - 1,
             selectedTab: this.state.tabs[this.state.tabs.length - 1].name,
             links: await this.getLinks(this.state.tabs[this.state.tabs.length - 1].name)
           })
-        } else if (i % 4 === 0) {
+        } else if (i % this.state.numTabs === 0) {
           this.setState({
-            linkIndex : 0,
-            tabIndex : this.state.tabIndex - 1,
+            linkIndex: 0,
+            tabIndex: this.state.tabIndex - 1,
             selectedTab: this.state.tabs[i - 1].name,
             links: await this.getLinks(this.state.tabs[i - 1].name)
           })
         } else {
           this.setState({
-            linkIndex : 0,
+            linkIndex: 0,
             selectedTab: this.state.tabs[i - 1].name,
             links: await this.getLinks(this.state.tabs[i - 1].name)
           })
@@ -761,13 +698,13 @@ class Home extends React.Component {
     var length = suggestions.length;
     var result = (this.state.suggestedIndex + num) % length;
     if (this.state.suggestedIndex + num === length || this.state.suggestedIndex + num < 0) {
-      this.setState({suggestedIndex: -1})
+      this.setState({ suggestedIndex: -1 })
       if (isAdd)
         document.getElementById("addurl").focus();
       else
         document.getElementById("editurl").focus();
     } else {
-      this.setState({suggestedIndex: result})
+      this.setState({ suggestedIndex: result })
       suggestions[result].focus();
     }
   }
@@ -777,142 +714,148 @@ class Home extends React.Component {
     var length = suggestions.length;
     var result = (this.state.suggestedTitleIndex + num) % length;
     if (this.state.suggestedTitleIndex + num === length || this.state.suggestedTitleIndex + num < 0) {
-      this.setState({suggestedTitleIndex: -1})
+      this.setState({ suggestedTitleIndex: -1 })
       if (isAdd)
         document.getElementById("addtitle").focus();
       else
         document.getElementById("edittitle").focus();
     } else {
-      this.setState({suggestedTitleIndex: result})
+      this.setState({ suggestedTitleIndex: result })
       suggestions[result].focus();
     }
   }
 
   toggleNightMode() {
     if (!this.state.preferences.theme) {
-      document.getElementById("container").classList.toggle("focus");
       var nightMode = this.state.preferences;
-      nightMode.night = document.getElementById("container").className === "container focus";
-      this.setState({preferences: nightMode});
-    }
-  }
-  
-  toggleSideMenu() {
-    document.getElementById("navbar").classList.toggle("active");
-    document.getElementById("sidemenubtn").classList.toggle("active");
-    if (document.getElementById("resetconfirmbox").className.includes("active"))
-      document.getElementById("resetconfirmbox").classList.toggle("active");
-    if (document.getElementById("savebox").className.includes("active")) {
-      document.getElementById("savebox").classList.toggle("active");
-      document.getElementById("saveconfirm").classList.toggle("active");
-      document.getElementById("shadow").classList.toggle("active");
+      nightMode.night = !this.state.preferences.night;
+      this.setState({ preferences: nightMode });
     }
   }
 
   render() {
     return (
-      <div className={this.state.preferences.theme ? "container themes" : (this.state.preferences.night ? "container focus" : "container")} id="container">
+      <div className={this.state.preferences.theme ? "container themes" : (this.state.preferences.night ? "container night" : "container")} id="container">
         <Head>
           <title>TabdaT</title>
-          <link rel="icon" href="/favicon.ico"/>
+          <link rel="icon" href="/favicon.ico" />
 
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"></link>
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
+          <link rel="stylesheet" href="https://use.typekit.net/efk1ogl.css"></link>
           <script src="https://smtpjs.com/v3/smtp.js"></script>
         </Head>
 
-        <Profile user={this.state.user} signIn={this.signIn.bind(this)} signOut={this.signOut.bind(this)}/>
+        <Profile user={this.state.user} signIn={this.signIn.bind(this)} signOut={this.signOut.bind(this)} />
 
-        <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""}/>
+        <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""} style={{ display: this.state.preferences.theme ? "block" : "none" }} draggable={false} />
 
         <main>
 
-          <p style={{color:"black"}} className="title">
-            <span className="letter">T</span>
-            <span className="letter">ɑ</span>
+          <p className="title">
+            <span className="letter">t</span>
+            <span className="letter">a</span>
             <span className="letter">b</span>
             <span className="letter">d</span>
-            <span className="letter">ɒ</span>
-            <span className="letter">T</span>
+            <span className="letter">a</span>
+            <span className="letter">t</span>
           </p>
 
-          <div className="bodyBox">
+          <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
+            <div className="cancelBar"></div>
+            <div className="cancelBar"></div>
+            <div className="cancelBar"></div>
+          </div>
 
-            <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
-              oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
-              defaultPreferences={this.state.defaultPreferences}/>
+          <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
+            oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
+            defaultPreferences={this.state.defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
 
-            <input className="searchBar" id="searchbar" placeholder="Search for your links here..." onChange={e => this.setInputText(e)}></input>
-            <br/>
-            
-            <div className = "buttonNav" id="buttonnav">
+          <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)}></Hotbar>
+
+          <input className="searchBar" id="searchbar" placeholder="Search your bookmarks here..." onChange={e => this.setInputText(e)}></input>
+          <br />
+
+          <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
+            <div className="buttonNav" id="buttonnav">
               <div className="dropTabBox" id="droptabbox" onDragEnter={e => this.dropTabHover(true)} onDragLeave={e => this.dropTabHover(true)} onDrop={e => this.changeTabPos(e, true)}
                 onDragOver={e => e.preventDefault()}>
-                <p className="dropTabText">Move <br/> to front</p>
+                <p className="dropTabText">Move <br /> to front</p>
               </div>
-              <img className={this.state.preferences.tabArrows ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
-                style={{
-                  display: this.state.tabs.length > 3 && this.state.user !== "default" ? "block" : "none",
-                  left: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
-                  top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem",
-                }}>
+              <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
+                style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
               </img>
               {
-                this.state.tabs.slice(this.state.tabIndex * 4, this.state.tabIndex * 4 + 4).map( (each) => 
-                  <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{borderBottomColor:each.color, 
-                    textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor : 
-                    '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "rgba(0, 0, 0, 0)" : (this.state.preferences.night ? "#000000" : "#808080"))}} 
-                    key={key++} onClick={e => this.updateTabs(each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
-                    draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
-                    onDragEnd={e => this.dropTabActive()}>
-                    <div className="openTabEdit" id="opentabedit" onClick={e => this.openTabEdit(each)}></div>
-                    <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} src="trash.png"></img>
-                    <p className="navBtnText" style={{color:each.color}}>{each.name}</p>
-                    <div className="navBtnBottom" style={{background:each.color}}></div>
-                  </button>
+                this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
+                  <div className="editTabWrapper" onClick={e => this.openTabEdit(e, false, each)}>
+                    <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{
+                      borderColor: each.color,
+                      textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
+                        '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "rgba(0, 0, 0, 0)" : (this.state.preferences.night ? "#000000" : "#808080"))
+                    }}
+                      key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
+                      draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
+                      onDragEnd={e => this.dropTabActive()}>
+                      <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
+                      <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
+                    </button>
+                    {
+                      this.state.user === "default" ? <div></div> :
+                        <EditTab editTab={this.editTabCallback.bind(this)} closeActiveEdit={this.closeActiveEdit.bind(this)} currTab={each} tabs={this.state.tabs} preferences={this.state.preferences}
+                          lastIndex={Math.floor(this.state.tabs.length / this.state.numTabs)} />
+                    }
+                  </div>
                 )
               }
-              <img className={this.state.preferences.tabArrows ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
-                style={{
-                  display: this.state.tabs.length > 3 && this.state.user !== "default" ? "block" : "none",
-                  right: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-8rem" : "-3rem",
-                  top: this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0 ? "-1.8rem" : "-0.4rem"
-                }}>
+              {
+                this.state.user === "default" ? <div></div> :
+                  <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
+              }
+              <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
+                style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
               </img>
-              <div className="dropTabBox" id="droptabbox2" style={{left:"auto", right:"-11rem", background:!(this.state.preferences.night || this.state.preferences.theme) ? 
-                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.616) 50%," + 
-                "rgb(46, 46, 46) 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)"), textAlign:"left"}}
+              <div className="dropTabBox" id="droptabbox2" style={{
+                left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
+                  "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.616) 50%," +
+                    "rgb(46, 46, 46) 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)"), textAlign: "left"
+              }}
                 onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
-                <p className="dropTabText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
+                <p className="dropTabText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
               </div>
             </div>
+            <br />
 
-            <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences}/>
-            <EditTab editTab={this.editTabCallback.bind(this)} currTab={this.state.currTab} tabs={this.state.tabs} preferences={this.state.preferences}/>
-            <br/>
-
-            <div className="grid" id="grid" style={{width: 400 + (this.state.preferences.gridSize * 20) + "px"}}>
+            <div className="grid" id="grid" style={{
+              gridTemplateRows: !this.state.preferences.linkText ? "repeat(auto-fill," + (70 + (this.state.preferences.linkImageSize * 0.9) + (75 + this.state.preferences.linkTextSize * 0.4)) + "px)" :
+                "repeat(auto-fill," + (100 + (this.state.preferences.linkImageSize * 0.9)) + "px)",
+              width: 550 + (this.state.preferences.gridWidth * 20) + "px", height: 200 + (this.state.preferences.gridHeight * 8) + (this.state.preferences.linkImageSize * 0.9) + this.state.preferences.linkTextSize + "px",
+              gridTemplateColumns: "repeat(auto-fill, " + (100 + (this.state.preferences.linkImageSize) + "px")
+            }}>
               <div className="dropLinkBox" id="droplinkbox" onDragEnter={e => this.dropLinkHover(true)} onDragLeave={e => this.dropLinkHover(true)} onDrop={e => this.changeLinkPos(e, true)}
                 onDragOver={e => e.preventDefault()}>
-                <p className="dropLinkText">Move <br/> to front</p>
+                <p className="dropLinkText">Move <br /> to front</p>
               </div>
-              <img className={this.state.preferences.linkArrows ? "leftLinkArrow hide" : "leftLinkArrow"} id="leftarrow" src="gray-arrow.png" onClick={e => this.changeLinks(-1)}
-                style={{display: this.state.links.length > this.state.preferences.numLinks ? "block" : "none"}}></img>
               {
-                this.state.links.slice(this.state.linkIndex * this.state.preferences.numLinks, 
-                  this.state.linkIndex * this.state.preferences.numLinks + this.state.preferences.numLinks).map( (each) =>
-                  <a className="linkBox" style={{textDecoration:"none", width:75 + (this.state.preferences.linkImageSize * 1.5) + "px"}} target="_blank" rel="noopener noreferrer" key={key++} href={each.link} 
-                    draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
-                    onDragEnd={e => this.dropLinkActive()}>
-                    <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.ref}></input></label>
+                this.state.links.map((each) =>
+                  <a className="linkBox" style={{ textDecoration: "none", width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px" }}
+                    target="_blank" rel="noopener noreferrer" href={each.link} draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
+                    onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)}>
+                    <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.image}></input></label>
                     <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
-                      <img src={each.image} key={key++} className="linkImg" style={{boxShadow: this.state.preferences.imageShadowColor ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + ' #' + 
-                        this.state.preferences.imageShadowColor : (this.state.preferences.night || this.state.preferences.theme ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #4D4D4D" : '0 0 ' + 
-                        (this.state.preferences.imageShadowSize + "px") + " #B6B6B6"), width:45 + (this.state.preferences.linkImageSize * 0.9) + "px", height:45 + (this.state.preferences.linkImageSize * 0.9) + "px"}}></img>
-                      <p className="linkNames" style={{color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : (this.state.preferences.theme ? "FFFFFF" :  (this.state.preferences.night ? "rgb(199, 199, 199)" : 
-                        "rgb(82, 86, 92)")), textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px")
-                        + ' #' + this.state.preferences.linkShadowColor : '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.theme || this.state.preferences.night ? "0E0E0E" : "F9FBFD"), 
-                        fontSize: 10 + (this.state.preferences.linkTextSize * 0.08) + "px", maxHeight: 30 + (this.state.preferences.linkTextSize * 0.25) + "px"}}>{each.name}</p>
+                      <img src={each.image} key={key++} className="linkImg" draggable={false} style={{
+                        boxShadow: this.state.preferences.imageShadowColor ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + ' #' + this.state.preferences.imageShadowColor :
+                          this.state.preferences.theme ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " rgba(0, 0, 0, 0)" :
+                            this.state.preferences.night ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #000000" :
+                              '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #B6B6B6",
+                        width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px"
+                      }}></img>
+                      <p className="linkNames" style={{
+                        display: this.state.preferences.linkText ? "none" : "-webkit-box",
+                        color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : this.state.preferences.theme ? "#EBEBEB" : this.state.preferences.night ? "#C7C7C7" : "#5D687E",
+                        textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + this.state.preferences.linkShadowColor :
+                          '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.theme || this.state.preferences.night ? "0E0E0E" : "F9FBFD"),
+                        fontSize: 14 + (this.state.preferences.linkTextSize * 0.08) + "px", maxHeight: 40 + (this.state.preferences.linkTextSize * 0.25) + "px"
+                      }}>{each.name}</p>
                       <div className="loaderDiv" id="loaderdiv">
                         <div className="loader" id="loader">
                           <div className="dot"></div>
@@ -925,138 +868,173 @@ class Home extends React.Component {
                   </a>
                 )
               }
-              <img className={this.state.preferences.linkArrows ? "rightLinkArrow hide" : "rightLinkArrow"} id="rightarrow" src="gray-arrow.png" onClick={e => this.changeLinks(1)}
-                style={{display: this.state.links.length > this.state.preferences.numLinks ? "block" : "none"}}></img>
-              <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)} 
-                onDragOver={e => e.preventDefault()} style={{left:"auto", right:"-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ? 
-                "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.69) 50%, rgba(37, 37, 37, 0.89)" : 
-                "linear-gradient(to left, rgba(14, 14, 14, 0) 0%,rgb(37, 37, 37) 100%)"), textAlign:"left"}}>
-                <p className="dropLinkText" style={{left:"0.4rem", textAlign:"left"}}>Move <br/> to back</p>
+              {
+                this.state.user === "default" ? <div></div> : <div>
+                  <div className="addLinkGridWrapper" style={{
+                    width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px", display: this.state.user === "default" || this.state.tabs.length === 0 ||
+                      (this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "none" : "inline-block"
+                    }}>
+                    <div className="addLinkGrid" id="addlinkgrid" style={{ width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px" }} onClick={e => this.openAddLink()}>
+                      <img key={key++} className="addLinkGridImage" src="plus.png" draggable={false}></img>
+                    </div>
+                  </div>
+                </div>
+              }
+              <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)}
+                onDragOver={e => e.preventDefault()} style={{
+                  left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
+                    "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.69) 50%, rgba(37, 37, 37, 0.89)" :
+                      "linear-gradient(to left, rgba(14, 14, 14, 0) 0%,rgb(37, 37, 37) 100%)"), textAlign: "left"
+                }}>
+                <p className="dropLinkText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
               </div>
             </div>
+            <br />
 
-            <br/>
-            <div className={!(this.state.preferences.addLink) ? "addContainer" : "addContainer active"} id="addcontainer" style={this.state.user === "default" || this.state.tabs.length === 0 || 
-              (this.state.tabIndex === this.state.tabs.length / 4 && this.state.tabs.length > 0) ? 
-                {display:"none"} : {display:"inline-flex"}} onClick={e => this.openAddLink()}>
-              <div className="addSlider">
-                <img className="plusImage" src="plus.png"></img>
+            {
+              this.state.user === "default" ? <div></div> : <div>
+                <div className="buttonWrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
+                  <p className="uploadLinkLoader" id="uploadlinkloader">
+                    {['U', 'p', 'l', 'o', 'a', 'd', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
+                  </p>
+
+                  <p className="uploadLinkLoader" id="deletelinkloader">
+                    {['D', 'e', 'l', 'e', 't', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
+                  </p>
+
+                  <div className={!(this.state.preferences.addLink) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="addcontainer" onClick={e => this.openAddLink()}
+                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                    <img className="modContainerImage" src="plus.png" draggable={false}></img>
+                  </div>
+
+                  <div className={!(this.state.preferences.editBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="editbox" onClick={e => this.editActive()}
+                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                    <img className="modContainerImage" id="editimg" src="edit.png" draggable={false}></img>
+                  </div>
+
+                  <div className={!(this.state.preferences.removeBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="erasebox" onClick={e => this.eraseActive()}
+                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                    <img className="modContainerImage" id="trashimg" src="trash.png" draggable={false}></img>
+                  </div>
+
+                  <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()}
+                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                    <div className="modImgConfirm" id="modimgconfirm"></div>
+                  </div>
+                </div>
               </div>
-              <button className="addLink" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}><b>Add New Link</b></button>
-              <p className="uploadLinkLoader" id="uploadlinkloader">
-                <span className="linkLoadLetter">U</span>
-                <span className="linkLoadLetter">p</span>
-                <span className="linkLoadLetter">l</span>
-                <span className="linkLoadLetter">o</span>
-                <span className="linkLoadLetter">a</span>
-                <span className="linkLoadLetter">d</span>
-                <span className="linkLoadLetter">i</span>
-                <span className="linkLoadLetter">n</span>
-                <span className="linkLoadLetter">g</span>
-                <span className="linkLoadLetter">.</span>
-                <span className="linkLoadLetter">.</span>
-                <span className="linkLoadLetter">.</span>
-              </p>
-              <p className="uploadLinkLoader" id="deletelinkloader">
-                <span className="linkLoadLetter">D</span>
-                <span className="linkLoadLetter">e</span>
-                <span className="linkLoadLetter">l</span>
-                <span className="linkLoadLetter">e</span>
-                <span className="linkLoadLetter">t</span>
-                <span className="linkLoadLetter">i</span>
-                <span className="linkLoadLetter">n</span>
-                <span className="linkLoadLetter">g</span>
-                <span className="linkLoadLetter">.</span>
-                <span className="linkLoadLetter">.</span>
-                <span className="linkLoadLetter">.</span>
-              </p>
-            </div>
-            <br/>
-
-            <div className={this.state.preferences.editBtn ? "modBox hide" : "modBox"} id="editbox" onClick={e => this.editActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
-              <button className="modBtn" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
-                <img className="modImg" id="editimg" src="edit.png"></img>
-                <p className="modTextEdit">Edit</p>
-              </button>
-              <p className="modText">Choose A Tab/Link</p>
-              <p className="modTextClose" onClick={e => this.editActive()}>Close</p>
-            </div>
-
-            <div className={this.state.preferences.removeBtn ? "modBox hide" : "modBox"} id="erasebox" onClick={e => this.eraseActive()} style={{display: this.state.user === "default" ? "none" : "inline-table"}}>
-              <button className="modBtn" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
-                <img className="modImg" id="trashimg" src="trash.png"></img>
-                <p className="modTextErase">Remove</p>
-              </button>
-              <p className="modTextClose" onClick={e => this.eraseActive()}>Close</p>
-            </div>
-
-            <div className={this.state.preferences.removeBtn ? "modBoxConfirm hide" : "modBoxConfirm"} id="confirmerase" onClick={e => this.confirmErase()} style={{display: this.state.user === "default" ? "none" : "inline-flex"}}>
-              <button className="modBtnConfirm" id="modbtnconfirm" style={{background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor :
-                '#' + (this.state.preferences.theme ? "444444" : (this.state.preferences.night ? "313131" : "F9FBFD"))}}>
-                <div className="modImgConfirm" id="modimgconfirm"></div>
-              </button>
-              <p className="modTextConfirm" onClick={e => this.confirmErase()}>Confirm</p>
-            </div>
+            }
           </div>
-
         </main>
 
-      <div className="tabEraseConfirm" id="taberaseconfirm">
-        <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
-          <p className="tabEraseConfirmText">Are you sure you want to <span style={{color:"rgb(255, 121, 121)"}}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
-          <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png"></img></button>
-          <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
-        </div>
-        <div className="tabEraseDeleting" id="taberasedeleting">
-          <p className="tabEraseDeletingText">Deleting...</p>
-          <div className="deleteLoader" id="deleteloader">
-            <div className="sk-chase" id="deleteloading">
-              <div className="sk-chase-dot"></div>
-              <div className="sk-chase-dot"></div>
-              <div className="sk-chase-dot"></div>
-              <div className="sk-chase-dot"></div>
-              <div className="sk-chase-dot"></div>
-              <div className="sk-chase-dot"></div>
+        {
+          this.state.user === "default" ? <div></div> : <div>
+            <div className="tabEraseConfirm" id="taberaseconfirm">
+              <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
+                <p className="tabEraseConfirmText">Are you sure you want to <span style={{ color: "rgb(255, 121, 121)" }}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
+                <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png" draggable={false}></img></button>
+                <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
+              </div>
+              <div className="tabEraseDeleting" id="taberasedeleting">
+                <p className="tabEraseDeletingText">Deleting...</p>
+                <div className="deleteLoader" id="deleteloader">
+                  <div className="sk-chase" id="deleteloading">
+                    <div className="sk-chase-dot"></div>
+                    <div className="sk-chase-dot"></div>
+                    <div className="sk-chase-dot"></div>
+                    <div className="sk-chase-dot"></div>
+                    <div className="sk-chase-dot"></div>
+                    <div className="sk-chase-dot"></div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div className="shadow" id="shadow"></div>
+
+            <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
+            <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
+            <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs} />
           </div>
-        </div>
+        }
       </div>
-
-      <div className="shadow" id="shadow"></div>
-
-      <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks}/>
-      <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks}/>
-      <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs}/>
-
-    </div>
     )
   }
 
   openAddLink() {
-    document.getElementById("AddFormDiv").classList.toggle("active");
-    document.getElementById("shadow").classList.toggle("active");
+    if (this.state.user !== "default") {
+      if (document.getElementById("buttonnav").className.includes("edit"))
+        this.editActive();
+      else if (document.getElementById("buttonnav").className.includes("erase"))
+        this.eraseActive();
+      document.getElementById("AddFormDiv").classList.toggle("active");
+      document.getElementById("shadow").classList.toggle("active");
+    }
   }
   openEditForm(e, link) {
-    e.preventDefault();
-    this.setState({selectedLink: link});
-    document.getElementById("EditFormDiv").classList.toggle("active");
-    document.getElementById("shadow").classList.toggle("active");
+    if (this.state.user !== "default") {
+      e.preventDefault();
+      this.setState({ selectedLink: link });
+      document.getElementById("EditFormDiv").classList.toggle("active");
+      document.getElementById("shadow").classList.toggle("active");
+    }
   }
-  openTabEdit(each) {
-    this.setState({currTab:each})
-    document.getElementById("colorpicker2").value = each.color;
-    document.getElementById("tabinput2").style.color = each.color;
-    document.getElementById("tabinput2").value = each.name;
-    document.getElementById("buttonnav").classList.toggle("focus");
-    document.getElementById("edittabdiv").classList.toggle("active");
-    if (!(document.getElementById("addtabdiv").className.includes("active"))) {
-      if (!this.state.preferences.addTab)
-        document.getElementById("addtabplus").classList.toggle("active");
+  openAddTab() {
+    if (this.state.user !== "default" && !this.state.preferences.addTab) {
+      if (document.getElementById("buttonnav").className.includes("edit"))
+        this.editActive();
+      else if (document.getElementById("buttonnav").className.includes("erase"))
+        this.eraseActive();
+      document.getElementById("addtabdiv").classList.toggle("active");
+      document.getElementById("taberrmsg").style.display = "none";
+      document.getElementById("titletaberrmsg").style.display = "none";
+      document.getElementById("addtabform").reset();
+
+      document.getElementById("addtabplus").classList.toggle("active");
       document.getElementById("lefttabarrow").classList.toggle("active");
       document.getElementById("righttabarrow").classList.toggle("active");
+    }
+  }
+  openTabEdit(e, isClosing, tab) {
+    if (this.state.user !== "default") {
+      this.closeActiveEdit();
+      if (!isClosing) {
+        e.target.classList.toggle("active");
+        if (document.getElementById("addtabdiv").className.includes("active")) {
+          document.getElementById("addtabdiv").classList.toggle("active");
+          document.getElementById("lefttabarrow").classList.toggle("active");
+          document.getElementById("righttabarrow").classList.toggle("active");
+        }
+      }
+    }
+  }
+  closeActiveEdit() {
+    var editTabs = document.getElementsByClassName("editTabWrapper");
+    for (var i = 0; i < editTabs.length; i++) {
+      if (editTabs[i].className.includes("active"))
+        editTabs[i].classList.toggle("active");
+    }
+  }
+  toggleSideMenu() {
+    document.getElementById("navbar").classList.toggle("active");
+    document.getElementById("sidemenubtn").classList.toggle("active");
+    if (this.state.user !== "default") {
+      if (document.getElementById("resetconfirmbox").className.includes("active"))
+        document.getElementById("resetconfirmbox").classList.toggle("active");
+      if (document.getElementById("savebox").className.includes("active")) {
+        document.getElementById("savebox").classList.toggle("active");
+        document.getElementById("saveconfirm").classList.toggle("active");
+        document.getElementById("shadow").classList.toggle("active");
+      }
+      if (document.getElementsByClassName("colorViewer active").length > 0) {
+        document.getElementsByClassName("colorViewer active")[0].classList.toggle("active");
+        document.getElementsByClassName("colorBtn active")[0].classList.toggle("active");
+        document.getElementsByClassName("colorBtn active")[1].classList.toggle("active");
+        document.getElementsByClassName("customColorPicker active")[0].classList.toggle("active");
+      }
     }
   }
 
@@ -1091,13 +1069,13 @@ class Home extends React.Component {
 
 
   getKeyPresses() {
-    document.addEventListener("keydown", async function(e) {
+    document.addEventListener("keydown", async function (e) {
       if (this.state.user !== "default" && document.activeElement.id === "" && e.keyCode === 78) // N
         this.toggleNightMode();
-      if (!e.shiftKey) {
-        if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
-          document.getElementsByClassName("modBox active").length === 0 && !(document.activeElement.id.includes("contact"))) {
-          switch(e.keyCode) {
+      if (!e.altKey && this.state.user !== "default") {
+        if (!document.getElementById("shadow").className.includes("active") && document.getElementsByClassName("editTabWrapper active").length === 0 &&
+          !(document.activeElement.id.includes("contact")) && !(document.activeElement.id.includes("color")) && !document.getElementById("addtabdiv").className.includes("active")) {
+          switch (e.keyCode) {
             case 9: // tab
               e.preventDefault();
               if (this.state.tabs.length > 1)
@@ -1105,8 +1083,8 @@ class Home extends React.Component {
               break;
             case 27: // esc
               if (document.getElementById("searchbar").value !== "") {
-                this.setState({links : await this.getLinks(this.state.selectedTab)})
-                document.getElementById("searchbar").value="";
+                this.setState({ links: await this.getLinks(this.state.selectedTab) })
+                document.getElementById("searchbar").value = "";
               }
               document.getElementById("searchbar").blur();
               break;
@@ -1117,22 +1095,16 @@ class Home extends React.Component {
               }
               break;
             case 37: // left arrow
-              if (document.activeElement.id !== "searchbar" && this.state.links.length > this.state.preferences.numLinks) {
-                this.changeLinks(-1)
-              }
+              if (document.activeElement.id === "" && this.state.tabs.length >= this.state.numTabs)
+                this.changeTabs(-1);
               break;
             case 39: // right arrow
-              if (document.activeElement.id !== "searchbar" && this.state.links.length > this.state.preferences.numLinks) {
-                this.changeLinks(1)
-              }
+              if (document.activeElement.id === "" && this.state.tabs.length >= this.state.numTabs)
+                this.changeTabs(1);
               break;
             case 69: //lmao E
-              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && document.getElementById("editbox").className !== "modBox hide")
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && !this.state.preferences.editBtn)
                 this.editActive();
-              break;
-            case 82: // R
-              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && document.getElementById("erasebox").className !== "modBox hide")
-                this.eraseActive();
               break;
             case 76: // L
               if (this.state.user !== "default" && document.activeElement.id === "" && this.state.tabs.length !== 0)
@@ -1150,22 +1122,31 @@ class Home extends React.Component {
               if (this.state.user !== "default" && document.activeElement.id === "") {
                 if (document.getElementById("profilewrapper").className.includes("active"))
                   document.getElementById("profilewrapper").className = "profileWrapper";
-                else 
+                else
                   document.getElementById("profilewrapper").className = "profileWrapper active";
-                }
+              }
+              break;
+            case 82: // R
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && !this.state.preferences.removeBtn)
+                this.eraseActive();
+              break;
+            case 84: // T
+              if (document.activeElement.id !== "searchbar" && this.state.user !== "default" && !this.state.preferences.addTab &&
+                (this.state.tabIndex >= Math.floor(this.state.tabs.length / this.state.numTabs)))
+                this.openAddTab();
               break;
             case 192: // `
               if (this.state.tabs.length > 1 && document.activeElement.id !== "searchbar")
                 this.switchToPreviousTab();
               break;
           }
-        } else if (document.getElementById("AddFormDiv").className === "addForm active") {
-          if (document.activeElement.id === "addtitle" || document.activeElement.id === "addurl") 
+        } else if (document.getElementById("AddFormDiv").className.includes("active")) {
+          if (document.activeElement.id === "addtitle" || document.activeElement.id === "addurl")
             this.setState({
               suggestedIndex: -1,
               suggestedTitleIndex: -1
             })
-          switch(e.keyCode) {
+          switch (e.keyCode) {
             case 9: // tab
               e.preventDefault();
               if (document.activeElement.id === "") {
@@ -1201,13 +1182,13 @@ class Home extends React.Component {
                 this.openAddLink();
               break;
           }
-        } else if (document.getElementById("EditFormDiv").className === "addForm active") {
-          if (document.activeElement.id === "edittitle" || document.activeElement.id === "editurl") 
+        } else if (document.getElementById("EditFormDiv").className.includes("active")) {
+          if (document.activeElement.id === "edittitle" || document.activeElement.id === "editurl")
             this.setState({
               suggestedIndex: -1,
               suggestedTitleIndex: -1
             })
-          switch(e.keyCode) {
+          switch (e.keyCode) {
             case 9: // tab
               e.preventDefault();
               if (document.activeElement.id === "") {
@@ -1239,8 +1220,8 @@ class Home extends React.Component {
                 this.changeTitleSuggestion(1, false);
               break;
           }
-        } else if (document.getElementById("addtabdiv").className === "addTabDiv active") {
-          switch(e.keyCode) {
+        } else if (document.getElementById("addtabdiv").className.includes("active")) {
+          switch (e.keyCode) {
             case 9: // tab
               e.preventDefault();
               if (document.activeElement.id === "") {
@@ -1250,133 +1231,71 @@ class Home extends React.Component {
               }
               break;
           }
-        } else if (document.getElementById("erasebox").className === "modBox active" && document.activeElement.id !== "searchbar") {
-          switch(e.keyCode) {
-            case 8: // backspace
-              this.eraseActive();
-              break;
+        } else if (document.activeElement.id.includes("contact")) {
+          switch (e.keyCode) {
             case 9: // tab
               e.preventDefault();
-              if (this.state.tabs.length > 1)
-                this.switchToNextTab();
               break;
-            case 13: // enter
-              this.confirmErase();
-              break;
-            case 37: // left arrow
-              if (this.state.links.length > this.state.preferences.numLinks) {
-                this.changeLinks(-1)
-              }
-              break;
-            case 39: // right arrow
-              if (this.state.links.length > this.state.preferences.numLinks) {
-                this.changeLinks(1)
-              }
+          }
+        }
+      } else if (this.state.user !== "default") {
+        if (!document.getElementById("shadow").className.includes("active") && document.getElementsByClassName("editTabWrapper active").length === 0 &&
+          !(document.activeElement.id.includes("contact")) && !document.getElementById("addtabdiv").className.includes("active")) {
+          switch (e.keyCode) {
+            case 48: // 0
+              if (document.getElementsByClassName("linkBox").length > 9)
+                document.getElementsByClassName("linkBox")[9].click();
               break;
             case 49: // 1
               if (document.getElementsByClassName("linkBox").length > 0)
-                document.getElementsByClassName("linkCheckBox")[0].checked = !(document.getElementsByClassName("linkCheckBox")[0].checked);
+                document.getElementsByClassName("linkBox")[0].click();
               break;
             case 50: // 2
               if (document.getElementsByClassName("linkBox").length > 1)
-                document.getElementsByClassName("linkCheckBox")[1].checked = !(document.getElementsByClassName("linkCheckBox")[1].checked);
+                document.getElementsByClassName("linkBox")[1].click();
               break;
             case 51: // 3
               if (document.getElementsByClassName("linkBox").length > 2)
-                document.getElementsByClassName("linkCheckBox")[2].checked = !(document.getElementsByClassName("linkCheckBox")[2].checked);
+                document.getElementsByClassName("linkBox")[2].click();
               break;
             case 52: // 4
               if (document.getElementsByClassName("linkBox").length > 3)
-                document.getElementsByClassName("linkCheckBox")[3].checked = !(document.getElementsByClassName("linkCheckBox")[3].checked);
+                document.getElementsByClassName("linkBox")[3].click();
               break;
             case 53: // 5
               if (document.getElementsByClassName("linkBox").length > 4)
-                document.getElementsByClassName("linkCheckBox")[4].checked = !(document.getElementsByClassName("linkCheckBox")[4].checked);
+                document.getElementsByClassName("linkBox")[4].click();
               break;
             case 54: // 6
               if (document.getElementsByClassName("linkBox").length > 5)
-                document.getElementsByClassName("linkCheckBox")[5].checked = !(document.getElementsByClassName("linkCheckBox")[5].checked);
+                document.getElementsByClassName("linkBox")[5].click();
               break;
             case 55: // 7
               if (document.getElementsByClassName("linkBox").length > 6)
-                document.getElementsByClassName("linkCheckBox")[6].checked = !(document.getElementsByClassName("linkCheckBox")[6].checked);
+                document.getElementsByClassName("linkBox")[6].click();
               break;
             case 56: // 8
               if (document.getElementsByClassName("linkBox").length > 7)
-                document.getElementsByClassName("linkCheckBox")[7].checked = !(document.getElementsByClassName("linkCheckBox")[7].checked);
+                document.getElementsByClassName("linkBox")[7].click();
               break;
             case 57: // 9
               if (document.getElementsByClassName("linkBox").length > 8)
-                document.getElementsByClassName("linkCheckBox")[8].checked = !(document.getElementsByClassName("linkCheckBox")[8].checked);
-              break;
-            case 58: // 0
-              if (document.getElementsByClassName("linkBox").length > 9)
-                document.getElementsByClassName("linkCheckBox")[9].checked = !(document.getElementsByClassName("linkCheckBox")[9].checked);
-              break;
-            case 69: //lmao E
-              this.editActive();
-              break;
-            case 82: // R
-              this.eraseActive();
-              break;
-            case 192: // `
-              if (this.state.tabs.length > 1 && document.activeElement.id !== "searchbar")
-                this.switchToPreviousTab();
+                document.getElementsByClassName("linkBox")[8].click();
               break;
           }
-        } else if (document.activeElement.id.includes("contact")) {
-          switch(e.keyCode) {
-            case 9: // tab
-              e.preventDefault();
-            break;
-          }
-        }
-      } else if (document.getElementById("shadow").className !== "shadow active" && document.getElementsByClassName("addTabDiv active").length === 0 &&
-        document.getElementsByClassName("modBox active").length === 0 && document.activeElement.id === "") {
-        switch(e.keyCode) {
-          case 48: // 0
-            if (document.getElementsByClassName("linkBox").length > 9)
-              document.getElementsByClassName("linkBox")[9].click();
-            break;
-          case 49: // 1
-            if (document.getElementsByClassName("linkBox").length > 0)
-              document.getElementsByClassName("linkBox")[0].click();
-            break;
-          case 50: // 2
-            if (document.getElementsByClassName("linkBox").length > 1)
-              document.getElementsByClassName("linkBox")[1].click();
-            break;
-          case 51: // 3
-            if (document.getElementsByClassName("linkBox").length > 2)
-              document.getElementsByClassName("linkBox")[2].click();
-            break;
-          case 52: // 4
-            if (document.getElementsByClassName("linkBox").length > 3)
-              document.getElementsByClassName("linkBox")[3].click();
-            break;
-          case 53: // 5
-            if (document.getElementsByClassName("linkBox").length > 4)
-              document.getElementsByClassName("linkBox")[4].click();
-            break;
-          case 54: // 6
-            if (document.getElementsByClassName("linkBox").length > 5)
-              document.getElementsByClassName("linkBox")[5].click();
-            break;
-          case 55: // 7
-            if (document.getElementsByClassName("linkBox").length > 6)
-              document.getElementsByClassName("linkBox")[6].click();
-            break;
-          case 56: // 8
-            if (document.getElementsByClassName("linkBox").length > 7)
-              document.getElementsByClassName("linkBox")[7].click();
-            break;
-          case 57: // 9
-            if (document.getElementsByClassName("linkBox").length > 8)
-              document.getElementsByClassName("linkBox")[8].click();
-            break;
         }
       }
     }.bind(this))
+  }
+
+  getResizeTabs() {
+    window.addEventListener("resize", async function (e) {
+      clearTimeout(resize);
+      resize = setTimeout(this.doResize(), 100);
+    }.bind(this))
+  }
+  doResize() {
+    this.setState({ numTabs: 550 + (this.state.preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (this.state.preferences.gridWidth * 20)) / 220) });
   }
 }
 

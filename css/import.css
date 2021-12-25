@@ -1,37 +1,27 @@
 .bookmarkBox {
     position:fixed;
     top:calc(50% - 260px);
-    left:0;
+    left:50%;
     opacity:0;
     width:350px;
     height:517px;
     padding:0.8rem 1.6rem;
     background-color: rgb(246, 247, 253);
-    box-shadow: 0px 0px 0px rgb(246, 247, 253);
+    box-shadow: 0px 0px 10px rgb(114, 114, 114);
     border-radius:5%;
     font-family:'Noto Sans JP', sans-serif;
     overflow-y:auto;
     overflow-x:hidden;
     pointer-events:none;
     transition:0.5s;
+    transform:scale(1.6) translateX(-100%);
     z-index:11;
 }
-.bookmarkBox.active {
-    left:calc(50% - 175px);
-    box-shadow: 0px 0px 10px rgb(114, 114, 114);
-    opacity:1;
-    pointer-events:all;
-    border-top-right-radius: 0%;
-    border-bottom-right-radius: 0%;
-}
-.bookmarkBox.focus {
-    left:calc(50% - 175px);
-    box-shadow: 0px 0px 10px rgb(114, 114, 114);
+.bookmarkBox.focus, .bookmarkBox.active {
+    transform:scale(1.6) translateX(calc(-50% + 65px));
     opacity:1;
     pointer-events:all;
 }
-
-
 
 .importTeacher {
     display:none;
@@ -50,7 +40,6 @@
     margin-bottom:1.3rem;
     background-color:rgb(141, 152, 172);
     text-align:center;
-    animation: headerBottom 2s;
 }
 .teachSteps {
     padding-left:0.6rem;
@@ -60,14 +49,11 @@
     text-align:left;
     padding:0 0 0.9rem 0.5rem;
 }
-.step:nth-child(1) {animation: stepSlide 0.4s}
-.step:nth-child(2) {animation: stepSlide 0.8s}
-.step:nth-child(3) {animation: stepSlide 1.2s}
-.step:nth-child(4) {animation: stepSlide 1.6s}
 .dots {
     box-shadow:none;
     width:20px;
     height:20px;
+    cursor:auto;
 }
 .openFile {
     position:absolute;
@@ -96,7 +82,6 @@
     color: rgb(99, 109, 126);
     border-radius:30px;
     box-shadow:0px 0px 5px lightgray;
-    animation: openFile 3s;
 }
 .openFileButton:hover {
     color:red;
@@ -104,8 +89,6 @@
 .bookmarkBox.focus .importTeacher {
     display:block;
 }
-
-
 
 .submitImportContainer {
     display:none;
@@ -127,7 +110,7 @@
     padding:20px;
 }
 .bookmarkCancel:hover {
-    width:3.6rem;
+    transform:scale(1.4);
 }
 .selectAll {
     margin-top:1.2rem;
@@ -199,37 +182,4 @@
 .bookmarkBox::-webkit-scrollbar-thumb {
     background:rgba(99, 109, 126, 0.8);
     border-radius:20px;
-}
-
-@keyframes stepSlide {
-    0% {
-        opacity:0;
-        margin-left:-20rem;
-    } 25% {
-        opacity:0;
-    } 100% {
-        opacity:1;
-        margin-left:0;
-    }
-}
-
-@keyframes headerBottom {
-    from {
-        width:0rem;
-    } to {
-        width:18.7rem;
-    }
-}
-
-@keyframes openFile {
-    0% {
-        opacity:0;
-        padding:0;
-    } 50% {
-        opacity:0;
-        padding:0;
-    } 100% {
-        opacity:1;
-        padding:0.6rem 3rem;
-    }
 }

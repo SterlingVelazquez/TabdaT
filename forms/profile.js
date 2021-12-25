@@ -1,5 +1,4 @@
 import React from 'react';
-import { database } from "../tools/database.js";
 var Email = { send: function (a) { return new Promise(function (n, e) { a.nocache = Math.floor(1e6 * Math.random() + 1), a.Action = "Send"; var t = JSON.stringify(a); Email.ajaxPost("https://smtpjs.com/v3/smtpjs.aspx?", t, function (e) { n(e) }) }) }, ajaxPost: function (e, n, t) { var a = Email.createCORSRequest("POST", e); a.setRequestHeader("Content-type", "application/x-www-form-urlencoded"), a.onload = function () { var e = a.responseText; null != t && t(e) }, a.send(n) }, ajax: function (e, n) { var t = Email.createCORSRequest("GET", e); t.onload = function () { var e = t.responseText; null != n && n(e) }, t.send() }, createCORSRequest: function (e, n) { var t = new XMLHttpRequest; return "withCredentials" in t ? t.open(e, n, !0) : "undefined" != typeof XDomainRequest ? (t = new XDomainRequest).open(e, n) : t = null, t } };
 const emailTest = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
 
@@ -76,12 +75,7 @@ export class Profile extends React.Component {
             .then(function (message) {
                 document.getElementById("loadercontact").classList.toggle("active");
                 document.getElementById("loadercontactdiv").classList.toggle("active");
-                document.getElementById("contactcheck").classList.toggle("active");
-                for (var i = 0; i < 8; i++) 
-                    document.getElementsByClassName("contactCheckLine")[i].classList.toggle("active");
-                document.getElementById("submitcontacttext").classList.toggle("active");
-                document.getElementById("aftercontacttext").classList.toggle("active");
-                document.getElementById("submitcontactcancel").classList.toggle("active");
+                document.getElementById("submitcontactdiv").classList.toggle("active");
                 setTimeout(function(){ document.getElementById("profilewrapper").classList.toggle("contact")}, 2800);
             }) 
         } else {
@@ -97,23 +91,23 @@ export class Profile extends React.Component {
                 <div className="profileWrapper" id="profilewrapper">
                     <div className="profileRelative" id="profilerelative">
                         <div className="profileDiv" id="profilediv">
-                            <img src={this.state.user === "default" ? "black-male.png" : this.state.user.photoURL} className="profilePic" id="profilepic" 
-                                draggable="false" onClick={e => this.profileActive()}></img>
-                            <p className="signInText active" id="signintext" onClick={e => this.checkSignIn()}>Sign In</p>
+                            <img className={this.state.user === "default" ? "profilePic" : "profilePic active"} id="profilepic" src={this.state.user === "default" ? "black-male.png" : this.state.user.photoURL}
+                                draggable={false} onClick={e => this.profileActive()}></img>
+                            <p className={this.state.user === "default" ? "signInText active" : "signInText"} id="signintext" onClick={e => this.checkSignIn()}>Sign In</p>
                             <p className="signOutText" id="signouttext" onClick={e => this.checkSignOut()}>Sign Out</p>
                             <ul className="profileList">
                                 <li className="profileOption" id="profileoption1" onClick={e => this.viewContactForm()}>
-                                    <img className="profileIcon" id="profileicon1" src="message.png"></img>
+                                    <img className="profileIcon" id="profileicon1" src="message.png" draggable={false}></img>
                                     <p className="profileText" id="profiletext1">Contact</p>
                                 </li>
                                 <li className="profileOption" id="profileoption2" onClick={e => this.viewShortcuts()}>
-                                    <img className="profileIcon" id="profileicon2" src="keyboard.png"></img>
+                                    <img className="profileIcon" id="profileicon2" src="keyboard.png" draggable={false}></img>
                                     <p className="profileText" id="profiletext2">Shortcuts</p>
                                 </li>
                             </ul>
                         </div>
                         <div className="contactDiv" id="contactdiv">
-                            <p className="contactText" id="contacttext">Questions? Feedback? Comments? I'm here to listen.</p>
+                            <p className="contactText" id="contacttext">Questions? Feedback? Comments? <br/> I'm here to listen.</p>
                             <form className="contactForm" id="contactform" onSubmit={e => this.submitContactForm(e)}>
                                 <p className="contactLabel">Preferred Email Address</p>
                                 <input className="contactEmail" id="contactemail" defaultValue={this.state.user.email} onInput={e => this.setEmail(e)} required></input>
@@ -133,7 +127,7 @@ export class Profile extends React.Component {
                                         <div className="dotContact"></div>
                                     </div>
                                 </div>
-                                <div className="contactCheck" id="contactcheck"></div>
+                                <img className="contactCheck" id="contactcheck" src="checkmark.png"></img>
                                 <div className="contactCheckEffects">
                                     <div className="contactCheckLine"></div>
                                     <div className="contactCheckLine"></div>
@@ -146,50 +140,48 @@ export class Profile extends React.Component {
                                 </div>
                                 <p className="submitContactText" id="submitcontacttext"><b>Message Sent!</b></p>
                                 <p className="afterContactText" id="aftercontacttext">Please allow a few minutes before attempting to send further messages.</p>
-                                <img className="submitContactCancel" id="submitcontactcancel" src="cancel.png" onClick={e => this.viewContactForm()}></img>
+                                <img className="submitContactCancel" id="submitcontactcancel" src="cancel.png" onClick={e => this.viewContactForm()} draggable={false}></img>
                             </div>
                         </div>
                         <div className="shortcutDiv" id="shortcutdiv">
                             <div className="shortcutHeader">
                                 <p className="shortcutHeaderText">Keyboard Shortcuts</p>
-                                <img className="shortcutCancel" src="cancel.png" onClick={e => this.viewShortcuts()}></img>
+                                <img className="shortcutCancel" src="cancel.png" onClick={e => this.viewShortcuts()} draggable={false}></img>
                             </div>
                             <div className="shortcutContainer">
+                                <div className="shortcutContainerShadow" id="shortcutTop"></div>
                                 <ul className="keyboardList">
                                     <li className="keyboard"><kbd>TAB</kbd></li>
                                     <li className="keyboard"><kbd>`</kbd></li>
-                                    <li className="keyboard"><kbd>&#8594;</kbd></li>
-                                    <li className="keyboard"><kbd>&#8592;</kbd></li>
-                                    <li className="keyboard"><kbd>M</kbd>&nbsp;or&nbsp;<kbd>O</kbd></li>
+                                    <li className="keyboard"><kbd>M</kbd></li>
                                     <li className="keyboard"><kbd>P</kbd></li>
-                                    <li className="keyboard"><kbd>SHIFT</kbd> + <kbd>1</kbd></li>
                                     <li className="keyboard"><kbd>L</kbd></li>
                                     <li className="keyboard"><kbd>E</kbd></li>
                                     <li className="keyboard"><kbd>R</kbd></li>
                                     <li className="keyboard"><kbd>SPACE</kbd></li>
                                     <li className="keyboard"><kbd>ESC</kbd></li>
+                                    <li className="keyboard" id="altkeyshortcut"><kbd>ALT</kbd> + <br/><kbd>1</kbd></li>
                                 </ul>
                                 <ul className="shortcutList">
                                     <li className="shortcut">Next Tab</li>
                                     <li className="shortcut">Previous Tab</li>
-                                    <li className="shortcut">Next Link Page</li>
-                                    <li className="shortcut">Previous Link Page</li>
                                     <li className="shortcut">Opens / Closes Menu</li>
                                     <li className="shortcut">Opens / Closes Profile</li>
-                                    <li className="shortcut">Opens First Link<br/>(2 opens second link, etc.)</li>
                                     <li className="shortcut">Add Link</li>
                                     <li className="shortcut">Edit Mode</li>
                                     <li className="shortcut">Remove Mode</li>
                                     <li className="shortcut">Enter Search Bar</li>
                                     <li className="shortcut">Exit Search Bar</li>
+                                    <li className="shortcut">Opens First Link<br/>(2 opens second <br/>link, etc.)</li>
                                 </ul>
+                                <div className="shortcutContainerShadow" id="shortcutBottom"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="saveConfirm" id="contactconfirm">
                     <p className="saveConfirmText" id="contactconfirmtext">Are you sure you want to discard your message?</p>
-                    <button className="saveConfirmBtn" onClick={e => this.closeConfirm()}><img className="saveConfirmImg" src="cancel.png"></img></button>
+                    <button className="saveConfirmBtn" onClick={e => this.closeConfirm()}><img className="saveConfirmImg" src="cancel.png" draggable={false}></img></button>
                     <button className="saveConfirmBtn" onClick={e => this.confirmCancel()}><div className="saveCheck"></div></button>
                 </div>
             </div>
