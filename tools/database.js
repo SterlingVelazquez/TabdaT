@@ -1,34 +1,7 @@
 import { firebase } from '../tools/config.js'
-import { suggestions } from "../tools/suggestions.js"
 import 'firebase/storage'
 
 class Database {
-
-    async imageUploads() {
-        var gifs = ['REBEL8', 'PALACE', 'Lexus', 'JUNGLES', 'Hack The Box'];
-        var allThemes = ['Japan Animation', 'Hills', 'Japan', 'Mountains', 'Bridge', 'Cityscape', 'Dark Forest', 'Dusk', 'Fence', 'Flares', 'Gas Station', 'Lake', 'Orange Tree', 'Ski Rink', 'Snow', 'Tunnel', 'Underwater', 'Wave'];
-        var pngthemes = ['Hills', 'Japan', 'Mountains'];
-        var count = 0;
-        for (var i = 0; i < suggestions.length; i++) {
-            await firebase.storage().ref('default/Logos/' + suggestions[i].name + (gifs.includes(suggestions[i].name) ? '.gif' : '.webp')).getDownloadURL().then((res) => {
-                firebase.database().ref("default/Suggestions/" + suggestions[i].name).set({
-                    name: suggestions[i].name,
-                    url: suggestions[i].url,
-                    image: res
-                });
-            })
-            console.log(++count)
-        }
-         for (var j = 0; j < allThemes.length; j++) {
-            await firebase.storage().ref('default/Themes/' + allThemes[j] + (j === 0 ? '.gif' : pngthemes.includes(allThemes[j]) ? '.png' : '.jpg')).getDownloadURL().then((res) => {
-                firebase.database().ref("default/Themes/" + allThemes[j]).set({
-                    name: allThemes[j],
-                    image: res
-                });
-            })
-            console.log(++count)
-        }
-    }
 
     async getPreferences(user, defaults) {
         var preferences = [];

@@ -100,7 +100,6 @@ class Home extends React.Component {
       var preferences = await database.getPreferences(uid, defaultPreferences);
       var tabs = await database.getTabs(uid);
       var allLinks = await database.getAllLinks(uid);
-      var isDone = await database.imageUploads();
       await this.setState({
         user: user ? user : "default",
         uid: uid,
