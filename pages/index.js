@@ -17,6 +17,7 @@ var key = 0;
 var resize
 var doneLoading = false;
 var firstResize = true;
+var prefInit = [];
 const defaultPreferences = {
   addLink: false,
   addTab: false,
@@ -100,12 +101,14 @@ class Home extends React.Component {
       var preferences = await database.getPreferences(uid, defaultPreferences);
       var tabs = await database.getTabs(uid);
       var allLinks = await database.getAllLinks(uid);
+      prefInit = preferences;
       await this.setState({
         user: user ? user : "default",
         uid: uid,
         preferences: preferences,
         oldPreferences: JSON.parse(JSON.stringify(preferences)),
         tabs: tabs,
+        numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
         selectedTab: tabs.length !== 0 ? tabs[0].name : "",
         allLinks: allLinks,
         links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks),
@@ -115,13 +118,10 @@ class Home extends React.Component {
         suggestions: user ? await database.getSuggestions() : [],
         themes: user ? await database.getThemes() : [],
       })
+      document.getElementById("title").classList.toggle("hide");
+      this.getKeyPresses();
+      this.getResizeTabs();
     }.bind(this))
-  }
-
-  async componentDidMount() {
-    document.getElementById("title").classList.toggle("hide");
-    this.getKeyPresses();
-    this.getResizeTabs();
   }
 
   async spinAnimation() {
@@ -741,12 +741,6 @@ class Home extends React.Component {
   }
 
   render() {
-
-    if (firstResize && this.state.preferences.gridSize) {
-      firstResize = !firstResize;
-      this.doResize();
-    }
-
     return (
       <div className={this.state.preferences.theme ? "container themes" : (this.state.preferences.night ? "container night" : "container")} id="container">
         <Head>
