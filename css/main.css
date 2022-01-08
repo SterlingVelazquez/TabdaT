@@ -96,7 +96,7 @@
     pointer-events:all;
   }
   .title.hide {
-    animation:titleFade 2s;
+    animation:titleFade 3s;
     opacity:0;
     pointer-events:none;
   }
@@ -1019,12 +1019,6 @@
     }
   }
 
-  @media (max-width:650px) {
-    .container {
-      padding-top:90px;
-    }
-  }
-
   @media (max-width:510px) {
     .searchBar {
       max-width:100vw;
@@ -1057,21 +1051,9 @@
 
   @media (max-width:400px) {
     .title {
-      position:fixed;
-      display:flex;
-      flex-wrap: wrap;
-      height:100%; width:100%;
       font-size: 96px;
-      opacity:1;
-      background:rgb(232, 238, 247);
-      transition:0.8s;
-      z-index:9999;
-      pointer-events:all;
     }
     .titleLoader {
       transform: translateX(-50%) scale(0.8);
-    }
-    .container {
-      padding-top:60px;
     }
   }

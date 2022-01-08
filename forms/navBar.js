@@ -202,7 +202,6 @@ export class NavBar extends React.Component {
     }
     changeColorInput() {
         for (var i = 1; i < document.getElementsByClassName("colorInput").length + 1; i++) {
-            console.log(this.hexc(document.getElementById("colortester" + i).style.background))
             document.getElementById("colorinput" + i).value = this.hexc(document.getElementById("colortester" + i).style.background);
         }
     }
