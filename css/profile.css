@@ -622,6 +622,12 @@ kbd {
     }
 }
 
+@media (max-width:845px) {
+    .signInText {
+        display:none;
+    }
+}
+
 @media (max-width:400px) {
     .profileWrapper {
         top:16px;

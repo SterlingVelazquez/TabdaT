@@ -16,7 +16,7 @@ var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
 var resize
 var doneLoading = false;
-var firstResize = true;
+var firstLoad = true;
 var prefInit = [];
 const defaultPreferences = {
   addLink: false,
@@ -96,12 +96,11 @@ class Home extends React.Component {
 
   async UNSAFE_componentWillMount() {
     firebase.auth().onAuthStateChanged(async function (user) {
-      doneLoading = true;
       var uid = user ? user.uid : "default";
       var preferences = await database.getPreferences(uid, defaultPreferences);
       var tabs = await database.getTabs(uid);
       var allLinks = await database.getAllLinks(uid);
-      prefInit = preferences;
+      doneLoading = true;
       await this.setState({
         user: user ? user : "default",
         uid: uid,
@@ -118,7 +117,8 @@ class Home extends React.Component {
         suggestions: user ? await database.getSuggestions() : [],
         themes: user ? await database.getThemes() : [],
       })
-      document.getElementById("title").classList.toggle("hide");
+      if (firstLoad) document.getElementById("title").classList.toggle("hide");
+      firstLoad = false;
       this.getKeyPresses();
       this.getResizeTabs();
     }.bind(this))
@@ -795,8 +795,8 @@ class Home extends React.Component {
 
               <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
                 <div className="buttonNav" id="buttonnav">
-                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
-                    style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} 
+                    id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)} draggable={false}>
                   </img>
                   {
                     this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
@@ -825,8 +825,8 @@ class Home extends React.Component {
                     this.state.user === "default" ? <div></div> :
                       <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
                   }
-                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
-                    style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} 
+                    id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)} draggable={false}>
                   </img>
                 </div>
                 <br />
