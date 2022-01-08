@@ -58,7 +58,7 @@ export class Hotbar extends React.Component {
           <div className="hotbarLinks" id="recentlinks">
             {
               this.state.recentLinks.map((each) =>
-                <a href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
+                <a className="hotbarLinkWrapper" href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
                   <img className="hotbarLink" src={each.image}></img></a>
               )
             }
@@ -66,7 +66,7 @@ export class Hotbar extends React.Component {
           <div className="hotbarLinks active" id="trendinglinks">
             {
               this.state.trendingLinks.map((each) =>
-                <a href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
+                <a className="hotbarLinkWrapper" href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
                   <img className="hotbarLink" src={each.image}></img></a>
               )
             }
@@ -74,7 +74,7 @@ export class Hotbar extends React.Component {
           <div className="hotbarLinks" id="popularlinks">
             {
               this.state.popularLinks.map((each) =>
-                <a href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
+                <a className="hotbarLinkWrapper" href={each.link} target="_blank" rel="noopener noreferrer" key={key++} onClick={e => this.props.updateShortcutCount(each.name)}>
                   <img className="hotbarLink" src={each.image}></img></a>
               )
             }

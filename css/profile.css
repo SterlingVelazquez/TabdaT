@@ -5,7 +5,7 @@
     height:80px;
     width:80px;
     transition:top 0.4s ease-in 0.1s, right 0.4s ease-out, height 0.8s, width 0.8s;
-    z-index:7;
+    z-index:6;
     border-radius:30px;
 }
 .profileWrapper.active {
@@ -619,5 +619,203 @@ kbd {
     } 100% {
         opacity: 1;
         pointer-events:all;
+    }
+}
+
+@media (max-width:400px) {
+    .profileWrapper {
+        top:16px;
+        right:16px;
+        height:62px;
+        width:62px;
+    }
+    .profileWrapper.active {
+        top:20px;
+        right:20px;
+        width:220px;
+        height:200px;
+        z-index:9;
+    }
+    .profileWrapper.contact {
+        top:60px;
+        right:-35px;
+        height:250px;
+        width:340px;
+    }
+    .profileWrapper.shortcut {
+        top:10px;
+        right:10px;
+        height:378px;
+        width:230px;
+    }
+    
+    .profilePic {
+        width:62px;
+    }
+    .profileWrapper.active .profilePic {
+        top:12px;
+        right:12px;
+    }
+    
+    .signInText {
+        padding:10px;
+        top:5px; left:-90px;
+        font-size:20px;
+    }
+    .signInText.active {
+        right:70px;
+    }
+    .signOutText {
+        margin:25px 0 0 28px;
+        padding:5px;
+        font-size:18px;
+    }
+    
+    .profileList {
+        margin:24px 0 0 6px;
+    }
+    .profileOption {
+        height:48px;
+        padding:10px 0 10px 18px;
+    }
+    .profileIcon {
+        height:25px;
+    }
+    .profileIcon:nth-child(1) {
+        width:32px;
+    }
+    .profileText {
+        font-size:18px;
+        transform:translateY(-5px);
+    }
+    
+    .contactDiv {
+        margin:14px;
+    }
+    .contactText {
+        margin:135px 0 0 160px;
+        padding:0 0px;
+        font-size:17px;
+    }
+    .contactTextRemove {
+        display:none;
+    }
+    .contactForm {
+        margin-left:-50px;
+        margin-top:-112px;
+    }
+    .contactLabel {
+        font-size:16px;
+    }
+    .contactEmail {
+        font-size:15px;
+        margin: 9px 0 21px -190px;
+        width:200px;
+    }
+    .emailError {
+        font-size:14px;
+        right:190px;
+        top:56px;
+    }
+    .contactMessage {
+        width:206px;
+        height:98px;
+        margin: 14px 202px 0 0;
+        font-size:15px;
+        padding: 7px;
+    }
+    .contactButton {
+        padding: 12px;
+        right:70px;
+        font-size:18px;
+    }
+    
+    .submitContactDiv {
+        top: -60px; left: 60px;
+        width:250px;
+        height:340px;
+    }
+    .contactCheck {
+        width:56px; height:40px;
+    }
+    .contactCheckEffects {
+        width:145px; height:145px;
+        left:20%; top:25%;
+    }
+    .contactCheckLine {
+        height:1.2px; width:1.2px;
+    }
+    .submitContactText {
+        font-size:20px;
+    }
+    .afterContactText {
+        top:70%; 
+        font-size:17px;
+    }
+    .submitContactCancel {
+        top:0;
+        right:0;
+        padding:22px;
+        width:4rem;
+    }
+    .loaderContact {
+        width:45px;
+        height:45px;
+    }
+    
+    .shortcutHeader {
+        height:73px;
+    }
+    .shortcutHeaderText {
+        top:18px; left:20px;
+        font-size:20px;
+        width:50%;
+    }
+    .shortcutContainer {
+        left:14px;
+        width:100%;
+        height:286px;
+        margin-top:10px;
+    }
+    .shortcutContainerShadow {
+        top:73px; left:0;
+    }
+    #shortcutBottom {
+        bottom:4px; left:2px;
+        height:28px;
+    }
+    .keyboardList {
+        margin-top:18px;
+    }
+    .keyboard {
+        margin-bottom:15px;
+        font-size:16px;
+    }
+    .shortcutList {
+        margin:18px 0 0 22px;
+    }
+    .shortcut {
+        margin:4px 0 22px 0;
+        font-size:14px;
+    }
+    kbd {
+        font-size: 0.85em;
+        margin-bottom:1.3px;
+        padding: 3px 5px;
+    }
+    #menuShortcut, #profileShortcut, #spaceShortcut {
+        margin-bottom:34px;
+    }
+    #altkeyshortcut {
+        margin-top:17px;
+    }
+    .shortcutContainer::-webkit-scrollbar {
+        width:63px; 
+    }
+    .shortcutContainer::-webkit-scrollbar-track {
+        border: 24px solid rgba(0, 0, 0, 0);
+    }
+    .shortcutContainer::-webkit-scrollbar-thumb {
+        border: 28px solid rgba(0, 0, 0, 0);
     }
 }

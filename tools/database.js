@@ -68,7 +68,7 @@ class Database {
                     imageShadowSize: 20,
                     linkImageSize: 50,
                     linkShadowColor: false,
-                    linkShadowSize: 10,
+                    linkShadowSize: 35,
                     linkText: false,
                     linkTextColor: false,
                     linkTextSize: 50,
@@ -98,9 +98,10 @@ class Database {
                 firebase.database().ref(user + "/Preferences").set(newPref);
             })
         } else {
-            firebase.storage().ref(user + "/ThemeUltafedIgm").delete().catch((err) => {
-                // File does not exist
-            })
+            if ((!preferences.theme || !preferences.theme.includes("ThemeUltafedIgm")) && oldPreferences.theme && oldPreferences.theme.includes("ThemeUltafedIgm"))
+                firebase.storage().ref(user + "/ThemeUltafedIgm").delete().catch((err) => {
+                    // File does not exist
+                })
             firebase.database().ref(user + "/Preferences").set(newPref);
         }
     }
@@ -267,8 +268,10 @@ class Database {
 
     async eraseLinks(uid, links) {
         for (var i = 0; i < links.length; i++) {
-            if (links[i].image.includes("https://firebasestorage.googleapis"))
-                await firebase.storage().ref(uid + '/' + links[i].name).delete();
+            if (links[i].image.includes(uid))
+                await firebase.storage().ref(uid + "/" + links[i].name).delete().catch((err) => {
+                    // File does not exist
+            })
             firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }
     }
@@ -284,7 +287,7 @@ class Database {
             })
         })
         for (var i = 0; i < links.length; i++) {
-            if (links[i].image.includes("https://firebasestorage.googleapis"))
+            if (links[i].image.includes(uid))
                 firebase.storage().ref(uid + '/' + links[i].name).delete();
             firebase.database().ref(uid + '/Links/' + links[i].name).remove();
         }

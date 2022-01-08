@@ -10,7 +10,7 @@
     opacity:0;
     cursor:pointer;
     pointer-events:none;
-    transition:0.5s 0.1s;
+    transition:transform 0.5s 0.1s, opacity 0.5s 0.1s;
     transform-origin:-95% 50%;
     transform:translateX(0);
     backface-visibility: hidden;
@@ -91,7 +91,7 @@
     margin-bottom:6rem;
     z-index:2;
     border-radius:5px;
-    transition:background-color 0.8s, opacity 0.3s, transform 0.5s;
+    transition:opacity 0.3s, transform 0.5s;
     transform-origin: top right;
     transform:scale(0);
     opacity:0;
@@ -109,16 +109,22 @@
     display:inline;
     text-align:left;
     top:8px;
-    margin-left:8px;
+    margin-left:15px;
     font-size:13px;
     color:rgba(74, 84, 95, 0.842);
-    transition:0.3s;
+    transition:color 0.3s, opacity 0.3s;
+    opacity:0.5;
+    pointer-events:none;
     cursor:pointer;
+}
+.defaultColor.active {
+    opacity: 1;
+    pointer-events:all;
 }
 .previewColor {
     position:relative;
     display:inline;
-    margin-left:60px;
+    margin-left:88px;
     top:8px;
     font-size:13px;
     color:rgba(74, 84, 95, 0.842);
@@ -143,7 +149,6 @@
     border-radius:6px;
     border:thin solid lightgray;
     cursor:pointer;
-    transition:0.3s;
 }
 .swatch:hover,
 .swatch.active {
@@ -202,7 +207,6 @@
     width:30px;
     height:100%;
     pointer-events:none;
-    transition:0.8s;
     z-index:1;
 }
 .hashTag {
@@ -214,7 +218,6 @@
     color:rgba(74, 84, 95, 0.842);
     font-size:18px;
     text-shadow:0 0 10px rgb(165, 165, 165);
-    transition:0.8s;
 }
 .colorInput {
     border: thin solid lightgray;
@@ -227,7 +230,6 @@
     background:rgb(255, 255, 255);
     color: rgb(114, 114, 114);
     padding: 0.08rem 0.4rem 0 2.4rem;
-    transition:0.8s;
     z-index:0;
 }
 
@@ -242,7 +244,6 @@
     height:6px;
     border:thin solid lightgray;
     border-radius:10px;
-    transition:0.8s;
     transform:rotateZ(-90deg);
 }
 .brightnessSlider {
@@ -284,5 +285,37 @@
     height:25px;
     border:thin solid lightgray;
     border-radius:100%;
-    transition:0.5s;
+}
+
+@media (max-width:400px) {
+    .colorViewer {
+        width:32px;
+        height:32px;
+        top:16px;
+        right:-62px;
+    }
+    .sideContainer.active .colorViewer:hover {
+        transform:scale(1.2) translateX(-76px);
+    }
+    .sideContainer.active .colorViewer {
+        transform:translateX(-80px);
+    }
+
+    .customColorPicker {
+        left:14px;
+        top:59px;
+    }
+    .customColorPicker.active {
+        transform:scale(1);
+    }
+
+    .colorCancel {
+        width:25px; height:25px;
+        box-shadow:none;
+        transform:translate(10px, -7px);
+    }
+    .colorCheck {
+        width:15px; height:26px;
+        transform: rotateZ(40deg) translate(10px, -23px);
+    }
 }

@@ -107,7 +107,7 @@ export class Profile extends React.Component {
                             </ul>
                         </div>
                         <div className="contactDiv" id="contactdiv">
-                            <p className="contactText" id="contacttext">Questions? Feedback? Comments? <br/> I'm here to listen.</p>
+                            <p className="contactText" id="contacttext">Questions? Feedback? <span className="contactTextRemove">Comments?</span> <br/> I'm here to listen.</p>
                             <form className="contactForm" id="contactform" onSubmit={e => this.submitContactForm(e)}>
                                 <p className="contactLabel">Preferred Email Address</p>
                                 <input className="contactEmail" id="contactemail" defaultValue={this.state.user.email} onInput={e => this.setEmail(e)} required></input>
@@ -153,12 +153,12 @@ export class Profile extends React.Component {
                                 <ul className="keyboardList">
                                     <li className="keyboard"><kbd>TAB</kbd></li>
                                     <li className="keyboard"><kbd>`</kbd></li>
-                                    <li className="keyboard"><kbd>M</kbd></li>
-                                    <li className="keyboard"><kbd>P</kbd></li>
+                                    <li className="keyboard" id="menuShortcut"><kbd>M</kbd></li>
+                                    <li className="keyboard" id="profileShortcut"><kbd>P</kbd></li>
                                     <li className="keyboard"><kbd>L</kbd></li>
                                     <li className="keyboard"><kbd>E</kbd></li>
                                     <li className="keyboard"><kbd>R</kbd></li>
-                                    <li className="keyboard"><kbd>SPACE</kbd></li>
+                                    <li className="keyboard" id="spaceShortcut"><kbd>SPACE</kbd></li>
                                     <li className="keyboard"><kbd>ESC</kbd></li>
                                     <li className="keyboard" id="altkeyshortcut"><kbd>ALT</kbd> + <br/><kbd>1</kbd></li>
                                 </ul>

@@ -6,38 +6,38 @@ var key = 0;
 export class AddLink extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            name : null, 
-            link : null, 
-            image : null,
+        this.state = {
+            name: null,
+            link: null,
+            image: null,
             imageAddress: "",
             defaultImg: "ultafedIgm/doggo.png",
             suggestions: [],
             suggestedTitle: [],
             suggestedLinks: [],
-            uid : this.props.userId,
-            selectedTab : this.props.currTab,
+            uid: this.props.userId,
+            selectedTab: this.props.currTab,
             newTab: null,
             tabs: this.props.tabs,
-            allLinks : this.props.allLinks
+            allLinks: this.props.allLinks
         };
         this.submitForm = this.submitForm.bind(this);
     }
 
     static getDerivedStateFromProps(props) {
         return {
-            uid : props.userId,
-            selectedTab : props.currTab,
+            uid: props.userId,
+            selectedTab: props.currTab,
             tabs: props.tabs,
-            allLinks : props.allLinks,
+            allLinks: props.allLinks,
             suggestions: props.suggestions
         }
     }
 
     async setName(event, isDefault) {
         event.persist();
-        if (this.state.suggestedLinks.length > 0) 
-            this.setState({suggestedLinks: []})
+        if (this.state.suggestedLinks.length > 0)
+            this.setState({ suggestedLinks: [] })
         if (!isDefault) {
             var count = 0;
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
@@ -87,20 +87,20 @@ export class AddLink extends React.Component {
         }
     }
     async setLink(event, isDefault) {
-        if (this.state.suggestedTitle.length > 0) 
-            this.setState({suggestedTitle: []})
+        if (this.state.suggestedTitle.length > 0)
+            this.setState({ suggestedTitle: [] })
         if (!isDefault) {
             var count = 0;
             for (var i = 0; i < this.state.suggestions.length; i++) {
                 if (event.target.value.includes(this.state.suggestions[i].url)) {
-                    this.setState({defaultImg: this.state.suggestions[i].image})
+                    this.setState({ defaultImg: this.state.suggestions[i].image })
                     count++;
                     i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
                 this.setState({
-                    defaultImg: this.state.name !== null && this.state.name.charAt(0).match(/[A-Z]/i) ? 
+                    defaultImg: this.state.name !== null && this.state.name.charAt(0).match(/[A-Z]/i) ?
                         "ultafedIgm/" + this.state.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                 })
             }
@@ -127,7 +127,7 @@ export class AddLink extends React.Component {
                 reader.onload = function () {
                     document.getElementById("outimage").src = reader.result;
                 }
-                this.setState({image: files[0]})
+                this.setState({ image: files[0] })
                 reader.readAsDataURL(files[0])
                 if (!document.getElementById("uploadimg").className.includes("active"))
                     this.toggleDefault();
@@ -135,12 +135,12 @@ export class AddLink extends React.Component {
         })
     }
     setImageAddress(event) {
-        this.setState({imageAddress: event.target.value})
+        this.setState({ imageAddress: event.target.value })
         this.toggleURL();
     }
     setNewTab(tabName) {
         if (tabName !== this.state.newTab)
-            this.setState({newTab: tabName})
+            this.setState({ newTab: tabName })
     }
 
     toggleDefault(isDefault) {
@@ -170,13 +170,13 @@ export class AddLink extends React.Component {
         if (document.getElementById("uploadimg").className.includes("active"))
             document.getElementById("uploadimg").classList.toggle("active")
     }
-    toggleTabActive(e) { 
+    toggleTabActive(e) {
         e.stopPropagation();
-        document.getElementById("selecttab").classList.toggle("active") 
+        document.getElementById("selecttab").classList.toggle("active")
     }
     clearImg() {
         document.getElementById("imageaddressinput").value = "";
-        this.setState({imageAddress: ""});
+        this.setState({ imageAddress: "" });
         this.toggleDefault(true);
     }
     closeSuggestions() {
@@ -233,8 +233,8 @@ export class AddLink extends React.Component {
             document.getElementById("selecttab").classList.toggle("active")
         window.formOpen = false;
         this.setState({
-            name:null,
-            link:null,
+            name: null,
+            link: null,
             image: null,
             defaultImg: "ultafedIgm/doggo.png",
             imageAddress: "",
@@ -248,7 +248,7 @@ export class AddLink extends React.Component {
         document.getElementById("titleerrmsg").style.display = "none";
     }
 
-    render () {
+    render() {
         return (
             <div className="addForm" id="AddFormDiv" onClick={e => this.closeSuggestions()}>
                 <form id="addFormDiv" onSubmit={this.submitForm}>
@@ -257,12 +257,12 @@ export class AddLink extends React.Component {
                     <div className="selectTab" id="selecttab">
                         <div className="selectTabChosen" id="selecttabchosen" onClick={e => this.toggleTabActive(e)}>
                             <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.selectedTab}
-                            <div className="selectTabArrow" id="selectTabArrow"></div></div>
+                                <div className="selectTabArrow" id="selectTabArrow"></div></div>
                         </div>
                         <div className="selectTabDrop" id="selecttabdrop">
                             <ul className="selectTabList" id="selecttablist">
                                 {
-                                    this.state.tabs.map((each) => 
+                                    this.state.tabs.map((each) =>
                                         <li className="selectTabItem" onClick={e => this.setNewTab(each.name)} key={key++}>{each.name}</li>
                                     )
                                 }
@@ -271,32 +271,12 @@ export class AddLink extends React.Component {
                     </div>
 
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" id="addtitle" onChange={e =>this.setName(e, false)} spellCheck="false" required/>
+                    <input type="text" name="linkName" id="addtitle" onChange={e => this.setName(e, false)} spellCheck="false" required />
                     <p className="errMsg" id="errmsg">Can't contain: . [ ] # $ /</p>
-                    <p className="errMsg" id="titleerrmsg" style={{right:"1rem"}}>You've already used that name</p>
-
-                    <ul className="suggestionList" id="suggestiontitlelist" style={{top:"18%"}}>
-                        {
-                            this.state.suggestedTitle.slice(0, 5).map( (each) => 
-                                <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
-                                    <img className="suggestionImg" src={each.image}></img>
-                                </button>
-                            )
-                        }
-                    </ul>
+                    <p className="errMsg" id="titleerrmsg" style={{ right: "1rem" }}>You've already used that name</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required/>
-                    
-                    <ul className="suggestionList" id="suggestionlist">
-                        {
-                            this.state.suggestedLinks.slice(0, 5).map( (each) => 
-                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
-                                    <img className="suggestionImg" src={each.image}></img>
-                                </button>
-                            )
-                        }
-                    </ul>
+                    <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required />
 
                     <div id="defaultimg" onClick={e => this.toggleDefault(true)} className="imgContainer active">
                         <div className="defaultImg">
@@ -304,29 +284,47 @@ export class AddLink extends React.Component {
                         </div>
                         <p className="imgLabel">Default</p>
                     </div>
-                    
+
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg" className="imgContainer">
-                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
-                            <div className="defaultImg">
-                                <img id="outimage" src="arrow.png" className="linkImgForm"></img>
-                            </div>
+                        <div className="defaultImg">
+                            <img id="outimage" src="arrow.png" className="linkImgForm"></img>
+                            <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
+                        </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 
-                    <br/>
-                    <label style={{float:"none"}}><b>OR</b></label>
-                    <br/>
+                    <br />
+                    <label id="orLinkText"><b>OR</b></label>
+                    <br />
                     <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
                     <input type="text" className="imgAddressInput" id="imageaddressinput" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
 
                     <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox">
-                        <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
+                        <img src={this.state.imageAddress} style={{ display: this.state.imageAddress !== "" ? "block" : "none" }}></img>
                     </div>
-                    <button className="clearImg" id="clearimg" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>
+                    <button className="clearImg" id="clearimg" type="button" style={{ display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none" }} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>
                 </form>
+                <ul className="suggestionList" id="suggestiontitlelist" style={{ top: "18%" }}>
+                    {
+                        this.state.suggestedTitle.slice(0, 5).map((each) =>
+                            <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
+                                <img className="suggestionImg" src={each.image}></img>
+                            </button>
+                        )
+                    }
+                </ul>
+                <ul className="suggestionList" id="suggestionlist">
+                    {
+                        this.state.suggestedLinks.slice(0, 5).map((each) =>
+                            <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
+                                <img className="suggestionImg" src={each.image}></img>
+                            </button>
+                        )
+                    }
+                </ul>
             </div>
         );
     }

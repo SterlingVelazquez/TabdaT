@@ -364,15 +364,15 @@ export class EditLink extends React.Component {
                     </div>
 
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg2" className={this.state.image === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
-                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
                         <div className="defaultImg">
                             <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
+                            <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
                         </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 
                     <br/>
-                    <label style={{float:"none"}}><b>OR</b></label>
+                    <label id="orLinkTextEdit"><b>OR</b></label>
                     <br/>
                     <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress2" onClick={e => this.toggleURL()}><b>Image URL</b></label>
                     <input type="text" className="imgAddressInput" id="imageaddressinput2" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>

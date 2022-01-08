@@ -1,15 +1,15 @@
 .hotbarContainer {
     position:relative;
     width:100%;
-    height:228px;
+    height:clamp(140px, 13vw, 228px);
     text-align:center;
-    margin-top:5vh;
+    margin-top:4vh;
 }
 .hotbar {
     position:absolute;
     left:50%;
     transform:translateX(-50%);
-    width:780px; height:100%;
+    width:clamp(370px, 45%, 780px); height:100%;
     box-shadow: 7px 7px 7px rgb(200,212,229), -7px -7px 7px rgb(255, 255, 255);
     border-radius:40px;
 }
@@ -33,8 +33,8 @@
     position:relative;
     display:inline-block;
     text-align:center;
-    width:35px; height:100%;
-    margin:auto 40px;
+    width:clamp(24px, 5%, 35px); height:100%;
+    margin:auto 5%;
     opacity:0.6;
     cursor:pointer;
     filter:sepia(80%) hue-rotate(180deg) brightness(105%);
@@ -44,12 +44,13 @@
     top:50%; left:0;
     transform:translateY(-50%);
     transform-origin:50% 0%;
-    width:35px; height:35px;
+    width:100%; height:auto;
     transition:0.1s;
     z-index:1;
 }
 .hotbarIconWrapper:nth-child(1) .hotbarIcon, .hotbarIconWrapper:nth-child(3) .hotbarIcon {
-    width:40px;
+    width:100%;
+    max-width:40px;
 }
 .hotbarIconWrapper.active .hotbarIcon {
     transform:scale(1.8) translateY(-50%);
@@ -104,13 +105,55 @@
     opacity:1;
 }
 
+.hotbarLinkWrapper {
+    position:relative;
+    width:100%; height:100%;
+    pointer-events:none;
+}
 .hotbarLink {
     position:relative;
     box-shadow:none;
-    width:80px; height:80px;
-    margin:auto 30px;
+    width:11%; height:auto;
+    max-width:80px;
+    margin:auto 4%;
     top:45%; transform:translateY(-50%);
     border-radius:100%;
     box-shadow: 4px 4px 5px rgb(200,212,229);
     transition:0.3s;
+}
+.hotbarLinks.active .hotbarLink {
+    pointer-events:all;
+}
+
+@media (max-width:1150px) {
+    .hotbarContainer {
+        height:215px;
+        margin-top:4vh;
+    }
+    .hotbar {
+        width:390px;
+    }
+    .hotbarIconWrapper {
+        width:30px;
+        margin:auto 5%;
+    }
+    .hotbarIconWrapper:nth-child(1) .hotbarIcon, .hotbarIconWrapper:nth-child(3) .hotbarIcon {
+        max-width:40px;
+    }
+    .hotbarIconWrapper.active .hotbarIcon {
+        transform:scale(1.8) translateY(-50%);
+    }
+    .hotbarIconWrapper:nth-child(1).active .hotbarIcon, .hotbarIconWrapper:nth-child(3).active .hotbarIcon {
+        transform:scale(1.6) translateY(-50%);
+    }
+
+    .hotbarIconTooltip {
+        display:none;
+    }
+    
+    .hotbarLink {
+        width:60px;
+        margin:-12px 35px;
+        top:30%;
+    }
 }

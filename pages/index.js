@@ -14,7 +14,31 @@ import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
 var key = 0;
-var resize;
+var resize
+var doneLoading = false;
+var firstResize = true;
+const defaultPreferences = {
+  addLink: false,
+  addTab: false,
+  buttonsColor: false,
+  editBtn: false,
+  gridWidth: 20,
+  gridHeight: 20,
+  imageShadowColor: false,
+  imageShadowSize: 20,
+  linkImageSize: 50,
+  linkShadowColor: false,
+  linkShadowSize: 35,
+  linkText: false,
+  linkTextColor: false,
+  linkTextSize: 50,
+  night: false,
+  removeBtn: false,
+  tabArrows: false,
+  tabShadowSize: 1,
+  tabTextShadowColor: false,
+  theme: false,
+}
 
 class Home extends React.Component {
 
@@ -40,28 +64,6 @@ class Home extends React.Component {
       bookmarks: [],
       preferences: [],
       oldPreferences: [],
-      defaultPreferences: {
-        addLink: false,
-        addTab: false,
-        buttonsColor: false,
-        editBtn: false,
-        gridWidth: 20,
-        gridHeight: 20,
-        imageShadowColor: false,
-        imageShadowSize: 20,
-        linkImageSize: 50,
-        linkShadowColor: false,
-        linkShadowSize: 10,
-        linkText: false,
-        linkTextColor: false,
-        linkTextSize: 50,
-        night: false,
-        removeBtn: false,
-        tabArrows: false,
-        tabShadowSize: 1,
-        tabTextShadowColor: false,
-        theme: false,
-      },
       suggestions: [],
       themes: [],
       currTab: {
@@ -91,21 +93,21 @@ class Home extends React.Component {
     this.updateShortcutCount = this.updateShortcutCount.bind(this);
   }
 
-  async componentDidMount() {
+  async UNSAFE_componentWillMount() {
     firebase.auth().onAuthStateChanged(async function (user) {
+      doneLoading = true;
       var uid = user ? user.uid : "default";
-      var preferences = await database.getPreferences(uid, this.state.defaultPreferences);
+      var preferences = await database.getPreferences(uid, defaultPreferences);
       var tabs = await database.getTabs(uid);
       var allLinks = await database.getAllLinks(uid);
-      // var isDone = await database.imageUploads();
-      this.setState({
+      var isDone = await database.imageUploads();
+      await this.setState({
         user: user ? user : "default",
         uid: uid,
         preferences: preferences,
         oldPreferences: JSON.parse(JSON.stringify(preferences)),
         tabs: tabs,
-        numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
-        selectedTab: tabs[0].name,
+        selectedTab: tabs.length !== 0 ? tabs[0].name : "",
         allLinks: allLinks,
         links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks),
         trendingLinks: await database.getTrendingLinks(),
@@ -115,6 +117,10 @@ class Home extends React.Component {
         themes: user ? await database.getThemes() : [],
       })
     }.bind(this))
+  }
+
+  async componentDidMount() {
+    document.getElementById("title").classList.toggle("hide");
     this.getKeyPresses();
     this.getResizeTabs();
   }
@@ -201,7 +207,7 @@ class Home extends React.Component {
       document.getElementById("leftarrow").classList.toggle("hide");
       document.getElementById("rightarrow").classList.toggle("hide");
     }
-    if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
+    if (JSON.stringify(this.state.preferences) !== JSON.stringify(defaultPreferences))
       document.getElementById("resetbox").classList.toggle("active");
   }
   async setPreferences(pref) {
@@ -249,7 +255,7 @@ class Home extends React.Component {
       uid: "default",
     })
     await firebase.auth().signOut();
-    this.setPreferences({ preferences: JSON.parse(JSON.stringify(this.state.defaultPreferences)) });
+    this.setPreferences({ preferences: JSON.parse(JSON.stringify(defaultPreferences)) });
     this.get();
     if (document.getElementById("container").className.includes("night"))
       this.toggleNightMode();
@@ -431,8 +437,10 @@ class Home extends React.Component {
             newArr.splice(k, 1);
             break;
           }
-      this.setState({ allLinks: newArr })
-      this.setState({ links: await this.getLinks(this.state.selectedTab) })
+      this.setState({
+        allLinks: newArr,
+        links: await this.getLinks(this.state.selectedTab, newArr)
+      })
       this.spinAnimation();
     } else {
       this.eraseActive();
@@ -734,6 +742,12 @@ class Home extends React.Component {
   }
 
   render() {
+
+    if (firstResize && this.state.preferences.gridSize) {
+      firstResize = !firstResize;
+      this.doResize();
+    }
+
     return (
       <div className={this.state.preferences.theme ? "container themes" : (this.state.preferences.night ? "container night" : "container")} id="container">
         <Head>
@@ -746,219 +760,214 @@ class Home extends React.Component {
           <script src="https://smtpjs.com/v3/smtp.js"></script>
         </Head>
 
-        <Profile user={this.state.user} signIn={this.signIn.bind(this)} signOut={this.signOut.bind(this)} />
-
-        <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""} style={{ display: this.state.preferences.theme ? "block" : "none" }} draggable={false} />
-
-        <main>
-
-          <p className="title">
-            <span className="letter">t</span>
-            <span className="letter">a</span>
-            <span className="letter">b</span>
-            <span className="letter">d</span>
-            <span className="letter">a</span>
-            <span className="letter">t</span>
-          </p>
-
-          <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
-            <div className="cancelBar"></div>
-            <div className="cancelBar"></div>
-            <div className="cancelBar"></div>
-          </div>
-
-          <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
-            oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
-            defaultPreferences={this.state.defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
-
-          <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)}></Hotbar>
-
-          <input className="searchBar" id="searchbar" placeholder="Search your bookmarks here..." onChange={e => this.setInputText(e)}></input>
-          <br />
-
-          <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
-            <div className="buttonNav" id="buttonnav">
-              <div className="dropTabBox" id="droptabbox" onDragEnter={e => this.dropTabHover(true)} onDragLeave={e => this.dropTabHover(true)} onDrop={e => this.changeTabPos(e, true)}
-                onDragOver={e => e.preventDefault()}>
-                <p className="dropTabText">Move <br /> to front</p>
-              </div>
-              <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
-                style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
-              </img>
-              {
-                this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
-                  <div className="editTabWrapper" onClick={e => this.openTabEdit(e, false, each)}>
-                    <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{
-                      borderColor: each.color,
-                      textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
-                        '0 0 ' + (0 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "rgba(0, 0, 0, 0)" : (this.state.preferences.night ? "#000000" : "#808080"))
-                    }}
-                      key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
-                      draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
-                      onDragEnd={e => this.dropTabActive()}>
-                      <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
-                      <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
-                    </button>
-                    {
-                      this.state.user === "default" ? <div></div> :
-                        <EditTab editTab={this.editTabCallback.bind(this)} closeActiveEdit={this.closeActiveEdit.bind(this)} currTab={each} tabs={this.state.tabs} preferences={this.state.preferences}
-                          lastIndex={Math.floor(this.state.tabs.length / this.state.numTabs)} />
-                    }
-                  </div>
-                )
-              }
-              {
-                this.state.user === "default" ? <div></div> :
-                  <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
-              }
-              <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
-                style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
-              </img>
-              <div className="dropTabBox" id="droptabbox2" style={{
-                left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
-                  "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.616) 50%," +
-                    "rgb(46, 46, 46) 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)"), textAlign: "left"
-              }}
-                onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
-                <p className="dropTabText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
-              </div>
+        <div className="title" id="title">
+          <div className="titleWrapper">
+            <div className="titleLetters">
+              <span className="letter">t</span>
+              <span className="letter">a</span>
+              <span className="letter">b</span>
+              <span className="letter">d</span>
+              <span className="letter">a</span>
+              <span className="letter">t</span>
             </div>
-            <br />
+            <div className="titleLoader" id="titleloader">
+              <div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" />
+              <div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" /><div className="titleLoadingDot" />
+            </div>
+          </div>
+        </div>
 
-            <div className="grid" id="grid" style={{
-              gridTemplateRows: !this.state.preferences.linkText ? "repeat(auto-fill," + (70 + (this.state.preferences.linkImageSize * 0.9) + (75 + this.state.preferences.linkTextSize * 0.4)) + "px)" :
-                "repeat(auto-fill," + (100 + (this.state.preferences.linkImageSize * 0.9)) + "px)",
-              width: 550 + (this.state.preferences.gridWidth * 20) + "px", height: 200 + (this.state.preferences.gridHeight * 8) + (this.state.preferences.linkImageSize * 0.9) + this.state.preferences.linkTextSize + "px",
-              gridTemplateColumns: "repeat(auto-fill, " + (100 + (this.state.preferences.linkImageSize) + "px")
-            }}>
-              <div className="dropLinkBox" id="droplinkbox" onDragEnter={e => this.dropLinkHover(true)} onDragLeave={e => this.dropLinkHover(true)} onDrop={e => this.changeLinkPos(e, true)}
-                onDragOver={e => e.preventDefault()}>
-                <p className="dropLinkText">Move <br /> to front</p>
+        {doneLoading ?
+          <div>
+            <Profile user={this.state.user} signIn={this.signIn.bind(this)} signOut={this.signOut.bind(this)} />
+
+            <img className="theme" id="theme" src={this.state.preferences.theme ? this.state.preferences.theme : ""} style={{ display: this.state.preferences.theme ? "block" : "none" }} draggable={false} />
+
+            <main>
+
+              <div className="sideMenuBtn" id="sidemenubtn" onClick={e => this.toggleSideMenu()}>
+                <div className="cancelBar"></div>
+                <div className="cancelBar"></div>
+                <div className="cancelBar"></div>
               </div>
-              {
-                this.state.links.map((each) =>
-                  <a className="linkBox" style={{ textDecoration: "none", width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px" }}
-                    target="_blank" rel="noopener noreferrer" href={each.link} draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
-                    onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)}>
-                    <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.image}></input></label>
-                    <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
-                      <img src={each.image} key={key++} className="linkImg" draggable={false} style={{
-                        boxShadow: this.state.preferences.imageShadowColor ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + ' #' + this.state.preferences.imageShadowColor :
-                          this.state.preferences.theme ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " rgba(0, 0, 0, 0)" :
-                            this.state.preferences.night ? '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #000000" :
-                              '0 0 ' + (this.state.preferences.imageShadowSize + "px") + " #B6B6B6",
-                        width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px"
-                      }}></img>
-                      <p className="linkNames" style={{
-                        display: this.state.preferences.linkText ? "none" : "-webkit-box",
-                        color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : this.state.preferences.theme ? "#EBEBEB" : this.state.preferences.night ? "#C7C7C7" : "#5D687E",
-                        textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + this.state.preferences.linkShadowColor :
-                          '0 0 ' + (0 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.theme || this.state.preferences.night ? "0E0E0E" : "F9FBFD"),
-                        fontSize: 14 + (this.state.preferences.linkTextSize * 0.08) + "px", maxHeight: 40 + (this.state.preferences.linkTextSize * 0.25) + "px"
-                      }}>{each.name}</p>
-                      <div className="loaderDiv" id="loaderdiv">
-                        <div className="loader" id="loader">
-                          <div className="dot"></div>
-                          <div className="dot"></div>
-                          <div className="dot"></div>
-                          <div className="dot"></div>
+
+              <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
+                oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
+                defaultPreferences={defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
+
+              <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)}></Hotbar>
+
+              <input className="searchBar" id="searchbar" placeholder="Search your bookmarks..." onChange={e => this.setInputText(e)}></input>
+              <br />
+
+              <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
+                <div className="buttonNav" id="buttonnav">
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)}
+                    style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
+                  </img>
+                  {
+                    this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
+                      <div className="editTabWrapper" onClick={e => this.openTabEdit(e, false, each)}>
+                        <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{
+                          borderColor: each.color,
+                          textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
+                            '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "transparent" : this.state.preferences.night ? "#000000" : "#808080")
+                        }}
+                          key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
+                        // draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
+                        //onDragEnd={e => this.dropTabActive()}
+                        >
+                          <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
+                          <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
+                        </button>
+                        {
+                          this.state.user === "default" ? <div></div> :
+                            <EditTab editTab={this.editTabCallback.bind(this)} closeActiveEdit={this.closeActiveEdit.bind(this)} currTab={each} tabs={this.state.tabs} preferences={this.state.preferences}
+                              lastIndex={Math.floor(this.state.tabs.length / this.state.numTabs)} />
+                        }
+                      </div>
+                    )
+                  }
+                  {
+                    this.state.user === "default" ? <div></div> :
+                      <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
+                  }
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)}
+                    style={{ display: this.state.tabs.length >= this.state.numTabs && this.state.user !== "default" ? "block" : "none" }} draggable={false}>
+                  </img>
+                </div>
+                <br />
+
+                <div className="grid" id="grid" style={{
+                  gridTemplateRows: !this.state.preferences.linkText ? "repeat(auto-fill," + (60 + (this.state.preferences.linkImageSize * 0.9) + (65 + this.state.preferences.linkTextSize * 0.4)) + "px)" :
+                    "repeat(auto-fill," + (90 + (this.state.preferences.linkImageSize * 0.9)) + "px)", height: `calc(${this.state.preferences.gridHeight}vh + 230px)`,
+                  gridTemplateColumns: "repeat(auto-fill, " + (100 + (this.state.preferences.linkImageSize) + "px")
+                }}>
+                  <div className="dropLinkBox" id="droplinkbox" onDragEnter={e => this.dropLinkHover(true)} onDragLeave={e => this.dropLinkHover(true)} onDrop={e => this.changeLinkPos(e, true)}
+                    onDragOver={e => e.preventDefault()}>
+                    <p className="dropLinkText">Move <br /> to front</p>
+                  </div>
+                  {
+                    this.state.links.map((each) =>
+                      <a className="linkBox" style={{ textDecoration: "none", width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px" }}
+                        target="_blank" rel="noopener noreferrer" href={each.link} draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
+                        onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)}>
+                        <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.image}></input></label>
+                        <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
+                          <img src={each.image} key={key++} className="linkImg" draggable={false} style={{
+                            boxShadow: this.state.preferences.imageShadowColor ? '0 0 ' + (-1 + this.state.preferences.imageShadowSize + "px") + ' #' + this.state.preferences.imageShadowColor :
+                              this.state.preferences.theme ? '0 0 ' + (-1 + this.state.preferences.imageShadowSize + "px") + "transparent" :
+                                this.state.preferences.night ? '0 0 ' + (-1 + this.state.preferences.imageShadowSize + "px") + " #000000" :
+                                  '0 0 ' + (-1 + this.state.preferences.imageShadowSize + "px") + " #B6B6B6",
+                            width: 65 + (this.state.preferences.linkImageSize * 0.9) + "px"
+                          }}></img>
+                          <p className="linkNames" style={{
+                            display: this.state.preferences.linkText ? "none" : "-webkit-box",
+                            color: this.state.preferences.linkTextColor ? '#' + this.state.preferences.linkTextColor : this.state.preferences.theme ? "#EBEBEB" : this.state.preferences.night ? "#C7C7C7" : "#5D687E",
+                            textShadow: this.state.preferences.linkShadowColor ? '0 0 ' + (-1 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + this.state.preferences.linkShadowColor :
+                              '0 0 ' + (-1 + (this.state.preferences.linkShadowSize * 0.3) + "px") + ' #' + (this.state.preferences.theme ? "000000" : this.state.preferences.night ? "0E0E0E" : "F9FBFD"),
+                            fontSize: 13 + (this.state.preferences.linkTextSize * 0.08) + "px", maxHeight: 40 + (this.state.preferences.linkTextSize * 0.25) + "px"
+                          }}>{each.name}</p>
+                          <div className="loaderDiv" id="loaderdiv">
+                            <div className="loader" id="loader">
+                              <div className="dot"></div>
+                              <div className="dot"></div>
+                              <div className="dot"></div>
+                              <div className="dot"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    )
+                  }
+                  {
+                    this.state.user === "default" ? <div></div> : <div>
+                      <div className="addLinkGridWrapper" style={{
+                        width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px", display: this.state.user === "default" || this.state.tabs.length === 0 ||
+                          (this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) || this.state.preferences.addLink ? "none" : "inline-block"
+                      }}>
+                        <div className="addLinkGrid" id="addlinkgrid" style={{ width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px" }} onClick={e => this.openAddLink()}>
+                          <img key={key++} className="addLinkGridImage" src="plus.png" draggable={false}></img>
                         </div>
                       </div>
                     </div>
-                  </a>
-                )
-              }
-              {
-                this.state.user === "default" ? <div></div> : <div>
-                  <div className="addLinkGridWrapper" style={{
-                    width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px", display: this.state.user === "default" || this.state.tabs.length === 0 ||
-                      (this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "none" : "inline-block"
+                  }
+                  <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)}
+                    onDragOver={e => e.preventDefault()} style={{
+                      left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
+                        "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.69) 50%, rgba(37, 37, 37, 0.89)" :
+                          "linear-gradient(to left, rgba(14, 14, 14, 0) 0%,rgb(37, 37, 37) 100%)"), textAlign: "left"
                     }}>
-                    <div className="addLinkGrid" id="addlinkgrid" style={{ width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px" }} onClick={e => this.openAddLink()}>
-                      <img key={key++} className="addLinkGridImage" src="plus.png" draggable={false}></img>
-                    </div>
+                    <p className="dropLinkText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
                   </div>
                 </div>
-              }
-              <div className="dropLinkBox" id="droplinkbox2" onDragEnter={e => this.dropLinkHover(false)} onDragLeave={e => this.dropLinkHover(false)} onDrop={e => this.changeLinkPos(e, false)}
-                onDragOver={e => e.preventDefault()} style={{
-                  left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
-                    "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.69) 50%, rgba(37, 37, 37, 0.89)" :
-                      "linear-gradient(to left, rgba(14, 14, 14, 0) 0%,rgb(37, 37, 37) 100%)"), textAlign: "left"
-                }}>
-                <p className="dropLinkText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
+                <br />
+
+                {
+                  this.state.user === "default" ? <div></div> : <div>
+                    <div className="buttonWrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
+                      <p className="uploadLinkLoader" id="uploadlinkloader">
+                        {['U', 'p', 'l', 'o', 'a', 'd', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
+                      </p>
+
+                      <p className="uploadLinkLoader" id="deletelinkloader">
+                        {['D', 'e', 'l', 'e', 't', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
+                      </p>
+
+                      <div className={!(this.state.preferences.addLink) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                        !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="addcontainer" onClick={e => this.openAddLink()}
+                        style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                        <img className="modContainerImage" src="plus.png" draggable={false}></img>
+                      </div>
+
+                      <div className={!(this.state.preferences.editBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                        !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="editbox" onClick={e => this.editActive()}
+                        style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                        <img className="modContainerImage" id="editimg" src="edit.png" draggable={false}></img>
+                      </div>
+
+                      <div className={!(this.state.preferences.removeBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
+                        !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="erasebox" onClick={e => this.eraseActive()}
+                        style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                        <img className="modContainerImage" id="trashimg" src="trash.png" draggable={false}></img>
+                      </div>
+
+                      <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()}
+                        style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
+                        <div className="modImgConfirm" id="modimgconfirm"></div>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
-            </div>
-            <br />
+            </main>
 
             {
               this.state.user === "default" ? <div></div> : <div>
-                <div className="buttonWrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
-                  <p className="uploadLinkLoader" id="uploadlinkloader">
-                    {['U', 'p', 'l', 'o', 'a', 'd', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
-                  </p>
-
-                  <p className="uploadLinkLoader" id="deletelinkloader">
-                    {['D', 'e', 'l', 'e', 't', 'i', 'n', 'g', '.', '.', '.'].map((each) => <span className="linkLoadLetter" key={key++}>{each}</span>)}
-                  </p>
-
-                  <div className={!(this.state.preferences.addLink) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
-                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="addcontainer" onClick={e => this.openAddLink()}
-                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                    <img className="modContainerImage" src="plus.png" draggable={false}></img>
+                <div className="tabEraseConfirm" id="taberaseconfirm">
+                  <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
+                    <p className="tabEraseConfirmText">Are you sure you want to <span style={{ color: "rgb(255, 121, 121)" }}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
+                    <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png" draggable={false}></img></button>
+                    <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
                   </div>
-
-                  <div className={!(this.state.preferences.editBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
-                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="editbox" onClick={e => this.editActive()}
-                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                    <img className="modContainerImage" id="editimg" src="edit.png" draggable={false}></img>
-                  </div>
-
-                  <div className={!(this.state.preferences.removeBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
-                    !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="erasebox" onClick={e => this.eraseActive()}
-                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                    <img className="modContainerImage" id="trashimg" src="trash.png" draggable={false}></img>
-                  </div>
-
-                  <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()}
-                    style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                    <div className="modImgConfirm" id="modimgconfirm"></div>
+                  <div className="tabEraseDeleting" id="taberasedeleting">
+                    <p className="tabEraseDeletingText">Deleting...</p>
+                    <div className="deleteLoader" id="deleteloader">
+                      <div className="sk-chase" id="deleteloading">
+                        <div className="sk-chase-dot"></div><div className="sk-chase-dot"></div><div className="sk-chase-dot"></div><div className="sk-chase-dot"></div><div className="sk-chase-dot"></div><div className="sk-chase-dot"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          </div>
-        </main>
 
-        {
-          this.state.user === "default" ? <div></div> : <div>
-            <div className="tabEraseConfirm" id="taberaseconfirm">
-              <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
-                <p className="tabEraseConfirmText">Are you sure you want to <span style={{ color: "rgb(255, 121, 121)" }}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
-                <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png" draggable={false}></img></button>
-                <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
-              </div>
-              <div className="tabEraseDeleting" id="taberasedeleting">
-                <p className="tabEraseDeletingText">Deleting...</p>
-                <div className="deleteLoader" id="deleteloader">
-                  <div className="sk-chase" id="deleteloading">
-                    <div className="sk-chase-dot"></div>
-                    <div className="sk-chase-dot"></div>
-                    <div className="sk-chase-dot"></div>
-                    <div className="sk-chase-dot"></div>
-                    <div className="sk-chase-dot"></div>
-                    <div className="sk-chase-dot"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <div className="shadow" id="shadow"></div>
 
-            <div className="shadow" id="shadow"></div>
-
-            <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
-            <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
-            <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs} />
-          </div>
+                <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
+                <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
+                <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs} />
+              </div>
+            } </div> :
+          <div className="placeholder"></div>
         }
       </div>
     )
@@ -983,7 +992,7 @@ class Home extends React.Component {
     }
   }
   openAddTab() {
-    if (this.state.user !== "default" && !this.state.preferences.addTab) {
+    if (this.state.user !== "default") {
       if (document.getElementById("buttonnav").className.includes("edit"))
         this.editActive();
       else if (document.getElementById("buttonnav").className.includes("erase"))
@@ -993,7 +1002,8 @@ class Home extends React.Component {
       document.getElementById("titletaberrmsg").style.display = "none";
       document.getElementById("addtabform").reset();
 
-      document.getElementById("addtabplus").classList.toggle("active");
+      if (!this.state.preferences.addTab)
+        document.getElementById("addtabplus").classList.toggle("active");
       document.getElementById("lefttabarrow").classList.toggle("active");
       document.getElementById("righttabarrow").classList.toggle("active");
     }
@@ -1024,16 +1034,10 @@ class Home extends React.Component {
     if (this.state.user !== "default") {
       if (document.getElementById("resetconfirmbox").className.includes("active"))
         document.getElementById("resetconfirmbox").classList.toggle("active");
-      if (document.getElementById("savebox").className.includes("active")) {
+      if (document.getElementById("savebox").className.includes("active") && !document.getElementById("navbar").className.includes("active")) {
         document.getElementById("savebox").classList.toggle("active");
         document.getElementById("saveconfirm").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
-      }
-      if (document.getElementsByClassName("colorViewer active").length > 0) {
-        document.getElementsByClassName("colorViewer active")[0].classList.toggle("active");
-        document.getElementsByClassName("colorBtn active")[0].classList.toggle("active");
-        document.getElementsByClassName("colorBtn active")[1].classList.toggle("active");
-        document.getElementsByClassName("customColorPicker active")[0].classList.toggle("active");
       }
     }
   }
@@ -1298,5 +1302,22 @@ class Home extends React.Component {
     this.setState({ numTabs: 550 + (this.state.preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (this.state.preferences.gridWidth * 20)) / 220) });
   }
 }
+
+/*
+                  <div className="dropTabBox" id="droptabbox2" style={{
+                    left: "auto", right: "-11rem", background: !(this.state.preferences.night || this.state.preferences.theme) ?
+                      "linear-gradient(to left, rgb(249, 251, 253) 0%,#b6b9d1 100%)" : (this.state.preferences.theme ? "linear-gradient(to left, rgba(14, 14, 14, 0) 0%, rgba(14, 14, 14, 0.616) 50%," +
+                        "rgb(46, 46, 46) 100%)" : "linear-gradient(to left, rgb(14, 14, 14) 0%,rgb(46, 46, 46) 100%)"), textAlign: "left"
+                  }}
+                    onDragEnter={e => this.dropTabHover(false)} onDragLeave={e => this.dropTabHover(false)} onDrop={e => this.changeTabPos(e, false)} onDragOver={e => e.preventDefault()}>
+                    <p className="dropTabText" style={{ left: "0.4rem", textAlign: "left" }}>Move <br /> to back</p>
+                  </div>
+
+                  <div className="dropTabBox" id="droptabbox" onDragEnter={e => this.dropTabHover(true)} onDragLeave={e => this.dropTabHover(true)} onDrop={e => this.changeTabPos(e, true)}
+                    onDragOver={e => e.preventDefault()}>
+                    <p className="dropTabText">Move <br /> to front</p>
+                  </div>
+
+*/
 
 export default Home;

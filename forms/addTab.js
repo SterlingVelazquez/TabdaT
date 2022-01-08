@@ -97,7 +97,7 @@ export class AddTab extends React.Component {
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>
                     <p className="tabErrMsg" id="titletaberrmsg">Name taken</p>
                     <input className="tabInput" id="tabinput" type="text" placeholder="Name..." onChange={e => this.setName(e)} style={{color:this.state.color}} required></input>
-                    <input className="colorPicker" id="colorpicker" onChange={e => this.setColor()} type="color"></input>
+                    <input className="colorPicker" id="colorpicker" onChange={e => this.setColor()} type="color" value={this.state.color}></input>
                     <div className="colorPickerWrapper" style={{backgroundColor: this.state.color}}></div>
                     <button className="tabCancel" id="tabcancel" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.png" id="tabcancelimg"></img></button>
                     <button className="tabSubmit" id="tabsubmit" type="submit"><img className="submitTabImg" src="checkmark.png" id="tabsubmitimg"></img></button>

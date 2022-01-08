@@ -51,6 +51,15 @@
   .container.night ::-webkit-scrollbar-thumb {
     background-color: rgb(20, 20, 20);
   }
+  .container.night body::-webkit-scrollbar {
+    background:rgb(19, 19, 19);
+  }
+  .container.night body::-webkit-scrollbar-track {
+    background-color: rgb(54, 54, 54);
+  }
+  .container.night body::-webkit-scrollbar-thumb {
+    background-color: rgb(20, 20, 20);
+  }
 
   .container.night .title {
     background:rgb(19, 19, 19);
@@ -86,6 +95,7 @@
   }
   .container.night .contactMessage {
     border:thin solid rgb(204, 204, 204);
+    color:rgb(204, 204, 204);
   }
   .container.night .contactButton {
     color:rgb(204, 204, 204);
@@ -414,7 +424,9 @@
     background-color: rgb(34, 34, 34);
     box-shadow: 0px 0px 20px rgb(0, 0, 0);
   }
-
+  .container.night #addFormDiv::-webkit-scrollbar-thumb {
+    background-color: #0f0f0f;
+  }
   .container.night .addForm h1 {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 10px black;
@@ -568,11 +580,7 @@
   }
 
   .container.night .bookmarkBox::-webkit-scrollbar-thumb {
-    background:rgba(200, 207, 221, 0.8);
-    border-radius:20px;
-  }
-  .container.night .bookmarkBox::-webkit-scrollbar-track {
-    background:rgb(105, 105, 105);
+    background-color: #0f0f0f;
   }
 
   .container.night .teachHeader {

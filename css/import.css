@@ -1,10 +1,10 @@
 .bookmarkBox {
     position:fixed;
-    top:calc(50% - 260px);
+    top:calc(50%);
     left:50%;
     opacity:0;
     width:350px;
-    height:517px;
+    height:50%; max-height:517px;
     padding:0.8rem 1.6rem;
     background-color: rgb(246, 247, 253);
     box-shadow: 0px 0px 10px rgb(114, 114, 114);
@@ -14,13 +14,32 @@
     overflow-x:hidden;
     pointer-events:none;
     transition:0.5s;
-    transform:scale(1.6) translateX(-100%);
+    transform:scale(1.6) translate(-100%, -50%);
+    transform-origin:50% 0%;
     z-index:11;
 }
 .bookmarkBox.focus, .bookmarkBox.active {
-    transform:scale(1.6) translateX(calc(-50% + 65px));
+    transform:scale(1.6) translate(calc(-50% + 65px), -50%);
     opacity:1;
     pointer-events:all;
+}
+.bookmarkBox::-webkit-scrollbar {
+    width:23px; 
+    border-radius:50px;
+    background:none;
+}
+.bookmarkBox::-webkit-scrollbar-track {
+    background:none;
+    border: 6px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: rgb(196, 211, 233);
+}
+.bookmarkBox::-webkit-scrollbar-thumb {
+    border: 9px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: white;
 }
 
 .importTeacher {
@@ -28,7 +47,7 @@
     color:rgb(99, 109, 126);
 }
 .teachHeader {
-    font-size:26px;
+    font-size:22px;
     letter-spacing:1px;
     margin-top:0.5rem;
     padding-bottom:0.2rem;
@@ -36,14 +55,15 @@
 }
 .teachHeaderLine {
     height:1px;
-    width:18.7rem;
-    margin-bottom:1.3rem;
+    width:250px;
     background-color:rgb(141, 152, 172);
     text-align:center;
+    margin:5px auto 20px auto;
 }
 .teachSteps {
     padding-left:0.6rem;
     line-height:1.7rem;
+    font-size:14px;
 }
 .step {
     text-align:left;
@@ -55,12 +75,14 @@
     height:20px;
     cursor:auto;
 }
+
+.importButton {
+    position:relative;
+}
 .openFile {
     position:absolute;
-    right:1.8rem;
-    bottom:1.5rem;
-    width:18.2rem;
-    height:2.7rem;
+    top:0; left:0;
+    width:100%; height:100%;
     border-radius:1000px;
     font-size:0;
     z-index:10;
@@ -81,6 +103,7 @@
     padding:0.6rem 3rem;
     color: rgb(99, 109, 126);
     border-radius:30px;
+    font-size:15px;
     box-shadow:0px 0px 5px lightgray;
 }
 .openFileButton:hover {
@@ -94,7 +117,7 @@
     display:none;
 }
 .bookmarkHead {
-    font-size:26px;
+    font-size:23px;
     color:rgba(99, 109, 126, 0.8);
     height:auto;
     width:auto;
@@ -112,27 +135,18 @@
 .bookmarkCancel:hover {
     transform:scale(1.4);
 }
+.selectAll, .confirmBookmark {
+    width:50%;
+    font-size:17px;
+    color:rgba(99, 109, 126, 0.8);
+    cursor:pointer;
+    transition:0.5s;
+}
 .selectAll {
     margin-top:1.2rem;
-    width:50%;
-    font-size:18px;
-    color:rgba(99, 109, 126, 0.8);
     border-right: 1px solid rgba(99, 109, 126, 0.8);
-    cursor:pointer;
-    transition:0.5s;
 }
-.selectAll:hover {
-    letter-spacing:1px;
-    color:rgba(64, 127, 230, 0.8);
-}
-.confirmBookmark {
-    width:50%;
-    font-size:18px;
-    color:rgba(99, 109, 126, 0.8);
-    cursor:pointer;
-    transition:0.5s;
-}
-.confirmBookmark:hover {
+.selectAll:hover, .confirmBookmark:hover {
     letter-spacing:1px;
     color:rgba(64, 127, 230, 0.8);
 }
@@ -149,7 +163,7 @@
 }
 .bookmarkCheck {
     position:absolute;
-    top:38%;
+    top:50%; transform:translateY(-50%);
     left:0;
     cursor:pointer;
 }
@@ -161,25 +175,11 @@
     margin-left:10%;
     cursor:pointer;
     transition:0.3s;
+    font-size:14px;
 }
 .itemContainer:hover .bookmarkItem {
     color:rgba(64, 127, 230, 0.8);
 }
 .bookmarkBox.active .submitImportContainer {
     display:block;
-}
-.bookmarkBox::-webkit-scrollbar {
-    width:7px;
-    height:3px;
-    left:10px;
-    border-left:0;
-    background:rgba(0,0,0,0.1);
-}
-.bookmarkBox::-webkit-scrollbar-track {
-    margin-right:-10px;
-    background:whitesmoke;
-}
-.bookmarkBox::-webkit-scrollbar-thumb {
-    background:rgba(99, 109, 126, 0.8);
-    border-radius:20px;
 }

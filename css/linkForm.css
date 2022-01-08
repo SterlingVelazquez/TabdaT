@@ -1,40 +1,55 @@
 .addForm {
-    position: absolute;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    position: fixed;
     text-align:center;
-    padding:20px;
     padding-top:0px;
     box-sizing:content-box;
-    width: 300px;
-    min-height:530px;
+    width: 340px;
+    height:60%; max-height:570px;
     left: calc(50% - 170px);
-    top: 50%;
+    top:50%;
     background-color: rgb(246, 247, 253);
     box-shadow: 0px 0px 20px rgb(114, 114, 114);
     z-index: 11;
     border-radius: 10px;
-    transition:transform 0.5s, opacity 0.5s, background-color 1s;
-    transform:scale(1.45) translateY(-150%);
+    transition:transform 0.5s, opacity 0.5s;
+    transform:scale(1.4) translateY(-100%);
+    transform-origin:50% 0%;
     opacity:0;
     pointer-events:none;
     font-family:'Noto Sans JP', sans-serif;
 }
 .addForm.active {
     pointer-events:all;
-    transform:scale(1.6) translateY(calc(-50% + 104px));
+    transform:scale(1.4) translateY(-50%);
     opacity: 1;
 }
 
+#addFormDiv {
+    height:100%; width:100%;
+    overflow-y:auto;
+}
+#addFormDiv::-webkit-scrollbar {
+    width:10px; 
+    background:none;
+}
+#addFormDiv::-webkit-scrollbar-track {
+    background:none;
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: none;
+}
+#addFormDiv::-webkit-scrollbar-thumb {
+    border: 2.5px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #c4d3e9;
+}
 .addForm h1 {
-    padding-top:20px;
+    padding-top:25px;
     margin-bottom:10px;
     font-size:30px;
     color:rgb(141, 152, 172);
     letter-spacing:0.5px;
-    transition:0.8s;
 }
 
 .selectTab {
@@ -49,7 +64,6 @@
     width:80%;
     left:10%;
     overflow:hidden;
-    transition:0.5s;
     cursor:pointer;
 }
 .selectTabText {
@@ -61,7 +75,6 @@
     white-space:nowrap;
     text-overflow: ellipsis;
     color:rgb(109, 116, 133);
-    transition:0.5s;
 }
 .selectTabChosen:hover .selectTabText{color:rgb(91, 120, 146)}
 .selectTabArrow {
@@ -75,7 +88,7 @@
     border-bottom:2px solid rgb(132, 140, 160);
     border-right:2px solid rgb(132, 140, 160);
     transform:rotateZ(45deg);
-    transition:0.5s;
+    transition:transform 0.5s;
 }
 .selectTab.active .selectTabArrow {
     transform:translateY(5px) rotateZ(225deg);
@@ -109,7 +122,7 @@
     padding: 0 10px;
     max-height:0px;
     overflow-y:auto;
-    transition:0.5s;
+    transition:max-height 0.5s;
 }
 .selectTab.active .selectTabList {
     max-height:150px
@@ -122,7 +135,6 @@
     min-height:2rem;
     overflow:hidden;
     text-overflow:ellipsis;
-    transition:0.3s;
     cursor:pointer;
 }
 .selectTabItem:hover {
@@ -146,11 +158,11 @@
 
 .addLinkCancel {
     position:absolute;
-    top:0px;
-    right:0px;
+    top:6px;
+    right:8px;
     box-shadow:none;
-    padding:20px;
-    width:54px;
+    padding:13px;
+    width:44px;
     height:auto;
 }
 .addLinkCancel:hover {
@@ -159,14 +171,14 @@
 
 .addForm label {
     color:rgb(141, 152, 172);
-    margin-left: 2%;
+    margin-left: 8%;
     float:left;
-    transition:1s;
     letter-spacing:0.5px;
 }
 .addForm input[type=text] {
-    width: 95%;
+    width: 83%;
     padding: 8px;
+    margin:auto;
     margin-bottom:25px;
     border: none;
     border-bottom:1px solid rgba(99, 109, 126, 0.8);
@@ -195,7 +207,6 @@
     width:80%;
     border-radius:10px;
     z-index:1;
-    transition:1s;
 }
 .suggestionLink,
 .suggestionTitle {
@@ -208,7 +219,6 @@
     padding: 6px 0;
     padding-right:45px;
     width:90%;
-    transition:0.5s;
     text-overflow:ellipsis;
     white-space: nowrap;
     overflow:hidden;
@@ -244,15 +254,14 @@
     border:none;
     cursor:pointer;
 }
-
 .imgContainer .defaultImg {
+    overflow:hidden;
+    position:relative;
     width:80px;
     height:80px;
     border-radius:10px;
     border:none;
-    transition:box-shadow 0.8s;
 }
-
 .imgContainer .defaultImg img {
     position:relative;
     width:82px;
@@ -260,7 +269,6 @@
     right:0%;
     top:-1.8%;
 }
-
 .imgContainer .imgLabel {
     position:relative;
     text-align:center;
@@ -268,9 +276,7 @@
     top:2px;
     color:rgb(141, 152, 172);
     pointer-events:none;
-    transition:text-shadow 0.8s;
 }
-
 .imgContainer.active .imgLabel {
     color:rgba(87, 125, 190, 0.8);
     border-bottom:thin solid rgba(87, 125, 190, 0.8);
@@ -297,6 +303,11 @@
     text-decoration: underline;
 }
 
+#orLinkText, #orLinkTextEdit {
+    float:none;
+    margin:auto;
+}
+
 .addForm button.submit {
     position:relative;
     top:0px;
@@ -308,7 +319,8 @@
     padding: 6px 18px;
     font-family:'Noto Sans JP', sans-serif;
     font-size: 14px;
-    transition:0.5s;
+    transition:color 0.5s, padding 0.5s;
+    margin-bottom:20px;
 }
 
 .addForm button.submit:hover {
@@ -332,7 +344,7 @@
 
 .addFile {
     position:absolute;
-    right:68px;
+    top:0; left:0;
     width:80px;
     height:80px;
     border-radius:8px;
@@ -342,16 +354,16 @@
   }
 
 .previewBox {
-    position:absolute;
+    position:fixed;
     width:90px;
     height:90px;
     background-color: rgb(246, 247, 253);
     box-shadow: 0 0 10px rgb(246, 247, 253);
     border-radius:10px;
-    margin-left:390px;
-    margin-top:-95px;
+    margin-left:410px;
+    top:72%;
     opacity:0;
-    transition:0.5s;
+    transition:transform 0.5s, opacity 0.5s;
     z-index:-1;
 }
 .previewBox img {
@@ -359,7 +371,7 @@
     opacity:0;
 }
 .previewBox.active {
-    margin-left:335px;
+    transform:translateX(-55px);
     opacity:1;
 }
 .previewBox.active img {
@@ -403,5 +415,38 @@
         transform:translateY(3px) rotateZ(225deg);
     } 100% {
         transform:translateY(5px) rotateZ(225deg);
+    }
+}
+
+@media (max-width:790px) {
+    .previewBox {
+        display:none;
+    }
+}
+
+@media (max-height:600px) {
+    .previewBox {
+        top:50%;
+    }
+}
+
+@media (max-width:400px) {
+    .addForm {
+        height:100%; max-height:570px;
+        transform:scale(0.9) translateY(-100%);
+    }
+    .addForm.active {
+        transform:scale(0.9) translateY(-50%);
+    }
+
+    .addLinkCancel {
+        right:15px;
+    }
+
+    .suggestionList {
+        display:none;
+    }
+    .previewBox {
+        display:none;
     }
 }
