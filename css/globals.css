@@ -1,0 +1,16 @@
+p {
+    font-family:'Noto Sans JP', sans-serif;
+    text-align:center;
+    overflow:hidden;
+    color:rgb(75, 75, 75);
+}
+img {
+    width:90px;
+    height:90px;
+    margin:auto;
+    cursor:pointer;
+    border-radius:10px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: transform 0.5s;
+}

@@ -1,22 +1,22 @@
 import React from 'react';
 import { suggestions } from "../tools/suggestions.js"
 
-var key=0;
+var key = 0;
 
 export class Import extends React.Component {
 
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.state = {
-            tabs : this.props.tabs,
-            bookmarks : [],
+            tabs: this.props.tabs,
+            bookmarks: [],
         }
         this.submitForm = this.submitForm.bind(this);
     }
 
     static getDerivedStateFromProps(props) {
         return {
-            tabs : props.tabs,
+            tabs: props.tabs,
         }
     }
 
@@ -24,7 +24,7 @@ export class Import extends React.Component {
         document.getElementById("openfile").addEventListener('change', async (event) => {
             if (event.target.files.length !== 0) {
                 var files = event.target.files,
-                reader = new FileReader();
+                    reader = new FileReader();
                 var info = document.getElementById("info");
                 var bookmarks = [];
                 reader.readAsText(files[0])
@@ -36,7 +36,7 @@ export class Import extends React.Component {
                             name: items[i].textContent.trim(),
                             link: items[i].innerHTML.substring(9, (items[i].innerHTML.indexOf("add_date=") - 2)),
                         })
-                    this.setState({bookmarks: bookmarks});
+                    this.setState({ bookmarks: bookmarks });
                     document.getElementById("bookmarkbox").classList.toggle("focus");
                     document.getElementById("bookmarkbox").classList.toggle("active");
                 }.bind(this)
@@ -59,8 +59,8 @@ export class Import extends React.Component {
         var selectedLinks = document.getElementsByClassName("bookmarkCheck");
         var completeLinks = [];
         for (var i = 0; i < selectedLinks.length; i++) {
-          if (selectedLinks[i].checked)
-            toAdd.push(this.state.bookmarks[i])
+            if (selectedLinks[i].checked)
+                toAdd.push(this.state.bookmarks[i])
         }
         if (toAdd.length === 0) {
             this.closeImport();
@@ -77,7 +77,7 @@ export class Import extends React.Component {
                 this.props.addTab(tab, false)
             }
             for (var j = 0; j < toAdd.length; j++) {
-                if (toAdd[j].name.includes('/') || toAdd[j].name.includes('$') || toAdd[j].name.includes('.') || toAdd[j].name.includes('[') || 
+                if (toAdd[j].name.includes('/') || toAdd[j].name.includes('$') || toAdd[j].name.includes('.') || toAdd[j].name.includes('[') ||
                     toAdd[j].name.includes(']') || toAdd[j].name.includes('#'))
                     toAdd[j].name = toAdd[j].name.replace(/[\[\]\/\.#\$]/g, " ")
 
@@ -124,27 +124,29 @@ export class Import extends React.Component {
                     <div className="teachHeaderLine"></div>
                     <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeTeach()}></img>
                     <ol className="teachSteps" id="teachsteps">
-                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon (located at the top-right of your browser) 
+                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon (located at the top-right of your browser)
                             and go to <b>Bookmarks {' > '} Bookmark Manager</b></li>
-                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located below the previous icon) 
+                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located below the previous icon)
                             and click on <b>Export Bookmarks</b></li>
                         <li className="step">Save your file somewhere you can easily access it again</li>
                         <li className="step">Click the button below and locate the file you saved in the previous step</li>
                     </ol>
-                    <input className="openFile" id="openfile" onClick={e => this.openSteps()} type="file" accept=".html"></input>
-                    <button className="openFileButton">Upload Your Bookmark File</button>
+                    <div className="importButton">
+                        <input className="openFile" id="openfile" onClick={e => this.openSteps()} type="file" accept=".html"></input>
+                        <button className="openFileButton">Upload Your Bookmarks</button>
+                    </div>
                 </div>
                 <div className="submitImportContainer" id="submitimportcontainer">
-                    <div className="info" id="info" style={{display:"none"}}></div>
+                    <div className="info" id="info" style={{ display: "none" }}></div>
                     <h1 className="bookmarkHead" id="bookmarkhead">Choose which bookmarks to import</h1>
                     <button className="selectAll" id="selectall" onClick={e => this.selectAll()}>Select All</button>
                     <button className="confirmBookmark" id="confirmbookmark" onClick={e => this.submitForm()}>Confirm</button>
                     <ul className="bookmarkList" id="bookmarklist">
                         {
-                            this.state.bookmarks.map( (each) => 
+                            this.state.bookmarks.map((each) =>
                                 <div className="itemContainer" id="itemcontainer" key={key++}>
                                     <label className="bookmarkItem">{each.name}
-                                    <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
+                                        <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
                                 </div>
                             )
                         }

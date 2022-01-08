@@ -1,6 +1,5 @@
 import React from 'react';
 import { database } from "../tools/database.js";
-import { suggestions } from "../tools/suggestions.js"
 
 var key=0;
 
@@ -12,8 +11,9 @@ export class EditLink extends React.Component {
                 name : this.props.currLink.name, 
                 link : this.props.currLink.link, 
                 image : this.props.currLink.image,
-                defaultImg: "ultafedIgm/doggo.png",
+                defaultImg: this.props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestions: this.props.suggestions,
                 suggestedTitle: [],
                 suggestedLinks: [],
                 tabs: this.props.tabs,
@@ -28,12 +28,14 @@ export class EditLink extends React.Component {
                 image : "",
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
+                suggestions: this.props.suggestions,
                 suggestedTitle: [],
                 suggestedLinks: [],
                 tabs: this.props.tabs,
                 currTab: this.props.currTab,
                 newTab: null,
-                allLinks : this.props.allLinks
+                allLinks : this.props.allLinks,
+                suggestions: props.suggestions,
             }
         }
         this.submitForm = this.submitForm.bind(this);
@@ -46,11 +48,12 @@ export class EditLink extends React.Component {
                     name: props.currLink.name,
                     link: props.currLink.link,
                     image: "arrow.png",
-                    defaultImg: props.currLink.image,
+                    defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             } else if (typeof props.currLink.ref !== "undefined") {
                 return {
@@ -62,6 +65,7 @@ export class EditLink extends React.Component {
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             } else {
                 return {
@@ -73,6 +77,7 @@ export class EditLink extends React.Component {
                     tabs: props.tabs,
                     currTab: props.currTab,
                     allLinks : props.allLinks,
+                    suggestions: props.suggestions,
                 }
             }
         }
@@ -88,19 +93,19 @@ export class EditLink extends React.Component {
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/" + event.target.value.charAt(0).toUpperCase() + ".png"
                 })
             } else if (this.state.defaultImg.includes("ultafedIgm/")) {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                     defaultImg: "ultafedIgm/doggo.png"
                 })
             } else {
                 this.setState({
                     name: event.target.value,
-                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, false) : [],
+                    suggestedTitle: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, false) : [],
                 })
             }
             for (var i = 0; i < this.state.allLinks.length; i++) {
@@ -124,11 +129,11 @@ export class EditLink extends React.Component {
             this.setState({
                 name: isDefault.name,
                 link: isDefault.url,
-                defaultImg: isDefault.image,
+                imageAddress: isDefault.image,
                 suggestedTitle: [],
             })
             document.getElementById("edittitle").focus();
-            this.toggleDefault(true);
+            this.toggleURL();
         }
     }
     async setLink(event, isDefault) {
@@ -136,11 +141,11 @@ export class EditLink extends React.Component {
             this.setState({suggestedTitle: []})
         if (!isDefault) {
             var count = 0;
-            for (var i = 0; i < suggestions.length; i++) {
-                if (event.target.value.includes(suggestions[i].url)) {
-                    this.setState({defaultImg: suggestions[i].image})
+            for (var i = 0; i < this.state.suggestions.length; i++) {
+                if (event.target.value.includes(this.state.suggestions[i].url)) {
+                    this.setState({defaultImg: this.state.suggestions[i].image})
                     count++;
-                    i = suggestions.length;
+                    i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
@@ -151,17 +156,17 @@ export class EditLink extends React.Component {
             }
             this.setState({
                 link: event.target.value,
-                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, suggestions, 0.65, true) : [],
+                suggestedLinks: event.target.value !== "" ? await database.stringSearch(event.target.value, this.state.suggestions, 0.65, true) : [],
             })
         } else {
             document.getElementById("editurl").value = isDefault.url;
             this.setState({
                 link: isDefault.url,
-                defaultImg: isDefault.image,
+                imageAddress: isDefault.image,
                 suggestedLinks: [],
             })
             document.getElementById("editurl").focus();
-            this.toggleDefault(true)
+            this.toggleURL()
         }
     }
     setImage(event) {
@@ -174,7 +179,7 @@ export class EditLink extends React.Component {
                 }
                 this.setState({image: files[0]})
                 reader.readAsDataURL(files[0])
-                if (document.getElementById("uploadimg2").className !== "imgContainer active")
+                if (!document.getElementById("uploadimg2").className.includes("active"))
                     this.toggleDefault(false);
             }
         })
@@ -189,27 +194,31 @@ export class EditLink extends React.Component {
     }
 
     toggleDefault(isDefault) {
-        if (document.getElementById("imageaddress2").className === "imageAddress active")
-            document.getElementById("imageaddress2").classList.toggle("active")
+        if (document.getElementById("imageaddress2").className.includes("active")) {
+            document.getElementById("previewbox2").classList.toggle("active");
+            document.getElementById("imageaddress2").classList.toggle("active");
+        }
         if (isDefault) {
-            if (document.getElementById("defaultimg2").className !== "imgContainer active")
-                document.getElementById("defaultimg2").classList.toggle("active")
-            if (document.getElementById("uploadimg2").className === "imgContainer active")
-                document.getElementById("uploadimg2").classList.toggle("active")
+            if (!document.getElementById("defaultimg2").className.includes("active"))
+                document.getElementById("defaultimg2").classList.toggle("active");
+            if (document.getElementById("uploadimg2").className.includes("active"))
+                document.getElementById("uploadimg2").classList.toggle("active");
         } else {
-            if (document.getElementById("defaultimg2").className === "imgContainer active")
-                document.getElementById("defaultimg2").classList.toggle("active")
-            if (document.getElementById("uploadimg2").className !== "imgContainer active")
-                document.getElementById("uploadimg2").classList.toggle("active")
+            if (document.getElementById("defaultimg2").className.includes("active"))
+                document.getElementById("defaultimg2").classList.toggle("active");
+            if (!document.getElementById("uploadimg2").className.includes("active"))
+                document.getElementById("uploadimg2").classList.toggle("active");
         }
     }
     toggleURL() {
-        if (document.getElementById("imageaddress2").className !== "imageAddress active")
-            document.getElementById("imageaddress2").classList.toggle("active")
-        if (document.getElementById("defaultimg2").className === "imgContainer active")
-            document.getElementById("defaultimg2").classList.toggle("active")
-        if (document.getElementById("uploadimg2").className === "imgContainer active")
-            document.getElementById("uploadimg2").classList.toggle("active")
+        if (!document.getElementById("imageaddress2").className.includes("active")) {
+            document.getElementById("imageaddress2").classList.toggle("active");
+            document.getElementById("previewbox2").classList.toggle("active");
+        }
+        if (document.getElementById("defaultimg2").className.includes("active"))
+            document.getElementById("defaultimg2").classList.toggle("active");
+        if (document.getElementById("uploadimg2").className.includes("active"))
+            document.getElementById("uploadimg2").classList.toggle("active");
     }
     toggleTabActive(e) {
         e.stopPropagation();
@@ -225,30 +234,27 @@ export class EditLink extends React.Component {
             suggestedTitle: [],
             suggestedLinks: []
         })
-        if (document.getElementById("selecttab2").className === "selectTab active")
+        if (document.getElementById("selecttab2").className.includes("active"))
             document.getElementById("selecttab2").classList.toggle("active")
     }
 
     async submitForm(event) {
         event.preventDefault();
         if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && (this.state.newTab === this.props.currLink.tab || this.state.newTab === null) &&
-            ((document.getElementById("defaultimg2").className === "imgContainer active" && this.state.defaultImg === this.props.currLink.image) ||
-                (document.getElementById("uploadimg2").className === "imgContainer active" && this.state.image === this.props.currLink.image) || 
-                    (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress === this.props.currLink.image))) {
+            ((document.getElementById("defaultimg2").className.includes("active") && this.state.defaultImg === this.props.currLink.image) ||
+                (document.getElementById("uploadimg2").className.includes("active") && this.state.image === this.props.currLink.image) || 
+                    (document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress === this.props.currLink.image))) {
             this.closeEditForm();
         } else {
             var newLink = {
                 name: this.state.name,
                 link: this.state.link,
-                image: document.getElementById("defaultimg2").className === "imgContainer active" ? this.state.defaultImg : this.state.image,
+                image: document.getElementById("uploadimg2").className.includes("active") && this.state.image !== "arrow.png" ? this.state.image : (
+                    document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress !== "" ? this.state.imageAddress : this.state.defaultImg),
                 tab: this.state.newTab !== null ? this.state.newTab : this.state.currTab
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
                 newLink.link = "http://" + newLink.link;
-            if (newLink.image === "arrow.png") 
-                newLink.image = this.state.defaultImg;
-            if (document.getElementById("imageaddress2").className === "imageAddress active" && this.state.imageAddress !== "")
-                newLink.image = this.state.imageAddress;
             if (newLink.image === this.props.currLink.image && typeof this.props.currLink.ref !== "undefined")
                 newLink.ref = this.props.currLink.ref;
             if (newLink.name.includes('/') || newLink.name.includes('.') || newLink.name.includes('#') || newLink.name.includes('$')
@@ -263,6 +269,7 @@ export class EditLink extends React.Component {
                 if (count !== 0) {
                     document.getElementById("titleerrmsg2").style.display = "block"
                 } else {
+                    document.getElementById("imageaddressinput2").value = "";
                     this.props.editLink(newLink, false);
                     this.closeEditForm();
                 }
@@ -282,7 +289,7 @@ export class EditLink extends React.Component {
         } else if (document.activeElement.id === "imageaddressinput2") {
             document.getElementById("imageaddressinput2").blur();
         }
-        if (document.getElementById("selecttab2").className === "selectTab active")
+        if (document.getElementById("selecttab2").className.includes("active"))
             document.getElementById("selecttab2").classList.toggle("active")
         window.formOpen = false;
         this.setState({
@@ -290,6 +297,7 @@ export class EditLink extends React.Component {
             link: "",
             image: "",
             defaultImg: "ultafedIgm/doggo.png",
+            imageAddress: "",
             suggestedTitle: [],
             suggestedLinks: [],
             newTab: null
@@ -356,20 +364,20 @@ export class EditLink extends React.Component {
                     </div>
 
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg2" className={this.state.image === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
-                        <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
-                            <div className="defaultImg">
-                                <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
-                            </div>
+                        <div className="defaultImg">
+                            <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
+                            <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
+                        </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 
                     <br/>
-                    <label style={{float:"none"}}><b>OR</b></label>
+                    <label id="orLinkTextEdit"><b>OR</b></label>
                     <br/>
-                    <label className={this.state.image !== this.props.currLink.image && this.state.defaultImg !== this.props.currLink.image ? "imageAddress active" : "imageAddress"} id="imageaddress2" onClick={e => this.toggleURL()}><b>Image URL</b></label>
+                    <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress2" onClick={e => this.toggleURL()}><b>Image URL</b></label>
                     <input type="text" className="imgAddressInput" id="imageaddressinput2" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
 
-                    <div className="previewBox">
+                    <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox2">
                         <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
                     </div>
                     <button className="clearImg" id="clearimg2" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput2" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>

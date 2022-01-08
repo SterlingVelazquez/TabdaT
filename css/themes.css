@@ -1,154 +1,266 @@
+/*
+  background-color:rgba(255, 255, 255, 0.178);
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 50px rgba(56, 56, 56, 0.144); 
+
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+*/
+  
+  .container.themes p {
+    color: rgb(231, 231, 231);
+  }
+  
+  .container.themes ::-webkit-scrollbar-track {
+    background-color: rgba(230, 230, 230, 0.26);
+  }
+  .container.themes ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.945);
+  }
+  
+  .container.themes .title {
+    background:rgba(0, 0, 0, 0.822);
+  }
   .container.themes .letter {
     color:rgb(219, 219, 219);
-    text-shadow:0px 0px 10px rgb(0, 0, 0);
+    text-shadow:0px 0px 10px rgb(219, 219, 219);
   }
 
-  .container.themes .profileRelative {
-    background:rgba(51, 51, 51, 0.986);
+  .container.themes .profileWrapper::before {
+    content:'';
+    position:absolute;
+    top:0; left:0;
+    border-radius:38px;
+    width:100%; height:100%;
+    transform: rotateY(0deg) rotateZ(0deg) scale(1);
+    transition:0.8s;
+    background-color:rgba(255, 255, 255, 0.178);
+    backdrop-filter:blur(20px);
   }
-  .container.themes .profileWrapper.active .profileRelative {
-    box-shadow: 0 0 5px rgb(0, 0, 0);
+  .container.themes .profileWrapper.contact::before {
+    transform: rotateY(180deg) rotateZ(90deg);
   }
-  .container.themes .profileDiv {
-    background-color:rgb(31, 31, 31);
-    box-shadow:0px 0px 0px rgb(0, 0, 0);
+  .container.themes .profileWrapper.shortcut::before {
+    transform: rotateY(180deg);
   }
-  .container.themes .profileDiv.active {
-    box-shadow:0px 0px 8px rgb(0, 0, 0);
-  }
+
+  .container.themes .profileRelative,
+  .container.themes .profileWrapper.active .profileRelative,
+  .container.themes .profileDiv,
+  .container.themes .profileWrapper.active .profileDiv,
+  .container.themes .profileDiv.active,
   .container.themes .profilePic.active {
-    box-shadow: 0 0 5px rgb(0, 0, 0);
+    box-shadow:none;
+    background:none;
   }
   .container.themes .signOutText {
     color:rgb(175, 136, 136);
-    text-shadow:0 0 5px black;
+    text-shadow:0 0 3px rgba(0, 0, 0, 0.616);
+  }
+  .container.themes .profileIcon {
+    filter:contrast(0) brightness(1.8) drop-shadow(0 0 2px rgba(0, 0, 0, 0.377));
   }
   .container.themes .profileText {
-    color:rgb(204, 204, 204);
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 2px rgba(0, 0, 0, 0.397);
+  }
+  
+  .container.themes .contactText {
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.692);
+  }
+  .container.themes .contactLabel {
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 4px rgb(0, 0, 0);
   }
   .container.themes .contactEmail {
     border-bottom:thin solid rgb(204, 204, 204);
-    color: rgb(173, 183, 199);
+    color: rgb(219, 219, 219);
+    text-shadow:0 0 2px rgb(0, 0, 0);
+    overflow:visible;
   }
   .container.themes .emailError {
-    color:rgb(204, 156, 156);
+    color:rgb(241, 144, 144);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.664);
   }
   .container.themes .contactMessage {
     border:thin solid rgb(204, 204, 204);
-    color: rgb(173, 183, 199);
+    color: rgb(219, 219, 219);
+    text-shadow:0 0 6px rgb(0, 0, 0);
+    overflow:visible;
   }
   .container.themes .contactButton {
-    color:rgb(204, 204, 204);
+    color:rgb(214, 214, 214);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.664);
   }
   .container.themes .contactButton:nth-child(8) {
-    color:rgb(204, 156, 156);
+    color:rgb(241, 144, 144);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.664);
   }
   .container.themes .contactCheck {
-    border-bottom:8px solid rgb(134, 147, 177);
-    border-right: 8px solid rgb(134, 147, 177);
+    filter:brightness(1.8);
   }
   .container.themes .contactCheckLine {
-    border-bottom:15px solid  rgb(134, 147, 177);
+    border-bottom:15px solid  rgb(243, 243, 243);
   }
   .container.themes .submitContactText {
-    color:rgb(203, 208, 218);
+    color:rgb(243, 243, 243);
+  }
+  .submitContactCancel {
+    filter:brightness(1.8);
+  }
+
+  .container.themes ::-webkit-scrollbar-track {
+    background-color: rgba(230, 230, 230, 0.26);
+  }
+  .container.themes ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.945);
   }
   .container.themes  .shortcut {
-    color:rgb(206, 206, 206);
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.664);
   }
   .container.themes kbd {
-    background-color: rgb(36, 36, 36);
-    border: 1px solid #4d4d4d;
-    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 0 0 rgba(0, 0, 0, 0.7) inset;
-    color: rgb(221, 221, 221);
+    background-color: rgb(224, 224, 224);
+    border: 1.5px solid #d3d3d3;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 0 0 rgba(144, 144, 144, 0.7) inset;
+    color: rgb(80, 80, 80);
+    text-shadow:none;
+  }
+  .container.themes .shortcutContainerShadow {
+    background:none;
+  }
+  .container.themes #shortcutBottom {
+    background:none;
+  }
+  .container.themes .shortcutCancel {
+    filter:brightness(2);
   }
 
   .container.themes .navBar,
   .container.themes .baseNavBar {
-    background-color:rgba(51, 51, 51, 0.959);
+    background-color:rgba(255, 255, 255, 0.191);
     box-shadow:0px 0px 0px rgba(29, 29, 29, 0.918);
+    backdrop-filter:blur(20px);
+    color:rgb(255, 255, 255);
+    text-shadow:0 0 6px rgb(0, 0, 0);
   }
   .container.themes .navBar.active,
   .container.themes .baseNavBar.active {
-    left:0px;
-    box-shadow:3px 0px 8px rgba(29, 29, 29, 0.918);
+    box-shadow:0px 0px 0px rgba(29, 29, 29, 0.918);
+  }
+  .container.themes .navBar p {
+    overflow:visible;
+    color:white;
+    text-shadow: 0 0 10px rgb(0, 0, 0);
+  }
+  .container.themes .sideMenuBtn {
+    filter: brightness(2) drop-shadow(0 0 4px rgba(0, 0, 0, 0.644));
+    background:rgba(255, 255, 255, 0.322);
+  }
+  .container.themes .sideMenuBtn.active {
+    filter: brightness(2) drop-shadow(0 0 2px black);
+    background:rgba(255, 255, 255, 0);
   }
 
   .container.themes .importImage {
-    filter:brightness(130%);
-  }
-  .container.themes .sideMenuBtn {
-    background-color:rgba(51, 51, 51, 0.815);
-  }
-  .container.themes .sideMenuBtn.active {
-    background-color:rgb(51, 51, 51, 0);
+    filter: brightness(1.6) drop-shadow(0 0 10px black);
   }
   .container.themes .switchContainer {
-    background-color:rgb(109, 138, 141);
-    box-shadow:0px 0px 10px rgb(109, 138, 141);
+    background-color:rgb(160, 190, 190);
+    box-shadow:0px 0px 10px rgb(160, 190, 190);
   }
   .container.themes .switch {
     background-color:rgb(219, 219, 219);
   }
   .container.themes .switchContainer.active {
-    background-color:rgb(24, 24, 24);
-    box-shadow:0px 0px 0px rgb(109, 138, 141);
+    background-color:rgb(92, 92, 92);
+    box-shadow:0px 0px 0px rgb(160, 190, 190);
   }
   .container.themes .switchContainer.active .switch {
     background-color:rgb(204, 204, 204);
   }
 
-  .container.themes .sideContainer.active .optionImage1 {
-    filter:sepia(100%) hue-rotate(140deg) drop-shadow(0 0 2px rgb(149, 213, 218));
+  .container.themes .sideContainer.active #sidecontainerheader1 .sideHeader, .container.themes #sidecontainerheader1:hover .sideHeader {
+    color: rgb(214, 255, 255);
   }
-  .container.themes .sideContainer.active .optionImage2 {
-    filter:sepia(100%) hue-rotate(250deg) drop-shadow(0 0 2px rgb(128, 106, 136));
+  .container.themes .sideContainer.active #sidecontainerheader2 .sideHeader, .container.themes #sidecontainerheader2:hover .sideHeader {
+    color: rgb(255, 235, 255);
   }
-  .container.themes .sideContainer.active .optionImage3 {
-    filter:sepia(100%) hue-rotate(100deg) drop-shadow(0 0 2px rgb(167, 223, 188));
+  .container.themes .sideContainer.active #sidecontainerheader3 .sideHeader, .container.themes #sidecontainerheader3:hover .sideHeader {
+    color: rgb(199, 255, 255);
   }
-  .container.themes .sideContainer.active .optionImage4 {
-    filter:sepia(100%) drop-shadow(0 0 2px rgb(207, 197, 152));
+  .container.themes .sideContainer.active #sidecontainerheader4 .sideHeader, .container.themes #sidecontainerheader4:hover .sideHeader {
+    color: rgb(255, 255, 199);
   }
 
-  .container.themes .sideContainer.active .optionDecor1 {
-    filter: drop-shadow(0 0 5px rgb(149, 213, 218));
+  .container.themes #optionimage1, 
+  .container.themes #optionimage2, 
+  .container.themes #optionimage3, 
+  .container.themes #optionimage4 {
+    filter:brightness(2) sepia(0) hue-rotate(0) drop-shadow(0 0 5px rgb(27, 27, 27));
   }
-  .container.themes .sideContainer.active .optionDecor2 {
-    filter: drop-shadow(0 0 5px rgb(128, 106, 136));
+
+  .container.themes .sideContainer.active #optionimage1 {
+    filter:brightness(2) sepia(100%) hue-rotate(140deg) drop-shadow(0 0 2px rgb(149, 213, 218));
   }
-  .container.themes .sideContainer.active .optionDecor3 {
-    filter: drop-shadow(0 0 5px rgb(167, 223, 188));
+  .container.themes .sideContainer.active #optionimage2 {
+    filter:brightness(2) sepia(100%) hue-rotate(250deg) drop-shadow(0 0 2px rgb(128, 106, 136));
   }
-  .container.themes .sideContainer.active .optionDecor4 {
-    filter: drop-shadow(0 0 5px rgb(207, 197, 152));
+  .container.themes .sideContainer.active #optionimage3 {
+    filter:brightness(2) sepia(100%) hue-rotate(100deg) drop-shadow(0 0 2px rgb(167, 223, 188));
+  }
+  .container.themes .sideContainer.active #optionimage4 {
+    filter:brightness(2) sepia(100%) hue-rotate(0) drop-shadow(0 0 2px rgb(207, 197, 152));
+  }
+
+  .container.themes .sideContainer.active #optiondecor1 {
+    background: rgb(214, 255, 255); 
+    box-shadow:0 0 5px rgb(214, 255, 255);
+  }
+  .container.themes .sideContainer.active #optiondecor2 {
+    background: rgb(255, 235, 255); 
+    box-shadow:0 0 5px rgb(255, 235, 255);
+  }
+  .container.themes .sideContainer.active #optiondecor3 {
+    background: rgb(199, 255, 255); 
+    box-shadow:0 0 5px rgb(199, 255, 255);
+  }
+  .container.themes .sideContainer.active #optiondecor4 {
+    background: rgb(255, 255, 199); 
+    box-shadow:0 0 5px rgb(255, 255, 199);
   }
 
   .container.themes .colorViewer {
     border: thin solid rgb(109, 109, 109);
   }
   .container.themes .customColorPicker {
-    background-color:rgb(31, 31, 31);
-    box-shadow:0px 0px 10px rgb(49, 49, 49);
+    background-color:rgb(218, 218, 218);
+    box-shadow:0px 0px 10px rgb(211, 211, 211);
   }
   .container.themes .defaultColor:hover,
   .container.themes .previewColor:hover {
-    color:rgb(173, 173, 173);
+    color:rgb(104, 104, 104);
+  }
+  .container.themes .colorBtn {
+    filter: brightness(2) drop-shadow(0 0 9px black);
   }
   .container.themes .swatch {
     border:thin solid rgb(92, 92, 92);
   }
   .container.themes .colorInputLabel {
-    background:rgb(70, 70, 70);
-    box-shadow:inset 0 0 5px rgb(59, 59, 59);
+    background:rgb(255, 255, 255);
+    box-shadow:inset 0 0 5px rgb(161, 161, 161);
   }
-  .container.themes .hashTag {
-    color:rgb(213, 215, 219);
+  .container.themes #hashtag {
+    color:rgb(149, 149, 149);
+    text-shadow: 0 0 0 black;
   }
   .container.themes .colorInput {
     border: thin solid rgb(51, 51, 51);
-    background:rgb(73, 73, 73);
-    color: rgb(211, 211, 211);
+    background:rgb(255, 255, 255);
+    color: rgb(109, 109, 109);
   }
 
   .container.themes .brightnessSlider,
@@ -162,6 +274,7 @@
 
   .container.themes .sizeSlider {
     background:linear-gradient(to right, rgb(231, 246, 248) 0%, rgb(189, 189, 189) 50%, rgb(87, 87, 87) 100%);
+    box-shadow:0 0 10px rgb(90, 90, 90);
   }
   .container.themes .sizeSlider::-webkit-slider-thumb {
     background: radial-gradient(rgb(231, 246, 248) 0%, rgb(158, 231, 144) 100%);
@@ -171,117 +284,135 @@
   .container.themes .sliderNumber {
     color: rgb(175, 175, 175);
   }
+  .container.themes .resetSlider {
+    filter:brightness(2) drop-shadow(0 0 2px black);
+  }
 
   .container.themes .themeGrid {
-    box-shadow:0 0 10px rgb(77, 77, 77);
+    box-shadow:0 0 10px rgba(0, 0, 0, 0.376);
   }
   .container.themes .themeImage {
     box-shadow:0 0 10px rgb(88, 88, 88);
   }
   .container.themes .themeSelect {
-    border:1px solid rgb(95, 95, 95);
+    border:1px solid rgb(121, 121, 121);
+  }
+  .container.themes .themeContainer.active .themeSelectText {
+    color: rgb(113, 154, 207);
   }
   .container.themes .themeGrid::-webkit-scrollbar-track {
-    background:linear-gradient(rgb(88, 88, 88) 0%, rgb(138, 138, 138) 100%);
+    background: rgb(170, 170, 170);
   }
   .container.themes .themeGrid::-webkit-scrollbar-thumb {
-    background:linear-gradient(rgb(144, 167, 180) 0%, rgb(113, 127, 190) 100%);
+    background: rgb(255, 255, 255);
+  }
+  .container.themes .themeUploadImage {
+    filter: brightness(1.4);
+  }
+
+  .container.themes .saveBox, .container.themes  .resetPreferences  {
+    box-shadow:0px 0px 4px rgb(255, 255, 255);
+  }
+
+  .container.themes #resetpreferences {
+    text-shadow:0 0 6px black;
+  }
+  .container.themes #resetconfirm {
+    text-shadow:0 0 5px black;
+  }
+  .container.themes .resetBtn {
+    filter: brightness(2) drop-shadow(0 0 2px black);
   }
 
   .container.themes .sideNightContainer {
     pointer-events:none;
   }
 
-  .container.themes .saveBtn {
-    background:rgba(46, 46, 46, 0.808);
-    box-shadow:0px 0px 5px rgb(46, 46, 46);
-  }
-  .container.themes .saveBox:hover .saveBtn {
-    background:rgb(66, 66, 66);
-  }
-  .container.themes .saveText {
-    color:rgb(219, 219, 219);
-    background-color:rgba(46, 46, 46, 0.808);
-  }
-  .container.themes .saveImg {
-    filter:brightness(175%) grayscale(200%);
-  }
-
   .container.themes .saveConfirm {
-    background-color: rgb(85, 85, 85);
+    background-color: rgba(255, 255, 255, 0.24);
     box-shadow: 0 0 10px rgb(110, 110, 110);
-    border:2px solid rgb(63, 63, 63);
+    backdrop-filter:blur(20px);
+    border:2px solid rgb(255, 255, 255);
+  }
+  .container.themes .saveConfirmText {
+    color:rgb(243, 243, 243);
+    text-shadow:0 0 4px black;
   }
   .container.themes .saveConfirmBtn:nth-child(2):hover {
-    background-color:rgb(104, 85, 85);
+    background-color:rgba(194, 154, 154, 0.287);
   }
   .container.themes .saveConfirmBtn:nth-child(3):hover {
-    background-color:rgb(71, 87, 71);
+    background-color:rgba(207, 226, 207, 0.253);
   }
   .container.themes .saveConfirmBtn:nth-child(3) {
-    border-left:thin solid rgb(67, 69, 73);
+    border-left:thin solid rgb(226, 226, 226);
+  }
+  .container.themes .saveConfirmImg {
+    filter:brightness(2);
+  }
+  .container.themes .saveCheck {
+    border-bottom:4.2px solid rgb(255, 255, 255);
+    border-right:4.2px solid rgb(255, 255, 255);
   }
   
   .container.themes .sideNightContainer {
     opacity:0;
   }
 
-  .container.themes .profileDiv {
-    background-color:rgba(51, 51, 51, 0.959);
-    box-shadow:0px 0px 0px black;
+  .container.themes .hotbar {
+    background:rgba(255, 255, 255, 0.178);
+    backdrop-filter:blur(20px);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
-  .container.themes .profileDiv.active {
-    box-shadow:0px 0px 8px black;
+  .container.themes .hotbarIcon {
+    filter:brightness(2) opacity(1) drop-shadow(0 0 4px rgb(44, 44, 44));
   }
-  .container.themes .profilePic.active {
-    box-shadow: 0 0 5px rgb(0, 0, 0);
+  .container.themes .hotbarIconTooltip {
+    overflow:visible;
+    color:rgb(255, 255, 255);
+    text-shadow:0 0 7px black;
   }
-  .container.themes .signOutText {
-    color:rgb(209, 209, 209);
-    text-shadow:0 0 5px black;
-  }
-  .container.themes .profileOption {
-    text-shadow:0 0 3px black;
+  .container.themes .hotbarLink {
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.521);
   }
 
   .container.themes .searchBar {
-    color: rgb(219, 219, 219);
-    background-color:rgba(88, 88, 88, 0.87);
-    box-shadow:0px 0px 10px rgb(59, 59, 59);
+    color: rgb(231, 231, 231);
+    text-shadow:0 0 1px rgb(0, 0, 0);
+    background-color:rgba(255, 255, 255, 0.178);
+    backdrop-filter:blur(20px);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
   .container.themes .searchBar:focus {
+    background-color:rgba(255, 255, 255, 0.226);
     outline:none;
-    box-shadow:0px 0px 15px rgb(0, 0, 0);
-    background-color:rgb(88, 88, 88);
-  }
-  .container.themes .searchBar:focus .buttonNav {
-    background-color:black;
   }
   .container.themes ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: rgb(195, 195, 195);
+    color: rgb(231, 231, 231);
+    overflow:visible;
     opacity: 1; /* Firefox */
   }
   .container.themes :-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: rgb(194, 194, 194);
+    color: rgb(231, 231, 231);
+    overflow:visible;
   }
   .container.themes ::-ms-input-placeholder { /* Microsoft Edge */
-    color: rgb(194, 194, 194);
+    color: rgb(231, 231, 231);
+    overflow:visible;
   }
 
   .container.themes .navBtns {
-    text-shadow:0 0 3px black;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(93, 102, 110, 0.739) 10%, rgba(93, 102, 110, 0.739) 90%, rgba(0, 0, 0, 0) 100%);
+    text-shadow:0 0 0 black;
+    background-color:rgba(255, 255, 255, 0.24);
+    backdrop-filter:blur(20px);
+    opacity:0.8;
   }
-
-  .container.themes img {
-    box-shadow:none;
-  }
-  .container.themes .linkNames {
-    background:linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.212) 15%, rgba(0, 0, 0, 0.534) 50%, rgba(0, 0, 0, 0.212) 85%, rgba(0, 0, 0, 0) 100%);
+  .container.themes .navBtns.active {
+    opacity:1;
   }
 
   .container.themes .dropTabBox {
-    background:linear-gradient(to right, rgba(14, 14, 14, 0) 0%,rgba(14, 14, 14, 0.616) 50%, rgb(46, 46, 46) 100%);
+    background:linear-gradient(to right, rgba(75, 60, 60, 0) 0%,rgba(14, 14, 14, 0.616) 50%, rgb(46, 46, 46) 100%);
   }
   .container.themes .dropTabText {
     color: rgb(168, 168, 168);
@@ -293,124 +424,52 @@
     color: rgb(168, 168, 168);
   }
 
-  .container.themes .leftTabArrow {
-    margin-top:0.15rem;
-    left:-2.4rem;
-    padding:1rem;
-    height:44px;
-    width:40px;
-    transform:scale(1);
-    background:rgba(0, 0, 0, 0.507);
-    border-radius:100%;
-    filter:brightness(150%);
-  }
-  .container.themes .rightTabArrow {
-    margin-top:0.15rem;
-    right:-2.4rem;
-    padding:1rem;
-    height:44px;
-    width:40px;
-    transform:rotateZ(180deg) scale(1);
-    background:rgba(0, 0, 0, 0.507);
-    border-radius:100%;
-    filter:brightness(150%);
-  }
-  .container.themes .leftLinkArrow {
-    top:5rem;
-    left:-5rem;
-    padding:2rem;
-    height:82px;
-    width:76px;
-    transform:scale(1);
-    background:rgba(0, 0, 0, 0.507);
-    border-radius:100%;
-    filter:brightness(150%);
-  }
-  .container.themes .rightLinkArrow {
-    top:5rem;
-    right:-5rem;
-    padding:2rem;
-    height:82px;
-    width:76px;
-    transform:rotateZ(180deg) scale(1);
-    background:rgba(0, 0, 0, 0.507);
-    border-radius:100%;
-    filter:brightness(150%);
+  .container.themes .leftTabArrow, .container.themes .rightTabArrow {
+    text-shadow:0 0 0 black;
+    background-color:none;
+    backdrop-filter:brightness(0.6) blur(20px);
+    box-shadow:0 0 50px rgba(0, 0, 0, 0.171);
+    filter:brightness(2) drop-shadow(0 0 1px rgba(0, 0, 0, 0.65));
   }
 
-  .container.themes .linkBox img {
-    box-shadow: 0 0 20px rgb(77, 77, 77);
+  .container.themes .grid {
+    background:rgba(255, 255, 255, 0.178);
+    backdrop-filter:blur(20px);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
+  }
+  .container.themes .grid.erase .linkBox:hover .linkImg {
+    filter:drop-shadow(0 0 0px rgb(255, 203, 203));
+  }
+  .container.themes .addLinkGrid {
+    border:3px solid rgb(255, 255, 255);
+  }
+  .container.themes .addLinkGridImage {
+    filter:brightness(2);
   }
 
-  .container.themes .grid.active .linkBox:hover img {
-    box-shadow:0px 0px 20px rgb(255, 155, 155);
+  .container.themes .modContainer, .container.themes .modBoxConfirm {
+    backdrop-filter:blur(20px); 
+    box-shadow:0 0 50px rgba(0, 0, 0, 0.171);
   }
-
-  .container.themes p {
-    color:rgb(199, 199, 199);
+  .container.themes .modContainer::before, .container.themes .modBoxConfirm::before {
+    content:'';
+    position:absolute;
+    width:100%; height:100%;
+    border-bottom-right-radius:20px;
+    border-bottom-left-radius:20px;
+    background:rgba(255, 255, 255, 0.116);
   }
-
-  .container.themes .addContainer {
-    color:rgb(199, 199, 199);
+  .container.themes .modContainerImage, .container.themes .modImgConfirm {
+    left:51%; transform:translate(-50%, -10%);
   }
-  .container.themes .addLink {
-    box-shadow:none;
-    color: rgb(194, 194, 194);
-    background:rgb(49, 49, 49);
-    box-shadow:none;
-    letter-spacing:0.8px;
-  }
-  .container.themes .addSlider {
-    box-shadow:0px 0px 4px rgb(49, 49, 49);
-    background: rgb(61, 61, 61);
-  }
-  .container.themes .addSlider img {
-    box-shadow:none;
-    color:white;
-  }
-  .container.themes .addContainer:hover .addSlider {
-    background:rgb(107, 107, 107);
-  }
-  .container.themes .plusImage {
-    filter:brightness(150%) grayscale(200%);
-  }
-
-  .container.themes .modBtn {
-    background:rgb(49, 49, 49);
-    box-shadow:0px 0px 4px rgb(49, 49, 49);
-  }
-  .container.themes .modBox:nth-child(12):hover .modBtn {
-    background:rgb(77, 91, 107);
-    box-shadow:0px 0px 10px rgb(58, 95, 139), inset 0 0 40px rgb(58, 95, 139);
-  }
-  .container.themes .modBox:nth-child(13):hover .modBtn {
-    background:rgb(102, 83, 83);
-    box-shadow:0px 0px 10px rgb(92, 40, 40), inset 0 0 40px rgb(92, 40, 40);
-  }
-  .container.themes .modText {
-    display:none;
-  }
-  .container.themes .modImg {
-    filter:brightness(125%) grayscale(200%);
-  }
-
-  .container.themes .modBtnConfirm {
-    background:rgb(49, 49, 49);
-    box-shadow:0px 0px 5px rgb(63, 63, 63);
-  }
-  .container.themes .modBoxConfirm:hover .modBtnConfirm {
-    background:rgb(56, 70, 56);
-    box-shadow:0px 0px 10px rgb(48, 78, 48), inset 0 0 40px rgb(48, 78, 48);
+  .container.themes .modImgConfirm {
+    transform:translate(-50%, -15%) rotateZ(-320deg) scale(1.2);
   }
   .container.themes .modBoxConfirm.active .modImgConfirm {
-    border-bottom:4.2px solid rgb(194, 194, 194);
-    border-right:4.2px solid rgb(194, 194, 194);
+    transform:translate(-50%, -15%) rotateZ(40deg) scale(1.2);
   }
-  .container.themes .modTextEdit,
-  .container.themes .modTextErase,
-  .container.themes .modTextClose,
-  .container.themes .modTextConfirm {
-    display:none;
+  .container.themes .modContainer.hide, .container.themes .modBoxConfirm.hide {
+    opacity:0;
   }
 
   .container.themes .dot:nth-child(1) { background-color:rgb(139, 139, 139)}
@@ -419,78 +478,92 @@
   .container.themes .dot:nth-child(4) { background-color:rgb(139, 139, 139)}
 
   .container.themes .tabEraseConfirm {
-    background-color: rgb(58, 58, 58);
-    box-shadow: 0 0 10px rgb(49, 49, 49);
-    border:2px solid rgb(90, 90, 90);
+    background-color: rgba(255, 255, 255, 0.24);
+    box-shadow: 0 0 10px rgb(110, 110, 110);
+    backdrop-filter:blur(20px);
+    border:2px solid rgb(255, 255, 255);
+  }
+  .container.themes .tabEraseConfirmText {
+    color:rgb(243, 243, 243);
+    text-shadow:0 0 4px black;
   }
   .container.themes .tabEraseConfirmBtn:nth-child(2):hover {
-    background-color:rgb(73, 59, 59);
+    background-color:rgba(194, 154, 154, 0.287);
   }
   .container.themes .tabEraseConfirmBtn:nth-child(3):hover {
-    background-color:rgb(44, 54, 44);
+    background-color:rgba(207, 226, 207, 0.253);
   }
   .container.themes .tabEraseConfirmBtn:nth-child(3) {
-    border-left:thin solid rgb(67, 69, 73);
+    border-left:thin solid rgb(226, 226, 226);
+  }
+  .tabEraseImg {
+    filter:brightness(2);
+  }
+  .tabEraseCheck {
+    border-bottom:4.2px solid rgb(255, 255, 255);
+    border-right:4.2px solid rgb(255, 255, 255);
   }
   .container.themes .sk-chase-dot:before {
-    background-color: rgb(173, 173, 173);
-    box-shadow:0 0 12px rgb(173, 173, 173);
+    background-color: rgb(255, 255, 255);
+    box-shadow:0 0 12px rgb(255, 255, 255);
   }
 
   .container.themes .addForm {
-    background-color: rgb(54, 54, 54);
-    box-shadow: 0px 0px 20px rgb(0, 0, 0);
+    background:rgba(255, 255, 255, 0.178);
+    backdrop-filter:blur(20px);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
-
+  .container.themes #addFormDiv::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.945);
+  }
+  .container.themes .addLinkCancel {
+    filter:brightness(2);
+  }
   .container.themes .addForm h1 {
     color:rgba(248, 248, 248, 0.781);
     text-shadow: 0px 0px 10px rgb(0, 0, 0);
   }
-
   .container.themes .selectTabText {
     color:rgba(248, 248, 248, 0.781);
   }
   .container.themes .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
   .container.themes .selectTabArrow {
-      border-bottom:2px solid rgba(248, 248, 248, 0.781);
-      border-right:2px solid rgba(248, 248, 248, 0.781);
+    border-bottom:2px solid rgba(248, 248, 248, 0.781);
+    border-right:2px solid rgba(248, 248, 248, 0.781);
   }
   .container.themes .selectTabChosen:hover .selectTabArrow {
-      border-bottom:2px solid rgb(175, 189, 201);
-      border-right:2px solid rgb(175, 189, 201);
+    border-bottom:2px solid rgb(175, 189, 201);
+    border-right:2px solid rgb(175, 189, 201);
   }
   .container.themes .selectTab.active .selectTabChosen:hover .selectTabArrow {
-      border-bottom:2px solid rgb(175, 189, 201);
-      border-right:2px solid rgb(175, 189, 201);
+    border-bottom:2px solid rgb(175, 189, 201);
+    border-right:2px solid rgb(175, 189, 201);
   }
   .container.themes .selectTabList {
-      background-color: rgb(51, 51, 51);
-      box-shadow: 0 0 10px rgb(65, 65, 65);
+    background:rgba(146, 146, 146, 0.911);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
   .container.themes .selectTabItem {
-      color:rgba(248, 248, 248, 0.781);
-      border-bottom:thin solid rgb(98, 98, 98);
+    color:rgba(255, 255, 255, 0.671);
+    border-bottom:thin solid rgba(255, 255, 255, 0.404);
   }
   .container.themes .selectTab.active .selectTabItem:hover {
-      color:rgb(160, 160, 160);
+    color:rgb(219, 231, 255);
   }
   .container.themes .selectTabList::-webkit-scrollbar-track {
-      background:rgb(75, 75, 75);
+    background:rgb(75, 75, 75);
   }
   .container.themes .selectTabList::-webkit-scrollbar-thumb {
-      background:rgb(29, 29, 29);
+    background:rgb(29, 29, 29);
   }
-
   .container.themes .addForm input[type=text] {
     border-bottom:1px solid rgba(248, 248, 248, 0.781);
     color:rgba(248, 248, 248, 0.781);
   }
-
   .container.themes .addForm label {
     color:rgba(248, 248, 248, 0.781);
     text-shadow: 0px 0px 6px rgb(0, 0, 0);
   }
-
   .container.themes .defaultImg {
     box-shadow: 0px 0px 10px rgb(0, 0, 0);
   }
@@ -498,117 +571,115 @@
     color:rgba(248, 248, 248, 0.781);
     text-shadow: 0px 0px 4px rgb(0, 0, 0);
   }
-
   .container.themes .imgContainer.active .imgLabel {
-    color:rgba(87, 125, 190, 0.8);
-    border-bottom:thin solid rgba(87, 125, 190, 0.8);
+    color:rgba(133, 171, 236, 0.8);
+    border-bottom:thin solid rgba(133, 171, 236, 0.8);
   }
   .container.themes .imageAddress.active {
-    color:rgba(87, 125, 190, 0.8);
+    color:rgba(133, 171, 236, 0.8);
   }
 
   .container.themes .clearImg {
     color:rgb(189, 189, 189);
   }
-
   .container.themes .previewBox {
-    background-color: rgb(34, 34, 34);
-    box-shadow: 0 0 15px rgb(0, 0, 0);
-  }
-
-  .container.themes .imgAddressInput:focus + .previewBox {
-    margin-left:21rem;
-    opacity:1;
+    background:rgba(146, 146, 146, 0.911);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
 
   .container.themes .addForm button.submit {
-    background: rgba(248, 248, 248, 0.781);
-    color: rgb(68, 75, 87);
-    box-shadow:0px 0px 10px rgb(0, 0, 0);
+    background:rgba(255, 255, 255, 0.082);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
+    color: rgba(255, 255, 255, 0.794);
   }
-
   .container.themes .addForm button.submit:hover {
-    background: rgba(250, 250, 250, 0.781);
     letter-spacing:1px;
-    color: rgb(26, 51, 122);
   }
-
   .container.themes .addForm img {
     box-shadow:none;
   }
+  .container.themes .errMsg {
+    color:rgb(255, 190, 190);
+    text-shadow:0 0 4px black;
+}
 
   .container.themes .suggestionList {
-    background-color: rgb(54, 54, 54);
-    box-shadow:0px 0px 15px rgb(46, 46, 46);
+    background:rgba(146, 146, 146, 0.911);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
   }
-  .container.themes  .suggestionLink {
-      color:rgb(206, 206, 206);
+  .container.themes .suggestionLink, .container.themes .suggestionTitle {
+    color:rgb(235, 235, 235);
+    border-bottom: thin solid rgba(223, 223, 223, 0.411);
   }
   .container.themes .suggestionLink:focus,
-  .container.themes .suggestionLink:hover {
-      color:rgb(85, 114, 168);
-      font-size:18px;
-  }
-  .container.themes .suggestionTitle {
-    color:rgb(206, 206, 206);
-  }
+  .container.themes .suggestionLink:hover,
   .container.themes .suggestionTitle:focus,
   .container.themes .suggestionTitle:hover {
-      color:rgb(85, 114, 168);
-      font-size:18px;
+    color:rgb(208, 225, 255);
   }
 
+  .container.themes .addTabDiv {
+    background-color:rgba(255, 255, 255, 0.13);
+    backdrop-filter:blur(20px);
+  }
+  .container.themes #addtabdiv {
+    opacity:1;
+  }
   .container.themes .addTabPlus {
     box-shadow:none;
-    background:rgb(24, 24, 24);
-    filter:brightness(135%) grayscale(200%);
-    backdrop-filter: brightness(135%) grayscale(200%);
+    filter:brightness(2) grayscale(200%) drop-shadow(0 0 5px black);
   }
   .container.themes .tabInput {
-    background:rgba(0, 0, 0, 0.63);
-    height:22px;
-    width:84%;
-    padding-left:3px;
-    text-shadow:0 0 7px rgb(167, 167, 167);
-  }
-  .container.themes .tabInput:focus {
-    background:rgba(0, 0, 0, 0.794);
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 3px rgba(0, 0, 0, 0.849);
   }
   .container.themes .tabCancel,
   .container.themes .tabSubmit {
-    font-size:14px;
-    color: rgb(184, 184, 184);
-    background:rgba(0, 0, 0, 0.774);
-    border-radius:20px;
-    margin-top:4px;
+    box-shadow:0 0 10px rgba(0, 0, 0, 0.554);
+    background:rgba(240, 240, 240, 0.685);
   }
   .container.themes .tabCancel:hover,
   .container.themes .tabSubmit:hover {
     color:rgb(115, 153, 235);
     letter-spacing:0.5px;
   }
+  .container.themes .submitTabImg,
+  .container.themes #tabsubmitimg {
+    filter:brightness(2) drop-shadow(0 0 5px rgba(0, 0, 0, 0.794));
+  }
   .container.themes .colorPicker {
     margin-top:2px;
   }
   .container.themes .tabInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: rgb(165, 165, 165);
-    padding-left:2px;
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.876);
   }
   .container.themes .tabInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: rgb(165, 165, 165);
-    padding-left:2px;
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.876);
   }
   .container.themes .tabInput::-ms-input-placeholder { /* Microsoft Edge */
-    color: rgb(165, 165, 165);
-    padding-left:2px;
+    color:rgb(235, 235, 235);
+    text-shadow:0 0 4px rgba(0, 0, 0, 0.876);
   }
 
   .container.themes .bookmarkBox {
-    background-color: rgb(54, 54, 54);
-    box-shadow:0px 0px 20px rgba(179, 183, 189, 0.8);
+    background-color: rgba(255, 255, 255, 0.205);
+    backdrop-filter:blur(20px);
+    box-shadow:none;
   }
   .container.themes .bookmarkHead {
     color:rgba(248, 248, 248, 0.781);
+  }
+  .container.themes .bookmarkCancel {
+    filter:brightness(2);
+  }
+  .container.themes .dots {
+    filter:brightness(2);
+  }
+  .container.themes .openFileButton {
+    box-shadow:0px 0px 2px rgb(255, 255, 255), inset 0 0 18px white;
+    text-shadow: 0 0 8px rgb(93, 93, 93);
   }
 
   .container.themes .selectAll {
@@ -628,17 +699,22 @@
     color:rgba(248, 248, 248, 0.781);
   }
   .container.themes .itemContainer:hover .bookmarkItem {
-    color:rgba(143, 174, 224, 0.8);
+    color:#d7eaffcc;
+  }
+  .container.themes .selectAll {
+    border-right: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  .container.themes .bookmarkList {
+    border-top:thin solid rgba(255, 255, 255, 0.8);
+  }
+  .container.themes .itemContainer {
+    border-bottom: thin solid rgba(255, 255, 255, 0.8);
   }
 
-  .container.themes .bookmarkBox::-webkit-scrollbar-thumb {
-    background:rgba(200, 207, 221, 0.8);
-    border-radius:20px;
+  .container.themes #addFormDiv::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.945);
   }
-  .container.themes .bookmarkBox::-webkit-scrollbar-track {
-    background:rgb(105, 105, 105);
-  }
-
+  
   .container.themes .teachHeader {
     color:rgba(248, 248, 248, 0.781);
   }

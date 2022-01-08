@@ -1,0 +1,159 @@
+.hotbarContainer {
+    position:relative;
+    width:100%;
+    height:clamp(140px, 13vw, 228px);
+    text-align:center;
+    margin-top:4vh;
+}
+.hotbar {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:clamp(370px, 45%, 780px); height:100%;
+    box-shadow: 7px 7px 7px rgb(200,212,229), -7px -7px 7px rgb(255, 255, 255);
+    border-radius:40px;
+}
+.hotbarIcons, .hotbarLinks {
+    position:absolute;
+    top:0;
+    text-align:center;
+    width:100%; height:50%;
+    transition:0.5s;
+}
+.hotbarLinks {
+    opacity:0;
+    pointer-events:none;
+    top:50%;
+}
+.hotbarLinks.active {
+    opacity:1;
+    pointer-events:all;
+}
+.hotbarIconWrapper {
+    position:relative;
+    display:inline-block;
+    text-align:center;
+    width:clamp(24px, 5%, 35px); height:100%;
+    margin:auto 5%;
+    opacity:0.6;
+    cursor:pointer;
+    filter:sepia(80%) hue-rotate(180deg) brightness(105%);
+}
+.hotbarIcon {
+    position:absolute;
+    top:50%; left:0;
+    transform:translateY(-50%);
+    transform-origin:50% 0%;
+    width:100%; height:auto;
+    transition:0.1s;
+    z-index:1;
+}
+.hotbarIconWrapper:nth-child(1) .hotbarIcon, .hotbarIconWrapper:nth-child(3) .hotbarIcon {
+    width:100%;
+    max-width:40px;
+}
+.hotbarIconWrapper.active .hotbarIcon {
+    transform:scale(1.8) translateY(-50%);
+    opacity:1;
+}
+.hotbarIconWrapper:nth-child(1).active .hotbarIcon, .hotbarIconWrapper:nth-child(3).active .hotbarIcon {
+    transform:scale(1.6) translateY(-50%);
+}
+.hotbarIconTooltip {
+    position:absolute;
+    color:rgb(93, 104, 126);
+    opacity:0;
+    transition:0.5s;
+    z-index:0;
+}
+#recenttooltip {
+    top:50%; left:-100%;
+    transform:translate(0, -50%);
+}
+#trendingtooltip {
+    top:60%; left:50%;
+    transform:translate(-50%, 0);
+}
+#populartooltip {
+    top:50%; left:70%;
+    transform:translate(0, -50%);
+}
+
+.hotbarIconWrapper:hover #recenttooltip {
+    transform:translate(-70%, -50%);
+    opacity:1;
+}
+.hotbarIconWrapper:hover #trendingtooltip {
+    transform:translate(-50%, 50%);
+    opacity:1;
+}
+.hotbarIconWrapper:hover #populartooltip {
+    transform:translate(55%, -50%);
+    opacity:1;
+}
+
+.hotbarIconWrapper.active:hover #recenttooltip/*, .hotbarIconWrapper.active #recenttooltip */ {
+    transform:translate(-100%, -50%);
+    opacity:1;
+}
+.hotbarIconWrapper.active:hover #trendingtooltip/*,  .hotbarIconWrapper.active #trendingtooltip */ {
+    transform:translate(-50%, 90%);
+    opacity:1;
+}
+.hotbarIconWrapper.active:hover #populartooltip/*, .hotbarIconWrapper.active #populartooltip */ {
+    transform:translate(75%, -50%);
+    opacity:1;
+}
+
+.hotbarLinkWrapper {
+    position:relative;
+    width:100%; height:100%;
+    pointer-events:none;
+}
+.hotbarLink {
+    position:relative;
+    box-shadow:none;
+    width:11%; height:auto;
+    max-width:80px;
+    margin:auto 4%;
+    top:45%; transform:translateY(-50%);
+    border-radius:100%;
+    box-shadow: 4px 4px 5px rgb(200,212,229);
+    transition:0.3s;
+}
+.hotbarLinks.active .hotbarLink {
+    pointer-events:all;
+}
+
+@media (max-width:1150px) {
+    .hotbarContainer {
+        height:215px;
+        margin-top:4vh;
+    }
+    .hotbar {
+        width:390px;
+    }
+    .hotbarIconWrapper {
+        width:30px;
+        margin:auto 5%;
+    }
+    .hotbarIconWrapper:nth-child(1) .hotbarIcon, .hotbarIconWrapper:nth-child(3) .hotbarIcon {
+        max-width:40px;
+    }
+    .hotbarIconWrapper.active .hotbarIcon {
+        transform:scale(1.8) translateY(-50%);
+    }
+    .hotbarIconWrapper:nth-child(1).active .hotbarIcon, .hotbarIconWrapper:nth-child(3).active .hotbarIcon {
+        transform:scale(1.6) translateY(-50%);
+    }
+
+    .hotbarIconTooltip {
+        display:none;
+    }
+    
+    .hotbarLink {
+        width:60px;
+        margin:-12px 35px;
+        top:30%;
+    }
+}

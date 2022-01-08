@@ -211,6 +211,60 @@
         filter:blur(10px);
     }
   }
+  @keyframes linkLoader13 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 60% {
+        opacity: 0;
+        filter:blur(10px);
+    } 80% {
+        opacity: 1;
+        filter:blur(0px);
+    } 85% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader14 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 65% {
+        opacity: 0;
+        filter:blur(10px);
+    } 85% {
+        opacity: 1;
+        filter:blur(0px);
+    } 90% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
+  @keyframes linkLoader15 {
+    0% {
+        opacity: 0;
+        filter:blur(10px);
+    } 70% {
+        opacity: 0;
+        filter:blur(10px);
+    } 90% {
+        opacity: 1;
+        filter:blur(0px);
+    } 95% {
+        opacity: 1;
+        filter:blur(0px);
+    } 100% {
+        opacity: 0;
+        filter:blur(10px);
+    }
+  }
 
   .linkBox.active:nth-child(3) {animation: linkRotateIn 0.2s}
   .linkBox.active:nth-child(4) {animation: linkRotateIn 0.25s}
