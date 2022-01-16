@@ -115,6 +115,7 @@
     box-shadow:none;
     width:11%; height:auto;
     max-width:80px;
+    aspect-ratio:1 / 1;
     margin:auto 4%;
     top:45%; transform:translateY(-50%);
     border-radius:100%;
