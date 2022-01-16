@@ -116,7 +116,7 @@
   box-shadow: 4px 4px 4px rgb(200,212,229), -4px -4px 4px rgb(255, 255, 255);
   transform:translateX(0, 0) rotateZ(0deg);
   opacity:0;
-  transition:0.8s;
+  transition:opacity 0.8s, transform 0.8s;
   z-index:-1;
 }
 .addTabDiv.active .tabSubmit, .editTabWrapper.active .tabSubmit {
@@ -170,11 +170,12 @@
 .editTabDiv {
   position:absolute;
   pointer-events:none;
-  top:-26px; left:-1px;
-  width:180px; height:110%;
+  bottom:27px; left:-1px;
+  width:180px; height:60px;
   border-top-right-radius:15px;
   border-top-left-radius:15px;
   border:3px solid;
+  border-bottom:none;
   background:rgb(232, 238, 247);
   opacity:0;
   transition:opacity 0.5s;
@@ -185,6 +186,9 @@
 }
 .editTabWrapper.active .editTabDiv {
   opacity:1;
+}
+.editTabWrapper.active .navBtnWrapper {
+  opacity:0;
 }
 .editTabDiv:hover {
   transform:translateY(12px);
