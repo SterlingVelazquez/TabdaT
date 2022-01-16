@@ -107,7 +107,7 @@
   .container.themes .submitContactText {
     color:rgb(243, 243, 243);
   }
-  .submitContactCancel {
+  .container.themes .submitContactCancel {
     filter:brightness(1.8);
   }
 
@@ -407,8 +407,12 @@
     backdrop-filter:blur(20px);
     opacity:0.8;
   }
-  .container.themes .navBtns.active {
+  .container.themes .navBtnWrapper.active .navBtns {
+    background:rgba(255, 255, 255, 0.178);
     opacity:1;
+  }
+  .container.themes .navBtnWrapper.active .tabThemeBlur {
+    display:block;
   }
 
   .container.themes .dropTabBox {
@@ -435,7 +439,7 @@
   .container.themes .grid {
     background:rgba(255, 255, 255, 0.178);
     backdrop-filter:blur(20px);
-    box-shadow:0 0 50px rgba(56, 56, 56, 0.144);
+    box-shadow:0 0 50px rgba(56, 56, 56, 0); /* 0.144 */
   }
   .container.themes .grid.erase .linkBox:hover .linkImg {
     filter:drop-shadow(0 0 0px rgb(255, 203, 203));
@@ -496,10 +500,10 @@
   .container.themes .tabEraseConfirmBtn:nth-child(3) {
     border-left:thin solid rgb(226, 226, 226);
   }
-  .tabEraseImg {
+  .container.themes .tabEraseImg {
     filter:brightness(2);
   }
-  .tabEraseCheck {
+  .container.themes .tabEraseCheck {
     border-bottom:4.2px solid rgb(255, 255, 255);
     border-right:4.2px solid rgb(255, 255, 255);
   }

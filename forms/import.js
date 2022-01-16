@@ -1,5 +1,4 @@
 import React from 'react';
-import { suggestions } from "../tools/suggestions.js"
 
 var key = 0;
 
@@ -10,6 +9,7 @@ export class Import extends React.Component {
         this.state = {
             tabs: this.props.tabs,
             bookmarks: [],
+            suggestions: [],
         }
         this.submitForm = this.submitForm.bind(this);
     }
@@ -17,6 +17,7 @@ export class Import extends React.Component {
     static getDerivedStateFromProps(props) {
         return {
             tabs: props.tabs,
+            suggestions: props.suggestions,
         }
     }
 
@@ -86,10 +87,10 @@ export class Import extends React.Component {
                 } else {
                     toAdd[j].image = "ultafedIgm/doggo.png";
                 }
-                for (var k = 0; k < suggestions.length; k++) {
-                    if (toAdd[j].link.includes(suggestions[k].url)) {
-                        toAdd[j].image = suggestions[k].image;
-                        k = suggestions.length;
+                for (var k = 0; k < this.state.suggestions.length; k++) {
+                    if (toAdd[j].link.includes(this.state.suggestions[k].url)) {
+                        toAdd[j].image = this.state.suggestions[k].image;
+                        k = this.state.suggestions.length;
                     }
                 }
 

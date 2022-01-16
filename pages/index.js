@@ -13,11 +13,13 @@ import { Hotbar } from "../react/hotbar.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 var key = 0;
 var resize
 var doneLoading = false;
 var firstLoad = true;
-var prefInit = [];
 const defaultPreferences = {
   addLink: false,
   addTab: false,
@@ -96,27 +98,7 @@ class Home extends React.Component {
 
   async UNSAFE_componentWillMount() {
     firebase.auth().onAuthStateChanged(async function (user) {
-      var uid = user ? user.uid : "default";
-      var preferences = await database.getPreferences(uid, defaultPreferences);
-      var tabs = await database.getTabs(uid);
-      var allLinks = await database.getAllLinks(uid);
-      doneLoading = true;
-      await this.setState({
-        user: user ? user : "default",
-        uid: uid,
-        preferences: preferences,
-        oldPreferences: JSON.parse(JSON.stringify(preferences)),
-        tabs: tabs,
-        numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
-        selectedTab: tabs.length !== 0 ? tabs[0].name : "",
-        allLinks: allLinks,
-        links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks),
-        trendingLinks: await database.getTrendingLinks(),
-        popularLinks: user ? await this.getShortcutLinks(true, allLinks) : [],
-        recentLinks: user ? await this.getShortcutLinks(false, allLinks) : [],
-        suggestions: user ? await database.getSuggestions() : [],
-        themes: user ? await database.getThemes() : [],
-      })
+      await this.get(user);
       if (firstLoad) document.getElementById("title").classList.toggle("hide");
       firstLoad = false;
       this.getKeyPresses();
@@ -124,23 +106,62 @@ class Home extends React.Component {
     }.bind(this))
   }
 
+  async get(user) {
+    var uid = user ? user.uid : "default";
+    var preferences = await database.getPreferences(uid, defaultPreferences);
+    var tabs = await database.getTabs(uid);
+    var allLinks = await database.getAllLinks(uid);
+    doneLoading = true;
+    this.setState({
+      user: user ? user : "default",
+      uid: uid,
+      preferences: preferences,
+      oldPreferences: JSON.parse(JSON.stringify(preferences)),
+      tabs: tabs,
+      numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
+      selectedTab: tabs.length !== 0 ? tabs[0].name : "",
+      allLinks: allLinks,
+      links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks),
+      trendingLinks: await database.getTrendingLinks(),
+      popularLinks: user ? await this.getShortcutLinks(true, allLinks) : [],
+      recentLinks: user ? await this.getShortcutLinks(false, allLinks) : [],
+      suggestions: user ? await database.getSuggestions() : [],
+      themes: user ? await database.getThemes() : [],
+    })
+  }
+
+  async signIn() {
+    firebase.auth().signInWithPopup(provider).then((user) => {
+      if (user) this.get(user.user)
+    })
+  }
+
+  async signOut() {
+    if (document.getElementById("addtabdiv").className.includes("active"))
+      this.openAddTab();
+    if (document.getElementById("buttonnav").className.includes("erase"))
+      this.eraseActive();
+    else if (document.getElementById("buttonnav").className.includes("edit"))
+      this.editActive();
+    if (document.getElementById("savebox").className.includes("active"))
+      document.getElementById("savebox").classList.toggle("active");
+    if (document.getElementById("profilewrapper").className.includes("active"))
+      document.getElementById("profilewrapper").classList.toggle("active");
+    this.setState({
+      user: "default",
+      uid: "default",
+    })
+    await firebase.auth().signOut();
+    this.setPreferences({ preferences: JSON.parse(JSON.stringify(defaultPreferences)) });
+    this.get();
+    if (document.getElementById("container").className.includes("night"))
+      this.toggleNightMode();
+  }
+
   async spinAnimation() {
     var links = document.getElementsByClassName("linkBox");
     for (var i = 0; i < links.length; i++)
       links[i].classList.toggle("active")
-  }
-
-  async get() {
-    var tabs = await database.getTabs(this.state.uid);
-    var allLinks = await database.getAllLinks(this.state.uid);
-    this.setState({
-      tabs: tabs,
-      selectedTab: tabs.length !== 0 ? tabs[0].name : "",
-      allLinks: allLinks,
-      linkIndex: 0,
-      tabIndex: 0,
-      links: tabs.length !== 0 ? await this.getLinks(tabs[0].name, allLinks) : await this.getLinks([], allLinks)
-    })
   }
 
   async getLinks(selectedTab, allLinks) {
@@ -226,38 +247,6 @@ class Home extends React.Component {
     if ((!isArrows && !this.state.preferences.addTab && this.state.tabIndex === max && this.state.tabs.length % this.state.numTabs === 0) ||
       (isArrows && !this.state.preferences.tabArrows && this.state.tabIndex === max && this.state.tabs.length % this.state.numTabs === 0))
       this.changeTabs(-1);
-  }
-
-  async signIn() {
-    this.setState({ user: await firebase.auth().signInWithPopup(provider) });
-    if (this.state.user !== "default") {
-      this.setState({
-        uid: this.state.user.user.uid,
-      })
-      this.get();
-    }
-  }
-
-  async signOut() {
-    if (document.getElementById("addtabdiv").className.includes("active"))
-      this.openAddTab();
-    if (document.getElementById("buttonnav").className.includes("erase"))
-      this.eraseActive();
-    else if (document.getElementById("buttonnav").className.includes("edit"))
-      this.editActive();
-    if (document.getElementById("savebox").className.includes("active"))
-      document.getElementById("savebox").classList.toggle("active");
-    if (document.getElementById("profilewrapper").className.includes("active"))
-      document.getElementById("profilewrapper").classList.toggle("active");
-    this.setState({
-      user: "default",
-      uid: "default",
-    })
-    await firebase.auth().signOut();
-    this.setPreferences({ preferences: JSON.parse(JSON.stringify(defaultPreferences)) });
-    this.get();
-    if (document.getElementById("container").className.includes("night"))
-      this.toggleNightMode();
   }
 
   async setInputText(event) {
@@ -795,24 +784,27 @@ class Home extends React.Component {
 
               <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
                 <div className="buttonNav" id="buttonnav">
-                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"} 
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"}
                     id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)} draggable={false}>
                   </img>
                   {
                     this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
                       <div className="editTabWrapper" onClick={e => this.openTabEdit(e, false, each)}>
-                        <button className={this.state.selectedTab === each.name ? "navBtns active" : "navBtns"} type="button" style={{
-                          borderColor: each.color,
-                          textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
-                            '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "transparent" : this.state.preferences.night ? "#000000" : "#808080")
-                        }}
-                          key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
-                        // draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
-                        //onDragEnd={e => this.dropTabActive()}
-                        >
-                          <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
-                          <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
-                        </button>
+                        <div className={this.state.selectedTab === each.name ? "navBtnWrapper active" : "navBtnWrapper"}>
+                          <button className="navBtns" type="button" style={{
+                            borderColor: each.color,
+                            textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
+                              '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "transparent" : this.state.preferences.night ? "#000000" : "#808080")
+                          }}
+                            key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
+                          // draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
+                          //onDragEnd={e => this.dropTabActive()}
+                          >
+                            <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
+                            <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
+                          </button>
+                          <div className="tabThemeBlur" />
+                        </div>
                         {
                           this.state.user === "default" ? <div></div> :
                             <EditTab editTab={this.editTabCallback.bind(this)} closeActiveEdit={this.closeActiveEdit.bind(this)} currTab={each} tabs={this.state.tabs} preferences={this.state.preferences}
@@ -825,7 +817,7 @@ class Home extends React.Component {
                     this.state.user === "default" ? <div></div> :
                       <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
                   }
-                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"} 
+                  <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"}
                     id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)} draggable={false}>
                   </img>
                 </div>
@@ -895,7 +887,7 @@ class Home extends React.Component {
                   </div>
                 </div>
                 <br />
-
+                <div className="asd"></div>
                 {
                   this.state.user === "default" ? <div></div> : <div>
                     <div className="buttonWrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
@@ -957,7 +949,7 @@ class Home extends React.Component {
 
                 <AddLink addLink={this.linkCallback.bind(this)} userId={this.state.uid} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
                 <EditLink editLink={this.editLinkCallback.bind(this)} currLink={this.state.selectedLink} currTab={this.state.selectedTab} tabs={this.state.tabs} allLinks={this.state.allLinks} suggestions={this.state.suggestions} />
-                <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs} />
+                <Import addTab={this.tabCallback.bind(this)} addLinks={this.multipleLinkCallback.bind(this)} tabs={this.state.tabs} suggestions={this.state.suggestions} />
               </div>
             } </div> :
           <div className="placeholder"></div>

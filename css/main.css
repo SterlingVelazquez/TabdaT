@@ -214,18 +214,19 @@
     text-align:center;
     width:180px;
     margin:0 10px;
-    padding:6px 0 25px 0;
+    padding:6px 0 20px 0;
     border:none;
     text-shadow:0 0 2px gray;
-    background-color:rgba(255, 255, 255, 0.363);
+    background:rgb(232, 238, 247);
     border:3px solid;
+    border-bottom:none;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     opacity:0.5;
     pointer-events:all;
     cursor:pointer;
-    overflow: hidden;
-    transform:translateY(0px);
+    overflow:hidden;
+    transform:translateY(-8px);
   }
   .navBtnText {
     position:relative;
@@ -238,18 +239,28 @@
   .navBtnTxtWrapper {
     display:inline-block;
   }
-  .navBtns.active {
+  .navBtnWrapper.active .navBtns {
     border:5px solid;
-    transform:translateY(-10px);
+    border-bottom:none;
+    transform:translateY(-20px);
     opacity:1;
+    z-index:2;
   }
-  .buttonNav.edit .navBtns.active {
+  .buttonNav.edit .navBtnWrapper.active {
     border:3px solid;
     transform:translateY(0px);
     opacity:1;
   }
-  .navBtns.active .navBtnText {
+  .navBtnWrapper.active .navBtnText {
     opacity:1;
+  }
+  .tabThemeBlur {
+    position:absolute;
+    display:none;
+    bottom:15px; left:15px;
+    height:10px; width:170px;
+    backdrop-filter:blur(3px);
+    z-index:2;
   }
 
   .signIn {
@@ -1015,7 +1026,7 @@
       margin-top:0rem;
     }
     .buttonNav {
-      margin-bottom:-15px;
+      margin-bottom:-30px;
     }
   }
 
@@ -1033,9 +1044,6 @@
     }
     .grid::-webkit-scrollbar {
       width:0; 
-    }
-    .buttonNav {
-      margin-bottom:-15px;
     }
     .leftTabArrow {
       left:10px;
