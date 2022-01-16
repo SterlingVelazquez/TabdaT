@@ -412,7 +412,7 @@
     opacity:1;
   }
   .container.themes .navBtnWrapper.active .tabThemeBlur {
-    display:block;
+    opacity:1;
   }
 
   .container.themes .dropTabBox {
