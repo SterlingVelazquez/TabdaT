@@ -49,7 +49,7 @@ export class NavBar extends React.Component {
             this.props.checkAddTab(false);
         else if (hideType === "tabArrows")
             this.props.checkAddTab(true);
-        
+
         if (document.getElementById("buttonnav").className.includes("edit") && hideType === "editBtn")
             this.props.editActive();
         else if (document.getElementById("buttonnav").className.includes("erase") && hideType === "removeBtn")
@@ -70,7 +70,7 @@ export class NavBar extends React.Component {
         if (isDefault) newColor = false;
 
         if (isReset) {
-            this.setPreviewColor(index, this.state.oldPreferences[colorType] ? this.state.oldPreferences[colorType] : 
+            this.setPreviewColor(index, this.state.oldPreferences[colorType] ? this.state.oldPreferences[colorType] :
                 this.state.preferences.theme ? theme : this.state.preferences.night ? night : day);
             colorPreferences[colorType] = this.state.oldPreferences[colorType];
             this.props.setPreferences(colorPreferences);
@@ -80,7 +80,7 @@ export class NavBar extends React.Component {
                 this.props.setPreferences(colorPreferences);
             }
         } else if (!toSet) {
-            this.setPreviewColor(index, colorChanges[colorType] ? colorChanges[colorType] : this.state.oldPreferences[colorType] ? this.state.oldPreferences[colorType] : 
+            this.setPreviewColor(index, colorChanges[colorType] ? colorChanges[colorType] : this.state.oldPreferences[colorType] ? this.state.oldPreferences[colorType] :
                 this.state.preferences.theme ? theme : this.state.preferences.night ? night : day);
             this.toggleColorView("colorviewer" + index, "colorbutton" + index, "customcolorpicker" + index, false, false);
             colorPreferences[colorType] = colorChanges[colorType] ? colorChanges[colorType] : this.state.oldPreferences[colorType] ? this.state.oldPreferences[colorType] : false;
@@ -96,7 +96,7 @@ export class NavBar extends React.Component {
         this.comparePreferences();
     }
     setPreviewColor(index, color, isSlider) {
-        var newColor = color !== "" ? color : (/^#[0-9A-FX]{6}$/i.test('#' + document.getElementById("colorinput" + index).value)) ? 
+        var newColor = color !== "" ? color : (/^#[0-9A-FX]{6}$/i.test('#' + document.getElementById("colorinput" + index).value)) ?
             document.getElementById("colorinput" + index).value : false;
         if (newColor) {
             if (!isSlider || !toShade) toShade = newColor;
@@ -167,7 +167,7 @@ export class NavBar extends React.Component {
     }
     async setUploadTheme(event, toChange) {
         event.stopPropagation();
-        if (toChange && !document.getElementById("themecontainer2").className.includes("active") && 
+        if (toChange && !document.getElementById("themecontainer2").className.includes("active") &&
             (uploadImage || (this.state.oldPreferences.theme && !this.state.oldPreferences.theme.includes("/default")))) {
             var themePreferences = this.state.preferences;
             themePreferences.theme = uploadImage ? uploadImage : this.state.oldPreferences.theme;
@@ -271,7 +271,7 @@ export class NavBar extends React.Component {
             this.setOptionsColor(false, false, true, "tabTextShadowColor", 4, "000000", "808080", "XXXXXX");
         if (this.state.preferences.buttonsColor !== this.state.oldPreferences.buttonsColor)
             this.setOptionsColor(false, false, true, "buttonsColor", 5, "313131", "C4D3E9", "XXXXXX");
-            
+
         if (this.state.preferences.gridWidth !== this.state.oldPreferences.gridWidth)
             this.setOptionSizes(false, "sizeslider1", "gridWidth");
         if (this.state.preferences.gridHeight !== this.state.oldPreferences.gridHeight)
@@ -313,17 +313,17 @@ export class NavBar extends React.Component {
             document.getElementById("resetconfirmbox").classList.toggle("active");
     }
     savePreferences() {
-        if (upload && document.getElementById("themeuploadimage").src !== "arrow.png" && document.getElementById("themecontainer2").className.includes("active")) {
+        if (upload && document.getElementById("themeuploadimage").src !== "arrow.webp" && document.getElementById("themecontainer2").className.includes("active")) {
             this.props.savePreferences(upload);
         } else {
-            if (document.getElementById("themeuploadimage").src === "arrow.png" && document.getElementById("themecontainer2").className.includes("active")) {
+            if (document.getElementById("themeuploadimage").src === "arrow.webp" && document.getElementById("themecontainer2").className.includes("active")) {
                 var themePreferences = this.state.preferences;
                 themePreferences.theme = this.state.oldPreferences.theme;
                 this.props.setPreferences(themePreferences);
                 this.props.savePreferences(false);
             } else {
                 this.props.savePreferences(false);
-                document.getElementById("themeuploadimage").src = "arrow.png";
+                document.getElementById("themeuploadimage").src = "arrow.webp";
                 uploadImage = false;
             }
         }
@@ -350,23 +350,26 @@ export class NavBar extends React.Component {
                     <p className="navTitle" id="navtitle">Options</p>
                     <div className={this.state.uid !== "default" ? "sideSignIn active" : "sideSignIn"} id="sidesignin" onClick={e => this.props.signIn()}>
                         <div className="rocketContainer">
-                            <img src="rocket.png" className="rocket" id="rocket" draggable={false}></img>
-                            <img src="flame.png" className="flame" id="flame" draggable={false}></img>
+                            <img src="rocket.webp" className="rocket" id="rocket" draggable={false}></img>
+                            <img src="flame.webp" className="flame" id="flame" draggable={false}></img>
                         </div>
                         <div className="rocketBase"></div>
                         <p className="baseSignIn" id="basesignin"><b>Sign In</b> To Google To Unlock All Features</p>
                     </div>
-                    { this.state.user !== "default" ?
+                    <div className={this.state.uid !== "default" ? "optionsImages" : "optionsImages active"}>
+                        <img className="optionsImage" src="options.webp"></img>
+                    </div>
+                    {this.state.user !== "default" ?
                         <div>
                             <div className="importBox" id="importbox" onClick={e => this.openImportLinks()} style={{ pointerEvents: this.state.user !== "default" ? "all" : "none" }}>
                                 <p className="importText" id="importtext">Import Your Bookmarks</p>
-                                <img className="importImage" src="import.png" draggable={false}></img>
+                                <img className="importImage" src="import.webp" draggable={false}></img>
                             </div>
 
                             <div className="sideContainer" id="sidecontainershow" style={{ marginTop: "1rem", pointerEvents: this.state.user !== "default" ? "all" : "none" }}>
                                 <div className="sideContainerHeader" id="sidecontainerheader1" onClick={e => this.toggleOptions("sidecontainershow")}>
                                     <div className="optionDecor" id="optiondecor1"></div>
-                                    <img className="optionImage" id="optionimage1" src="visibility.png" draggable={false}></img>
+                                    <img className="optionImage" id="optionimage1" src="visibility.webp" draggable={false}></img>
                                     <p className="sideHeader">Visibility</p>
                                 </div>
                                 <div className="sideOptions" id="hideoptions">
@@ -383,24 +386,24 @@ export class NavBar extends React.Component {
                             <div className="sideContainer" id="sidecontainercolor" style={{ pointerEvents: this.state.user !== "default" ? "all" : "none" }}>
                                 <div className="sideContainerHeader" id="sidecontainerheader2" onClick={e => this.toggleOptions("sidecontainercolor")}>
                                     <div className="optionDecor" id="optiondecor2"></div>
-                                    <img className="optionImage" id="optionimage2" src="colors.png" draggable={false}></img>
+                                    <img className="optionImage" id="optionimage2" src="colors.webp" draggable={false}></img>
                                     <p className="sideHeader">Colors</p>
                                 </div>
                                 <div className="sideOptions" id="linkoptions">
                                     <ColorViewer name="Link Text" colorType="linkTextColor" colorChanges={colorChanges} index="1" transitionDelay="" preferences={this.state.preferences.linkTextColor} night={this.state.preferences.night} theme={this.state.preferences.theme}
-                                        nightColorHex="C7C7C7" dayColorHex="5D687E" themeColorHex="EBEBEB" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} 
+                                        nightColorHex="C7C7C7" dayColorHex="5D687E" themeColorHex="EBEBEB" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)}
                                         setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)} display={!this.state.preferences.linkText ? "block" : "none"}></ColorViewer>
                                     <ColorViewer name="Link Shadow" colorType="linkShadowColor" index="2" transitionDelay="0.1s" preferences={this.state.preferences.linkShadowColor} night={this.state.preferences.night} theme={this.state.preferences.theme}
-                                        nightColorHex="0E0E0E" dayColorHex="F9FBFD" themeColorHex="000000" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} 
+                                        nightColorHex="0E0E0E" dayColorHex="F9FBFD" themeColorHex="000000" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)}
                                         setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)} display={!this.state.preferences.linkText ? "block" : "none"}></ColorViewer>
                                     <ColorViewer name="Image Shadow" colorType="imageShadowColor" index="3" transitionDelay="0.2s" preferences={this.state.preferences.imageShadowColor} night={this.state.preferences.night} theme={this.state.preferences.theme}
-                                        nightColorHex="000000" dayColorHex="B6B6B6" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} 
+                                        nightColorHex="000000" dayColorHex="B6B6B6" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)}
                                         setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)} display="block"></ColorViewer>
                                     <ColorViewer name="Tab Text Shadow" colorType="tabTextShadowColor" index="4" transitionDelay="0.3s" preferences={this.state.preferences.tabTextShadowColor} night={this.state.preferences.night} theme={this.state.preferences.theme}
-                                        nightColorHex="000000" dayColorHex="808080" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} 
+                                        nightColorHex="000000" dayColorHex="808080" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)}
                                         setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)} display="block"></ColorViewer>
                                     <ColorViewer name="Buttons" colorType="buttonsColor" index="5" transitionDelay="0.4s" preferences={this.state.preferences.buttonsColor} night={this.state.preferences.night} theme={this.state.preferences.theme}
-                                        nightColorHex="313131" dayColorHex="C4D3E9" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)} 
+                                        nightColorHex="313131" dayColorHex="C4D3E9" themeColorHex="XXXXXX" setColor={this.setOptionsColor.bind(this)} toggleColorView={this.toggleColorView.bind(this)}
                                         setPreviewColor={this.setPreviewColor.bind(this)} adjustBrightness={this.adjustBrightness.bind(this)} adjustHue={this.adjustHue.bind(this)}
                                         display={this.state.preferences.addLink && this.state.preferences.editBtn && this.state.preferences.removeBtn ? "none" : "block"}></ColorViewer>
                                 </div>
@@ -409,7 +412,7 @@ export class NavBar extends React.Component {
                             <div className="sideContainer" id="sidecontainersize" style={{ pointerEvents: this.state.user !== "default" ? "all" : "none" }}>
                                 <div className="sideContainerHeader" id="sidecontainerheader3" onClick={e => this.toggleOptions("sidecontainersize")}>
                                     <div className="optionDecor" id="optiondecor3"></div>
-                                    <img className="optionImage" id="optionimage3" src="sizes.png" draggable={false}></img>
+                                    <img className="optionImage" id="optionimage3" src="sizes.webp" draggable={false}></img>
                                     <p className="sideHeader">Sizes</p>
                                 </div>
                                 <div className="sideOptions" id="hideoptions">
@@ -433,7 +436,7 @@ export class NavBar extends React.Component {
                             <div className="sideContainer" id="sidecontainerthemes" style={{ pointerEvents: this.state.user !== "default" ? "all" : "none" }}>
                                 <div className="sideContainerHeader" id="sidecontainerheader4" onClick={e => this.toggleOptions("sidecontainerthemes")}>
                                     <div className="optionDecor" id="optiondecor4"></div>
-                                    <img className="optionImage" id="optionimage4" src="themes.png" draggable={false}></img>
+                                    <img className="optionImage" id="optionimage4" src="themes.webp" draggable={false}></img>
                                     <p className="sideHeader">Themes</p>
                                 </div>
                                 <div className="sideOptions" id="themeoptions">
@@ -447,7 +450,7 @@ export class NavBar extends React.Component {
                                         <div className="themeSelect">
                                             <input onClick={e => this.setUploadTheme(e, false)} type="file" id="addtheme" className="addTheme" accept="image/*"></input>
                                             <img className="themeUploadImage" id="themeuploadimage" src={uploadImage ? uploadImage : this.state.oldPreferences.theme && !this.state.oldPreferences.theme.includes("/default") ?
-                                                this.state.oldPreferences.theme : "arrow.png"} draggable={false}></img>
+                                                this.state.oldPreferences.theme : "arrow.webp"} draggable={false}></img>
                                         </div>
                                         <p className="themeSelectText" onClick={e => this.setUploadTheme(e, true)}>Upload</p>
                                     </div>
@@ -470,7 +473,7 @@ export class NavBar extends React.Component {
                                 <p className="resetPreferences" id="resetpreferences" onClick={e => this.toggleReset()}>Reset Default Settings</p>
                                 <div className="resetConfirmBox" id="resetconfirmbox">
                                     <p className="resetConfirm" id="resetconfirm">Are you sure you want to reset all settings?</p>
-                                    <button className="resetBtn" onClick={e => this.toggleActive("resetconfirmbox")}><img className="resetCancel" src="cancel.png" draggable={false}></img></button>
+                                    <button className="resetBtn" onClick={e => this.toggleActive("resetconfirmbox")}><img className="resetCancel" src="cancel.webp" draggable={false}></img></button>
                                     <button className="resetBtn" onClick={e => this.resetPreferences()}><div className="resetCheck"></div></button>
                                 </div>
                             </div>
@@ -479,8 +482,8 @@ export class NavBar extends React.Component {
                                 <p className="sideNightLabel" id="sidelabel">Night Mode</p>
                                 <button className={this.state.preferences.night ? "nightContainer active" : "nightContainer"} id="nightmodecontainer" onClick={e => this.nightMode()}
                                     style={{ pointerEvents: this.state.user === "default" || this.state.preferences.theme ? "none" : "all" }}>
-                                    <img src="sun.png" className="nightImg" draggable={false}></img>
-                                    <img src="moon.png" className="nightImg" style={{ marginLeft: "20px" }} draggable={false}></img>
+                                    <img src="sun.webp" className="nightImg" draggable={false}></img>
+                                    <img src="moon.webp" className="nightImg" style={{ marginLeft: "20px" }} draggable={false}></img>
                                     <div className="nightSwitch" id="nightswitch"></div>
                                 </button>
                             </div>
@@ -489,7 +492,7 @@ export class NavBar extends React.Component {
                 </div>
                 <div className="saveConfirm" id="saveconfirm">
                     <p className="saveConfirmText" id="saveconfirmtext">Would you like to save your changes?</p>
-                    <button className="saveConfirmBtn" onClick={e => this.closeSave()}><img className="saveConfirmImg" src="cancel.png" draggable={false}></img></button>
+                    <button className="saveConfirmBtn" onClick={e => this.closeSave()}><img className="saveConfirmImg" src="cancel.webp" draggable={false}></img></button>
                     <button className="saveConfirmBtn" onClick={e => this.savePreferences()}><div className="saveCheck"></div></button>
                 </div>
             </div>

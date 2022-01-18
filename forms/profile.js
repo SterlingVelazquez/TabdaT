@@ -91,17 +91,17 @@ export class Profile extends React.Component {
                 <div className="profileWrapper" id="profilewrapper">
                     <div className="profileRelative" id="profilerelative">
                         <div className="profileDiv" id="profilediv">
-                            <img className={this.state.user === "default" ? "profilePic" : "profilePic active"} id="profilepic" src={this.state.user === "default" ? "black-male.png" : this.state.user.photoURL}
+                            <img className={this.state.user === "default" ? "profilePic" : "profilePic active"} id="profilepic" src={this.state.user === "default" ? "black-male.webp" : this.state.user.photoURL}
                                 draggable={false} onClick={e => this.profileActive()}></img>
                             <p className={this.state.user === "default" ? "signInText active" : "signInText"} id="signintext" onClick={e => this.checkSignIn()}>Sign In</p>
                             <p className="signOutText" id="signouttext" onClick={e => this.checkSignOut()}>Sign Out</p>
                             <ul className="profileList">
                                 <li className="profileOption" id="profileoption1" onClick={e => this.viewContactForm()}>
-                                    <img className="profileIcon" id="profileicon1" src="message.png" draggable={false}></img>
+                                    <img className="profileIcon" id="profileicon1" src="message.webp" draggable={false}></img>
                                     <p className="profileText" id="profiletext1">Contact</p>
                                 </li>
                                 <li className="profileOption" id="profileoption2" onClick={e => this.viewShortcuts()}>
-                                    <img className="profileIcon" id="profileicon2" src="keyboard.png" draggable={false}></img>
+                                    <img className="profileIcon" id="profileicon2" src="keyboard.webp" draggable={false}></img>
                                     <p className="profileText" id="profiletext2">Shortcuts</p>
                                 </li>
                             </ul>
@@ -127,7 +127,7 @@ export class Profile extends React.Component {
                                         <div className="dotContact"></div>
                                     </div>
                                 </div>
-                                <img className="contactCheck" id="contactcheck" src="checkmark.png"></img>
+                                <img className="contactCheck" id="contactcheck" src="checkmark.webp"></img>
                                 <div className="contactCheckEffects">
                                     <div className="contactCheckLine"></div>
                                     <div className="contactCheckLine"></div>
@@ -140,13 +140,13 @@ export class Profile extends React.Component {
                                 </div>
                                 <p className="submitContactText" id="submitcontacttext"><b>Message Sent!</b></p>
                                 <p className="afterContactText" id="aftercontacttext">Please allow a few minutes before attempting to send further messages.</p>
-                                <img className="submitContactCancel" id="submitcontactcancel" src="cancel.png" onClick={e => this.viewContactForm()} draggable={false}></img>
+                                <img className="submitContactCancel" id="submitcontactcancel" src="cancel.webp" onClick={e => this.viewContactForm()} draggable={false}></img>
                             </div>
                         </div>
                         <div className="shortcutDiv" id="shortcutdiv">
                             <div className="shortcutHeader">
                                 <p className="shortcutHeaderText">Keyboard Shortcuts</p>
-                                <img className="shortcutCancel" src="cancel.png" onClick={e => this.viewShortcuts()} draggable={false}></img>
+                                <img className="shortcutCancel" src="cancel.webp" onClick={e => this.viewShortcuts()} draggable={false}></img>
                             </div>
                             <div className="shortcutContainer">
                                 <div className="shortcutContainerShadow" id="shortcutTop"></div>
@@ -181,7 +181,7 @@ export class Profile extends React.Component {
                 </div>
                 <div className="saveConfirm" id="contactconfirm">
                     <p className="saveConfirmText" id="contactconfirmtext">Are you sure you want to discard your message?</p>
-                    <button className="saveConfirmBtn" onClick={e => this.closeConfirm()}><img className="saveConfirmImg" src="cancel.png" draggable={false}></img></button>
+                    <button className="saveConfirmBtn" onClick={e => this.closeConfirm()}><img className="saveConfirmImg" src="cancel.webp" draggable={false}></img></button>
                     <button className="saveConfirmBtn" onClick={e => this.confirmCancel()}><div className="saveCheck"></div></button>
                 </div>
             </div>

@@ -333,10 +333,10 @@ class Home extends React.Component {
     document.getElementById("grid").classList.toggle("edit");
 
     if (document.getElementById("buttonnav").className.includes("edit")) {
-      document.getElementById("editimg").src = "cancel.png";
-      document.getElementById("trashimg").src = "trash.png";
+      document.getElementById("editimg").src = "cancel.webp";
+      document.getElementById("trashimg").src = "trash.webp";
     } else {
-      document.getElementById("editimg").src = "edit.png";
+      document.getElementById("editimg").src = "edit.webp";
       this.openTabEdit(null, true, null);
     }
   }
@@ -398,10 +398,10 @@ class Home extends React.Component {
     document.getElementById("buttonnav").classList.toggle("erase");
     document.getElementById("confirmerase").classList.toggle("active");
     if (document.getElementById("buttonnav").className.includes("erase")) {
-      document.getElementById("trashimg").src = "cancel.png"
-      document.getElementById("editimg").src = "edit.png"
+      document.getElementById("trashimg").src = "cancel.webp"
+      document.getElementById("editimg").src = "edit.webp"
     } else {
-      document.getElementById("trashimg").src = "trash.png"
+      document.getElementById("trashimg").src = "trash.webp"
     }
   }
 
@@ -689,6 +689,11 @@ class Home extends React.Component {
     this.spinAnimation();
   }
 
+  linkContext(e, name) {
+    // e.preventDefault();
+    // console.log(name);
+  }
+
   changeSuggestion(num, isAdd) {
     var suggestions = document.getElementsByClassName("suggestionLink");
     var length = suggestions.length;
@@ -735,6 +740,7 @@ class Home extends React.Component {
         <Head>
           <title>TabdaT</title>
           <link rel="icon" href="/favicon.ico" />
+          <meta name="google" content="notranslate"></meta>
 
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"></link>
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet"></link>
@@ -777,7 +783,8 @@ class Home extends React.Component {
                 oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
                 defaultPreferences={defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
 
-              <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)}></Hotbar>
+              <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)} 
+                signIn={this.signIn.bind(this)}></Hotbar>
 
               <input className="searchBar" id="searchbar" placeholder="Search your bookmarks..." onChange={e => this.setInputText(e)}></input>
               <br />
@@ -785,7 +792,7 @@ class Home extends React.Component {
               <div className="gridWrapper" id="gridwrapper" style={{ width: 550 + (this.state.preferences.gridWidth * 20) + "px" }}>
                 <div className="buttonNav" id="buttonnav">
                   <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "leftTabArrow hide" : "leftTabArrow"}
-                    id="lefttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(-1)} draggable={false}>
+                    id="lefttabarrow" src="gray-arrow.webp" onClick={e => this.changeTabs(-1)} draggable={false}>
                   </img>
                   {
                     this.state.tabs.slice(this.state.tabIndex * this.state.numTabs, this.state.tabIndex * this.state.numTabs + this.state.numTabs).map((each) =>
@@ -800,7 +807,7 @@ class Home extends React.Component {
                           // draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
                           //onDragEnd={e => this.dropTabActive()}
                           >
-                            <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.png"></img>
+                            <img className="trashTab" id="trashtab" onClick={e => this.confirmTabBox(e, each.name)} draggable={false} src="trash.webp"></img>
                             <a className="navBtnText"><span className="navBtnTxtWrapper" style={{ color: each.color }}>{each.name}</span></a>
                           </button>
                           <div className="tabThemeBlur" />
@@ -818,7 +825,7 @@ class Home extends React.Component {
                       <AddTab addTab={this.tabCallback.bind(this)} isUser={this.state.user} tabs={this.state.tabs} tabIndex={this.state.tabIndex} preferences={this.state.preferences} openAddTab={this.openAddTab.bind(this)} displayedTabs={this.state.numTabs} />
                   }
                   <img className={this.state.preferences.tabArrows || (this.state.preferences.addTab && this.state.tabs.length === this.state.numTabs) || (this.state.tabs.length < this.state.numTabs) ? "rightTabArrow hide" : "rightTabArrow"}
-                    id="righttabarrow" src="gray-arrow.png" onClick={e => this.changeTabs(1)} draggable={false}>
+                    id="righttabarrow" src="gray-arrow.webp" onClick={e => this.changeTabs(1)} draggable={false}>
                   </img>
                 </div>
                 <br />
@@ -836,7 +843,7 @@ class Home extends React.Component {
                     this.state.links.map((each) =>
                       <a className="linkBox" style={{ textDecoration: "none", width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px" }}
                         target="_blank" rel="noopener noreferrer" href={each.link} draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
-                        onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)}>
+                        onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)} onContextMenu={e => this.linkContext(e, each.name)}>
                         <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.image}></input></label>
                         <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                           <img src={each.image} key={key++} className="linkImg" draggable={false} style={{
@@ -872,7 +879,7 @@ class Home extends React.Component {
                           (this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) || this.state.preferences.addLink ? "none" : "inline-block"
                       }}>
                         <div className="addLinkGrid" id="addlinkgrid" style={{ width: 70 + (this.state.preferences.linkImageSize * 0.9) + "px", height: 70 + (this.state.preferences.linkImageSize * 0.9) + "px" }} onClick={e => this.openAddLink()}>
-                          <img key={key++} className="addLinkGridImage" src="plus.png" draggable={false}></img>
+                          <img key={key++} className="addLinkGridImage" src="plus.webp" draggable={false}></img>
                         </div>
                       </div>
                     </div>
@@ -902,19 +909,19 @@ class Home extends React.Component {
                       <div className={!(this.state.preferences.addLink) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
                         !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="addcontainer" onClick={e => this.openAddLink()}
                         style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                        <img className="modContainerImage" src="plus.png" draggable={false}></img>
+                        <img className="modContainerImage" src="plus.webp" draggable={false}></img>
                       </div>
 
                       <div className={!(this.state.preferences.editBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
                         !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="editbox" onClick={e => this.editActive()}
                         style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                        <img className="modContainerImage" id="editimg" src="edit.png" draggable={false}></img>
+                        <img className="modContainerImage" id="editimg" src="edit.webp" draggable={false}></img>
                       </div>
 
                       <div className={!(this.state.preferences.removeBtn) && this.state.user !== "default" && this.state.tabs.length !== 0 &&
                         !(this.state.tabIndex === this.state.tabs.length / this.state.numTabs && this.state.tabs.length > 0) ? "modContainer" : "modContainer hide"} id="erasebox" onClick={e => this.eraseActive()}
                         style={{ background: this.state.preferences.buttonsColor ? '#' + this.state.preferences.buttonsColor : this.state.preferences.theme ? "transparent" : (this.state.preferences.night ? "#313131" : "#C4D3E9") }}>
-                        <img className="modContainerImage" id="trashimg" src="trash.png" draggable={false}></img>
+                        <img className="modContainerImage" id="trashimg" src="trash.webp" draggable={false}></img>
                       </div>
 
                       <div className="modBoxConfirm" id="confirmerase" onClick={e => this.confirmErase()}
@@ -932,7 +939,7 @@ class Home extends React.Component {
                 <div className="tabEraseConfirm" id="taberaseconfirm">
                   <div className="tabEraseConfirmBox" id="taberaseconfirmbox">
                     <p className="tabEraseConfirmText">Are you sure you want to <span style={{ color: "rgb(255, 121, 121)" }}>remove</span> your <b>{this.state.tabToErase}</b> tab and all of its links?</p>
-                    <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.png" draggable={false}></img></button>
+                    <button className="tabEraseConfirmBtn" onClick={e => this.confirmTabBox(e, null)}><img className="tabEraseImg" src="cancel.webp" draggable={false}></img></button>
                     <button className="tabEraseConfirmBtn" onClick={e => this.eraseTab(e)}><div className="tabEraseCheck"></div></button>
                   </div>
                   <div className="tabEraseDeleting" id="taberasedeleting">

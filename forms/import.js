@@ -123,11 +123,11 @@ export class Import extends React.Component {
                 <div className="importTeacher" id="importteacher">
                     <h1 className="teachHeader">How To Get Your Bookmarks</h1>
                     <div className="teachHeaderLine"></div>
-                    <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeTeach()}></img>
+                    <img type="button" src="cancel.webp" className="bookmarkCancel" onClick={e => this.closeTeach()}></img>
                     <ol className="teachSteps" id="teachsteps">
-                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon (located at the top-right of your browser)
+                        <li className="step">Select the <img className="dots" src="dots.webp"></img> icon (located at the top-right of your browser)
                             and go to <b>Bookmarks {' > '} Bookmark Manager</b></li>
-                        <li className="step">Select the <img className="dots" src="dots.png"></img> icon again (located below the previous icon)
+                        <li className="step">Select the <img className="dots" src="dots.webp"></img> icon again (located below the previous icon)
                             and click on <b>Export Bookmarks</b></li>
                         <li className="step">Save your file somewhere you can easily access it again</li>
                         <li className="step">Click the button below and locate the file you saved in the previous step</li>
@@ -152,7 +152,7 @@ export class Import extends React.Component {
                             )
                         }
                     </ul>
-                    <img type="button" src="cancel.png" className="bookmarkCancel" onClick={e => this.closeImport()}></img>
+                    <img type="button" src="cancel.webp" className="bookmarkCancel" onClick={e => this.closeImport()}></img>
                 </div>
             </div>
         )

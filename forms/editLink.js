@@ -47,7 +47,7 @@ export class EditLink extends React.Component {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
-                    image: "arrow.png",
+                    image: "arrow.webp",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
                     tabs: props.tabs,
@@ -71,7 +71,7 @@ export class EditLink extends React.Component {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
-                    image: "arrow.png",
+                    image: "arrow.webp",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: props.currLink.image,
                     tabs: props.tabs,
@@ -249,7 +249,7 @@ export class EditLink extends React.Component {
             var newLink = {
                 name: this.state.name,
                 link: this.state.link,
-                image: document.getElementById("uploadimg2").className.includes("active") && this.state.image !== "arrow.png" ? this.state.image : (
+                image: document.getElementById("uploadimg2").className.includes("active") && this.state.image !== "arrow.webp" ? this.state.image : (
                     document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress !== "" ? this.state.imageAddress : this.state.defaultImg),
                 tab: this.state.newTab !== null ? this.state.newTab : this.state.currTab
             };
@@ -383,7 +383,7 @@ export class EditLink extends React.Component {
                     <button className="clearImg" id="clearimg2" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput2" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
-                    <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeEditForm()}></img>
+                    <img type="button" src="cancel.webp" className="addLinkCancel" onClick={e => this.closeEditForm()}></img>
                 </form>
             </div>
         );

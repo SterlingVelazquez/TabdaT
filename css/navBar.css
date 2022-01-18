@@ -110,6 +110,20 @@
     margin-top:-4.5rem;
     opacity: 0;
 }
+.optionsImages {
+    display:none;
+}
+.optionsImages.active {
+    display:block;
+}
+.optionsImage, .optionsNightImage {
+    position:relative;
+    width:100%; height:auto;
+    top:100px; left:0;
+    opacity:0.4;
+    pointer-events:none;
+    margin-bottom:100px;
+}
 
 .sideMenuBtn {
     position:fixed;
@@ -906,6 +920,11 @@
         padding-bottom:20px;
         margin-bottom:60px;
         font-size:40px;
+    }
+
+    .optionsImage {
+        top:20px;
+        margin-bottom:80px;
     }
     
     .baseSignIn {

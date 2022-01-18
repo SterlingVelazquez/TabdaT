@@ -193,7 +193,7 @@ export class AddLink extends React.Component {
         var newLink = {
             name: this.state.name,
             link: this.state.link,
-            image: document.getElementById("uploadimg").className.includes("active") && this.state.image !== "arrow.png" ? this.state.image : (
+            image: document.getElementById("uploadimg").className.includes("active") && this.state.image !== "arrow.webp" ? this.state.image : (
                 document.getElementById("imageaddress").className.includes("active") && this.state.imageAddress !== "" ? this.state.imageAddress : this.state.defaultImg),
             tab: this.state.newTab !== null ? this.state.newTab : this.state.selectedTab
         };
@@ -243,7 +243,7 @@ export class AddLink extends React.Component {
             newTab: null
         })
         this.toggleDefault(true);
-        document.getElementById("outimage").src = "arrow.png";
+        document.getElementById("outimage").src = "arrow.webp";
         document.getElementById("errmsg").style.display = "none";
         document.getElementById("titleerrmsg").style.display = "none";
     }
@@ -287,7 +287,7 @@ export class AddLink extends React.Component {
 
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg" className="imgContainer">
                         <div className="defaultImg">
-                            <img id="outimage" src="arrow.png" className="linkImgForm"></img>
+                            <img id="outimage" src="arrow.webp" className="linkImgForm"></img>
                             <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
                         </div>
                         <p className="imgLabel">Upload</p>
@@ -305,7 +305,7 @@ export class AddLink extends React.Component {
                     <button className="clearImg" id="clearimg" type="button" style={{ display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none" }} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
-                    <img type="button" src="cancel.png" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>
+                    <img type="button" src="cancel.webp" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>
                 </form>
                 <ul className="suggestionList" id="suggestiontitlelist" style={{ top: "18%" }}>
                     {

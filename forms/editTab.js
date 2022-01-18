@@ -105,8 +105,8 @@ export class EditTab extends React.Component {
                     <input className="colorPicker" id={this.state.colorpicker} onChange={e => this.setColor()} type="color"
                         value={this.state.color !== "" ? this.state.color : this.state.currTab.color}></input>
                     <div className="colorPickerWrapper" id={this.state.colorpickerwrapper} style={{ backgroundColor: this.state.color !== "" ? this.state.color : this.state.currTab.color }}></div>
-                    <button className="tabCancel" id="tabcancel2" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.png" id="tabcancelimg"></img></button>
-                    <button className="tabSubmit" id="tabsubmit2" type="submit"><img className="submitTabImg" src="checkmark.png" id="tabsubmitimg"></img></button>
+                    <button className="tabCancel" id="tabcancel2" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.webp" id="tabcancelimg"></img></button>
+                    <button className="tabSubmit" id="tabsubmit2" type="submit"><img className="submitTabImg" src="checkmark.webp" id="tabsubmitimg"></img></button>
                 </form>
             </div>
         );

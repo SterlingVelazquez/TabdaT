@@ -92,15 +92,15 @@ export class AddTab extends React.Component {
         var isLastIndex = this.state.tabIndex < Math.floor(this.state.numTabs / this.state.displayedTabs);
         return (
             <div className="addTabDiv" id="addtabdiv" style={{ display: this.state.user === "default" || isLastIndex || this.state.preferences.addTab ? "none" : "inline-table", left: isLastIndex ? "-100px" : "0", borderColor: this.state.defaultColor}}>
-                <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.png" onClick={e => this.viewTab()}></img>
+                <img className={!(this.state.preferences.addTab) ? "addTabPlus active" : "addTabPlus"} id="addtabplus" src="plus.webp" onClick={e => this.viewTab()}></img>
                 <form className="addTabForm" id="addtabform" onSubmit={this.submitForm}>
                     <p className="tabErrMsg" id="taberrmsg">Can't contain: . [ ] # $ /</p>
                     <p className="tabErrMsg" id="titletaberrmsg">Name taken</p>
                     <input className="tabInput" id="tabinput" type="text" placeholder="Name..." onChange={e => this.setName(e)} style={{color:this.state.color}} required></input>
                     <input className="colorPicker" id="colorpicker" onChange={e => this.setColor()} type="color" value={this.state.color}></input>
                     <div className="colorPickerWrapper" style={{backgroundColor: this.state.color}}></div>
-                    <button className="tabCancel" id="tabcancel" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.png" id="tabcancelimg"></img></button>
-                    <button className="tabSubmit" id="tabsubmit" type="submit"><img className="submitTabImg" src="checkmark.png" id="tabsubmitimg"></img></button>
+                    <button className="tabCancel" id="tabcancel" type="button" onClick={e => this.viewTab()}><img className="submitTabImg" src="cancel.webp" id="tabcancelimg"></img></button>
+                    <button className="tabSubmit" id="tabsubmit" type="submit"><img className="submitTabImg" src="checkmark.webp" id="tabsubmitimg"></img></button>
                 </form>
             </div>
         );

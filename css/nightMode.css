@@ -327,6 +327,9 @@
   .container.night .hotbarIconTooltip {
     color:rgb(255, 255, 255);  
   }
+  .container.night .recentPlaceholder, .container.night .popularPlaceholder {
+    color:rgba(255, 255, 255, 0.5);  
+  } 
   .container.night .hotbarLink {
     box-shadow: 4px 4px 5px rgb(0, 0, 0);
   }

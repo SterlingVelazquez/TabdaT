@@ -9,7 +9,7 @@ class ColorViewer extends React.Component {
                     this.props.night ? this.props.nightColorHex : this.props.dayColorHex)}}
                     onClick={e => this.props.toggleColorView("colorviewer" + this.props.index, "colorbutton" + this.props.index, "customcolorpicker" + this.props.index, true, false)}></button>
                 <button className="colorBtn" id={"colorbutton" + this.props.index + "a"} onClick={e => this.props.setColor(false, false, false, this.props.colorType, this.props.index, this.props.nightColorHex, this.props.dayColorHex, this.props.themeColorHex)}>
-                    <img className="colorCancel" src="cancel.png"></img></button>
+                    <img className="colorCancel" src="cancel.webp"></img></button>
                 <button className="colorBtn" id={"colorbutton" + this.props.index + "b"} onClick={e => this.props.setColor(true, false, false, this.props.colorType, this.props.index, this.props.nightColorHex, this.props.dayColorHex, this.props.themeColorHex)}>
                     <div className="colorCheck"></div></button>
                 <div className="customColorPicker" id={"customcolorpicker" + this.props.index}>
