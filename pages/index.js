@@ -345,7 +345,6 @@ class Home extends React.Component {
           break;
         }
       }
-      console.log(link.tab, this.state.selectedTab)
       while (link.tab !== this.state.selectedTab)
         await this.switchToNextTab();
       this.setState({ 
