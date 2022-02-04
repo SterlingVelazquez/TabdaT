@@ -47,10 +47,14 @@ export class Import extends React.Component {
     }
 
     selectAll() {
-        var checked = document.getElementsByClassName("bookmarkCheck");
-        for (var i = 0; i < checked.length; i++) {
-            checked[i].checked = !checked[i].checked;
-        }
+        var checkBoxes = document.getElementsByClassName("bookmarkCheck");
+        var checked = 0;
+        for (var i = 0; i < checkBoxes.length; i++)
+            if (checkBoxes[i].checked) checked++;
+
+        var isEqual = checked === checkBoxes.length;
+        for (var i = 0; i < checkBoxes.length; i++)
+            checkBoxes[i].checked = isEqual ? false : true;
     }
 
     async submitForm() {
@@ -107,6 +111,11 @@ export class Import extends React.Component {
         }
     }
 
+    switchView() {
+        document.getElementById("bookmarkbox").classList.toggle("focus");
+        document.getElementById("bookmarkbox").classList.toggle("active");
+    }
+
     closeImport() {
         document.getElementById("bookmarkbox").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
@@ -139,19 +148,25 @@ export class Import extends React.Component {
                 </div>
                 <div className="submitImportContainer" id="submitimportcontainer">
                     <div className="info" id="info" style={{ display: "none" }}></div>
-                    <h1 className="bookmarkHead" id="bookmarkhead">Choose which bookmarks to import</h1>
-                    <button className="selectAll" id="selectall" onClick={e => this.selectAll()}>Select All</button>
-                    <button className="confirmBookmark" id="confirmbookmark" onClick={e => this.submitForm()}>Confirm</button>
-                    <ul className="bookmarkList" id="bookmarklist">
-                        {
-                            this.state.bookmarks.map((each) =>
-                                <div className="itemContainer" id="itemcontainer" key={key++}>
-                                    <label className="bookmarkItem">{each.name}
-                                        <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
-                                </div>
-                            )
-                        }
-                    </ul>
+                    <h1 className="bookmarkHead" id="bookmarkhead">Choose which<br />bookmarks to import</h1>
+                    <button className="selectAll" id="selectall" style={{display: this.state.bookmarks[0] ? "inline-block" : "none"}} 
+                        onClick={e => this.selectAll()}>Select All</button>
+                    <button className="confirmBookmark" id="confirmbookmark" style={{display: this.state.bookmarks[0] ? "inline-block" : "none"}} 
+                        onClick={e => this.submitForm()}>Confirm</button>
+                    {this.state.bookmarks[0] ?
+                        <ul className="bookmarkList" id="bookmarklist">
+                            {
+                                this.state.bookmarks.map((each) =>
+                                    <div className="itemContainer" id="itemcontainer" key={key++}>
+                                        <label className="bookmarkItem">{each.name}
+                                            <input type="checkbox" className="bookmarkCheck" value={each}></input></label>
+                                    </div>
+                                )
+                            }
+                        </ul> :
+                        <p className="noBookmarks">No bookmarks in this file...</p>
+                    }
+                    <p className="backButton" id="bookmarkBackButton" onClick={e => this.switchView()}>&#8592;</p>
                     <img type="button" src="cancel.webp" className="bookmarkCancel" onClick={e => this.closeImport()}></img>
                 </div>
             </div>

@@ -243,10 +243,10 @@ export class NavBar extends React.Component {
     }
     openImportLinks() {
         document.getElementById("bookmarkbox").classList.toggle("focus");
-        if (document.getElementById("AddFormDiv").classList.contains("active"))
-            document.getElementById("AddFormDiv").classList.toggle("active");
-        else if (document.getElementById("EditFormDiv").classList.contains("active")) {
-            document.getElementById("EditFormDiv").classList.toggle("active");
+        if (document.getElementById("addLinkForm").classList.contains("active"))
+            document.getElementById("addLinkForm").classList.toggle("active");
+        else if (document.getElementById("editLinkForm").classList.contains("active")) {
+            document.getElementById("editLinkForm").classList.toggle("active");
         }
         else {
             document.getElementById("shadow").classList.toggle("active");
@@ -272,20 +272,11 @@ export class NavBar extends React.Component {
         if (this.state.preferences.buttonsColor !== this.state.oldPreferences.buttonsColor)
             this.setOptionsColor(false, false, true, "buttonsColor", 5, "313131", "C4D3E9", "XXXXXX");
 
-        if (this.state.preferences.gridWidth !== this.state.oldPreferences.gridWidth)
-            this.setOptionSizes(false, "sizeslider1", "gridWidth");
-        if (this.state.preferences.gridHeight !== this.state.oldPreferences.gridHeight)
-            this.setOptionSizes(false, "sizeslider2", "gridHeight");
-        if (this.state.preferences.linkImageSize !== this.state.oldPreferences.linkImageSize)
-            this.setOptionSizes(false, "sizeslider3", "linkImageSize");
-        if (this.state.preferences.linkTextSize !== this.state.oldPreferences.linkTextSize)
-            this.setOptionSizes(false, "sizeslider4", "linkTextSize");
-        if (this.state.preferences.tabShadowSize !== this.state.oldPreferences.tabShadowSize)
-            this.setOptionSizes(false, "sizeslider5", "tabShadowSize");
-        if (this.state.preferences.imageShadowSize !== this.state.oldPreferences.imageShadowSize)
-            this.setOptionSizes(false, "sizeslider6", "imageShadowSize");
-        if (this.state.preferences.linkShadowSize !== this.state.oldPreferences.linkShadowSize)
-            this.setOptionSizes(false, "sizeslider7", "linkShadowSize");
+        var optionSizes = ["gridWidth", "gridHeight", "linkImageSize", "linkTextSize", "tabShadowSize", "imageShadowSize", "linkShadowSize"];
+        for (var i = 0; i < optionSizes.length; i++)
+            if (this.state.preferences[optionSizes[i]] !== this.state.oldPreferences[optionSizes[i]])
+                this.setOptionSizes(false, "sizeslider" + (i + 1), [optionSizes[i]]);
+
         if (this.state.preferences.theme !== this.state.oldPreferences.theme) {
             var themePreferences = this.state.preferences;
             themePreferences.theme = this.state.oldPreferences.theme;

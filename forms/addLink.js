@@ -93,7 +93,7 @@ export class AddLink extends React.Component {
             var count = 0;
             for (var i = 0; i < this.state.suggestions.length; i++) {
                 if (event.target.value.includes(this.state.suggestions[i].url)) {
-                    this.setState({ defaultImg: this.state.suggestions[i].image })
+                    this.setState({ imageAddress: this.state.suggestions[i].image })
                     count++;
                     i = this.state.suggestions.length;
                 }
@@ -219,7 +219,7 @@ export class AddLink extends React.Component {
     }
 
     async closeAddForm() {
-        document.getElementById("AddFormDiv").classList.toggle("active");
+        document.getElementById("addLinkForm").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
         document.getElementById("addFormDiv").reset();
         if (document.activeElement.id === "addtitle") {
@@ -250,14 +250,14 @@ export class AddLink extends React.Component {
 
     render() {
         return (
-            <div className="addForm" id="AddFormDiv" onClick={e => this.closeSuggestions()}>
-                <form id="addFormDiv" onSubmit={this.submitForm}>
+            <div className="linkForm" id="addLinkForm" onClick={e => this.closeSuggestions()}>
+                <form className="linkFormDiv" id="addFormDiv" onSubmit={this.submitForm}>
                     <h1> ADD NEW LINK </h1>
 
                     <div className="selectTab" id="selecttab">
                         <div className="selectTabChosen" id="selecttabchosen" onClick={e => this.toggleTabActive(e)}>
-                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.selectedTab}
-                                <div className="selectTabArrow" id="selectTabArrow"></div></div>
+                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.selectedTab}</div>
+                            <div className="selectTabArrow" id="selectTabArrow"></div>
                         </div>
                         <div className="selectTabDrop" id="selecttabdrop">
                             <ul className="selectTabList" id="selecttablist">
@@ -278,14 +278,14 @@ export class AddLink extends React.Component {
                     <label><b>URL</b></label>
                     <input type="text" name="link" className="addURL" id="addurl" onChange={e => this.setLink(e, false)} spellCheck="false" required />
 
-                    <div id="defaultimg" onClick={e => this.toggleDefault(true)} className="imgContainer active">
+                    <div id="defaultimg" onClick={e => this.toggleDefault(true)} className={this.state.imageAddress !== "" || this.state.image ? "imgContainer" : "imgContainer active"}>
                         <div className="defaultImg">
                             <img src={this.state.defaultImg} className="linkImgForm"></img>
                         </div>
                         <p className="imgLabel">Default</p>
                     </div>
 
-                    <div onClick={e => this.toggleDefault(false)} id="uploadimg" className="imgContainer">
+                    <div onClick={e => this.toggleDefault(false)} id="uploadimg" className={this.state.image && this.state.imageAddress === "" ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">
                             <img id="outimage" src="arrow.webp" className="linkImgForm"></img>
                             <input onClick={e => this.setImage(e)} type="file" id="fileUploader" className="addFile" accept="image/*"></input>
@@ -296,35 +296,41 @@ export class AddLink extends React.Component {
                     <br />
                     <label id="orLinkText"><b>OR</b></label>
                     <br />
-                    <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
+                    <label className={this.state.imageAddress !== "" && !this.state.image ? "imageAddress active" : "imageAddress"} id="imageaddress" onClick={e => this.toggleURL()}><b>Image URL</b></label>
                     <input type="text" className="imgAddressInput" id="imageaddressinput" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
 
-                    <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox">
-                        <img src={this.state.imageAddress} style={{ display: this.state.imageAddress !== "" ? "block" : "none" }}></img>
-                    </div>
                     <button className="clearImg" id="clearimg" type="button" style={{ display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput" ? "inline" : "none" }} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img type="button" src="cancel.webp" className="addLinkCancel" onClick={e => this.closeAddForm()}></img>
                 </form>
-                <ul className="suggestionList" id="suggestiontitlelist" style={{ top: "18%" }}>
-                    {
-                        this.state.suggestedTitle.slice(0, 5).map((each) =>
-                            <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
-                                <img className="suggestionImg" src={each.image}></img>
-                            </button>
-                        )
-                    }
-                </ul>
-                <ul className="suggestionList" id="suggestionlist">
-                    {
-                        this.state.suggestedLinks.slice(0, 5).map((each) =>
-                            <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
-                                <img className="suggestionImg" src={each.image}></img>
-                            </button>
-                        )
-                    }
-                </ul>
+
+                <div className="suggestionWrapper" id="suggestiontitlewrapper">
+                    <ul className="suggestionList">
+                        {
+                            this.state.suggestedTitle.slice(0, 5).map((each) =>
+                                <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
+                </div>
+                <div className="suggestionWrapper">
+                    <ul className="suggestionList">
+                        {
+                            this.state.suggestedLinks.slice(0, 5).map((each) =>
+                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
+                </div>
+
+                <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox">
+                    <img src={this.state.imageAddress} style={{ display: this.state.imageAddress !== "" ? "block" : "none" }}></img>
+                </div>
             </div>
         );
     }

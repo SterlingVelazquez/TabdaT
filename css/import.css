@@ -13,7 +13,7 @@
     overflow-y:auto;
     overflow-x:hidden;
     pointer-events:none;
-    transition:0.5s;
+    transition:transform 0.5s, opacity 0.5s;
     transform:scale(1.6) translate(-100%, -50%);
     transform-origin:50% 0%;
     z-index:11;
@@ -121,7 +121,19 @@
     color:rgba(99, 109, 126, 0.8);
     height:auto;
     width:auto;
-    text-align:left;
+    text-align:center;
+}
+.backButton {
+    position:absolute;
+    top:8px; left:10px;
+    font-size:25px;
+    transition:transform 0.3s;
+    padding:0 10px;
+    cursor:pointer;
+    color: rgb(143, 151, 174);
+}
+.backButton:hover {
+    transform:scale(1.2);
 }
 .bookmarkCancel {
     position:absolute;
@@ -133,7 +145,7 @@
     padding:20px;
 }
 .bookmarkCancel:hover {
-    transform:scale(1.4);
+    transform:scale(1.2);
 }
 .selectAll, .confirmBookmark {
     width:50%;
@@ -159,7 +171,6 @@
     color:rgb(89, 98, 114);
     border-bottom: thin solid rgba(99, 109, 126, 0.8);
     text-align:left;
-    transition:0.5s;
 }
 .bookmarkCheck {
     position:absolute;
@@ -174,7 +185,6 @@
     list-style:none;
     margin-left:10%;
     cursor:pointer;
-    transition:0.3s;
     font-size:14px;
 }
 .itemContainer:hover .bookmarkItem {
@@ -182,4 +192,20 @@
 }
 .bookmarkBox.active .submitImportContainer {
     display:block;
+}
+.noBookmarks {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    font-size:21px; 
+    opacity:0.4;
+}
+
+@media (max-width: 580px) {
+    .bookmarkBox {
+        transform:scale(1.2) translate(-100%, -50%);
+    }
+    .bookmarkBox.focus, .bookmarkBox.active {
+        transform:scale(1.2) translate(calc(-50% + 29px), -50%);
+    }
 }

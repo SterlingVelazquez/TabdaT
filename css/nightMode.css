@@ -285,10 +285,10 @@
     color: rgb(113, 154, 207);
   }
   .container.night .themeGrid::-webkit-scrollbar-track {
-    background: rgb(119, 119, 119);
+    background:none;
   }
   .container.night .themeGrid::-webkit-scrollbar-thumb {
-    background: rgb(20, 20, 20);
+    background-color: rgb(15, 15, 15);
   }
 
   .container.night .saveBox, .container.night .resetPreferences  {
@@ -423,14 +423,17 @@
     box-shadow:0px 0px 5px white;
   }
 
-  .container.night .addForm {
+  .container.night .linkFormDiv {
     background-color: rgb(34, 34, 34);
     box-shadow: 0px 0px 20px rgb(0, 0, 0);
   }
-  .container.night #addFormDiv::-webkit-scrollbar-thumb {
+  .container.night .linkFormDiv::-webkit-scrollbar-track {
+    background:none;
+  }
+  .container.night .linkFormDiv::-webkit-scrollbar-thumb {
     background-color: #0f0f0f;
   }
-  .container.night .addForm h1 {
+  .container.night .linkFormDiv h1 {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 10px black;
   }
@@ -440,41 +443,41 @@
   }
   .container.night .selectTabChosen:hover .selectTabText{ color:rgb(175, 189, 201) }
   .container.night .selectTabArrow {
-      border-bottom:2px solid rgba(248, 248, 248, 0.781);
-      border-right:2px solid rgba(248, 248, 248, 0.781);
+    border-bottom:2px solid rgba(248, 248, 248, 0.781);
+    border-right:2px solid rgba(248, 248, 248, 0.781);
   }
   .container.night .selectTabChosen:hover .selectTabArrow {
-      border-bottom:2px solid rgb(175, 189, 201);
-      border-right:2px solid rgb(175, 189, 201);
+    border-bottom:2px solid rgb(175, 189, 201);
+    border-right:2px solid rgb(175, 189, 201);
   }
   .container.night .selectTab.active .selectTabChosen:hover .selectTabArrow {
-      border-bottom:2px solid rgb(175, 189, 201);
-      border-right:2px solid rgb(175, 189, 201);
+    border-bottom:2px solid rgb(175, 189, 201);
+    border-right:2px solid rgb(175, 189, 201);
   }
   .container.night .selectTabList {
-      background-color: rgb(51, 51, 51);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.623);
+    background-color: rgb(51, 51, 51);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.623);
   }
   .container.night .selectTabItem {
-      color:rgba(248, 248, 248, 0.781);
-      border-bottom:thin solid rgb(98, 98, 98);
+    color:rgba(248, 248, 248, 0.781);
+    border-bottom:thin solid rgb(98, 98, 98);
   }
   .container.night .selectTab.active .selectTabItem:hover {
-      color:rgb(160, 160, 160);
+    color:rgb(160, 160, 160);
   }
   .container.night .selectTabList::-webkit-scrollbar-track {
-      background:rgb(75, 75, 75);
+    background:rgb(75, 75, 75);
   }
   .container.night .selectTabList::-webkit-scrollbar-thumb {
-      background:rgb(29, 29, 29);
+    background:rgb(29, 29, 29);
   }
 
-  .container.night .addForm input[type=text] {
+  .container.night .linkFormDiv input[type=text] {
     border-bottom:1px solid rgba(248, 248, 248, 0.781);
     color:rgba(248, 248, 248, 0.781);
   }
 
-  .container.night .addForm label {
+  .container.night .linkFormDiv label {
     color:rgba(248, 248, 248, 0.781);
     text-shadow:0 0 4px black;
   }
@@ -504,12 +507,12 @@
     margin-left:21rem;
     opacity:1;
   }
-  .container.night .addForm button.submit {
+  .container.night .linkFormDiv button.submit {
     background: rgba(248, 248, 248, 0.781);
     color: rgb(68, 75, 87);
     box-shadow:0px 0px 10px rgba(0, 0, 0, 0.781);
   }
-  .container.night .addForm button.submit:hover {
+  .container.night .linkFormDiv button.submit:hover {
     background: rgba(250, 250, 250, 0.781);
     letter-spacing:1px;
     color: rgb(26, 51, 122);
@@ -519,9 +522,9 @@
     filter:contrast(0);
   }
 
-  .container.night .suggestionList {
+  .container.night .suggestionWrapper {
     background-color: rgb(34, 34, 34);
-    box-shadow:0px 0px 15px rgb(46, 46, 46);
+    box-shadow:0px 0px 10px rgb(0, 0, 0);
   }
   .container.night  .suggestionLink {
       color:rgb(206, 206, 206);
@@ -560,6 +563,9 @@
   }
   .container.night .openFileButton {
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.356), -4px -4px 4px rgb(32, 32, 32);
+  }
+  .container.night .bookmarkCancel {
+    filter: brightness(2) opacity(0.8);
   }
 
   .container.night .selectAll {

@@ -1,16 +1,17 @@
 import React from 'react';
 import { database } from "../tools/database.js";
 
-var key=0;
+var key = 0;
 
 export class EditLink extends React.Component {
     constructor(props) {
         super(props);
         if (this.props.currLink.name !== "") {
             this.state = {
-                name : this.props.currLink.name, 
-                link : this.props.currLink.link, 
-                image : this.props.currLink.image,
+                name: this.props.currLink.name,
+                link: this.props.currLink.link,
+                image: this.props.currLink.image,
+                tab: this.props.currLink.tab,
                 defaultImg: this.props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                 imageAddress: "",
                 suggestions: this.props.suggestions,
@@ -19,13 +20,14 @@ export class EditLink extends React.Component {
                 tabs: this.props.tabs,
                 currTab: this.props.currTab,
                 newTab: null,
-                allLinks : this.props.allLinks
+                allLinks: this.props.allLinks
             };
         } else {
             this.state = {
-                name : "",
-                link : "",
-                image : "",
+                name: "",
+                link: "",
+                image: "",
+                tab: "",
                 defaultImg: "ultafedIgm/doggo.png",
                 imageAddress: "",
                 suggestions: this.props.suggestions,
@@ -34,7 +36,7 @@ export class EditLink extends React.Component {
                 tabs: this.props.tabs,
                 currTab: this.props.currTab,
                 newTab: null,
-                allLinks : this.props.allLinks,
+                allLinks: this.props.allLinks,
                 suggestions: props.suggestions,
             }
         }
@@ -47,36 +49,39 @@ export class EditLink extends React.Component {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
+                    tab: props.currLink.tab,
                     image: "arrow.webp",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
                     tabs: props.tabs,
                     currTab: props.currTab,
-                    allLinks : props.allLinks,
+                    allLinks: props.allLinks,
                     suggestions: props.suggestions,
                 }
             } else if (typeof props.currLink.ref !== "undefined") {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
+                    tab: props.currLink.tab,
                     image: props.currLink.image,
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: "",
                     tabs: props.tabs,
                     currTab: props.currTab,
-                    allLinks : props.allLinks,
+                    allLinks: props.allLinks,
                     suggestions: props.suggestions,
                 }
             } else {
                 return {
                     name: props.currLink.name,
                     link: props.currLink.link,
+                    tab: props.currLink.tab,
                     image: "arrow.webp",
                     defaultImg: props.currLink.name.charAt(0).match(/[A-Z]/i) ? "ultafedIgm/" + props.currLink.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                     imageAddress: props.currLink.image,
                     tabs: props.tabs,
                     currTab: props.currTab,
-                    allLinks : props.allLinks,
+                    allLinks: props.allLinks,
                     suggestions: props.suggestions,
                 }
             }
@@ -86,8 +91,8 @@ export class EditLink extends React.Component {
 
     async setName(event, isDefault) {
         event.persist();
-        if (this.state.suggestedLinks.length > 0) 
-            this.setState({suggestedLinks: []})
+        if (this.state.suggestedLinks.length > 0)
+            this.setState({ suggestedLinks: [] })
         if (!isDefault) {
             var count = 0;
             if (event.target.value !== "" && event.target.value.charAt(0).match(/[A-Z]/i) && this.state.defaultImg.includes("ultafedIgm/")) {
@@ -137,20 +142,20 @@ export class EditLink extends React.Component {
         }
     }
     async setLink(event, isDefault) {
-        if (this.state.suggestedTitle.length > 0) 
-            this.setState({suggestedTitle: []})
+        if (this.state.suggestedTitle.length > 0)
+            this.setState({ suggestedTitle: [] })
         if (!isDefault) {
             var count = 0;
             for (var i = 0; i < this.state.suggestions.length; i++) {
                 if (event.target.value.includes(this.state.suggestions[i].url)) {
-                    this.setState({defaultImg: this.state.suggestions[i].image})
+                    this.setState({ imageAddress: this.state.suggestions[i].image })
                     count++;
                     i = this.state.suggestions.length;
                 }
             }
             if (count === 0) {
                 this.setState({
-                    defaultImg: this.state.name !== null && this.state.name.charAt(0).match(/[A-Z]/i) ? 
+                    defaultImg: this.state.name !== null && this.state.name.charAt(0).match(/[A-Z]/i) ?
                         "ultafedIgm/" + this.state.name.charAt(0).toUpperCase() + ".png" : "ultafedIgm/doggo.png",
                 })
             }
@@ -177,7 +182,7 @@ export class EditLink extends React.Component {
                 reader.onload = function () {
                     document.getElementById("outimage2").src = reader.result;
                 }
-                this.setState({image: files[0]})
+                this.setState({ image: files[0] })
                 reader.readAsDataURL(files[0])
                 if (!document.getElementById("uploadimg2").className.includes("active"))
                     this.toggleDefault(false);
@@ -185,12 +190,12 @@ export class EditLink extends React.Component {
         })
     }
     setImageAddress(event) {
-        this.setState({imageAddress: event.target.value})
+        this.setState({ imageAddress: event.target.value })
         this.toggleURL();
     }
     setNewTab(tabName) {
         if (tabName !== this.state.newTab)
-            this.setState({newTab: tabName})
+            this.setState({ newTab: tabName })
     }
 
     toggleDefault(isDefault) {
@@ -222,11 +227,11 @@ export class EditLink extends React.Component {
     }
     toggleTabActive(e) {
         e.stopPropagation();
-        document.getElementById("selecttab2").classList.toggle("active") 
+        document.getElementById("selecttab2").classList.toggle("active")
     }
     clearImg() {
         document.getElementById("imageaddressinput2").value = "";
-        this.setState({imageAddress: ""});
+        this.setState({ imageAddress: "" });
         this.toggleDefault(true);
     }
     closeSuggestions() {
@@ -242,8 +247,8 @@ export class EditLink extends React.Component {
         event.preventDefault();
         if (this.state.name === this.props.currLink.name && this.state.link === this.props.currLink.link && (this.state.newTab === this.props.currLink.tab || this.state.newTab === null) &&
             ((document.getElementById("defaultimg2").className.includes("active") && this.state.defaultImg === this.props.currLink.image) ||
-                (document.getElementById("uploadimg2").className.includes("active") && this.state.image === this.props.currLink.image) || 
-                    (document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress === this.props.currLink.image))) {
+                (document.getElementById("uploadimg2").className.includes("active") && this.state.image === this.props.currLink.image) ||
+                (document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress === this.props.currLink.image))) {
             this.closeEditForm();
         } else {
             var newLink = {
@@ -251,7 +256,7 @@ export class EditLink extends React.Component {
                 link: this.state.link,
                 image: document.getElementById("uploadimg2").className.includes("active") && this.state.image !== "arrow.webp" ? this.state.image : (
                     document.getElementById("imageaddress2").className.includes("active") && this.state.imageAddress !== "" ? this.state.imageAddress : this.state.defaultImg),
-                tab: this.state.newTab !== null ? this.state.newTab : this.state.currTab
+                tab: this.state.newTab !== null ? this.state.newTab : this.state.tab
             };
             if (!(newLink.link.includes("https://")) && !(newLink.link.includes("http://")))
                 newLink.link = "http://" + newLink.link;
@@ -279,7 +284,7 @@ export class EditLink extends React.Component {
 
     async closeEditForm() {
         this.props.editLink("", true)
-        document.getElementById("EditFormDiv").classList.toggle("active");
+        document.getElementById("editLinkForm").classList.toggle("active");
         document.getElementById("shadow").classList.toggle("active");
         document.getElementById("editFormDiv").reset();
         if (document.activeElement.id === "edittitle") {
@@ -296,6 +301,7 @@ export class EditLink extends React.Component {
             name: "",
             link: "",
             image: "",
+            tab: "",
             defaultImg: "ultafedIgm/doggo.png",
             imageAddress: "",
             suggestedTitle: [],
@@ -306,21 +312,21 @@ export class EditLink extends React.Component {
         document.getElementById("titleerrmsg2").style.display = "none";
     }
 
-    render () {
+    render() {
         return (
-            <div className="addForm" id="EditFormDiv" onClick={e => this.closeSuggestions()}>
-                <form id="editFormDiv" onSubmit={this.submitForm}>
+            <div className="linkForm" id="editLinkForm" onClick={e => this.closeSuggestions()}>
+                <form className="linkFormDiv" id="editFormDiv" onSubmit={this.submitForm}>
                     <h1> EDIT LINK </h1>
 
                     <div className="selectTab" id="selecttab2">
                         <div className="selectTabChosen" id="selecttabchosen" onClick={e => this.toggleTabActive(e)}>
-                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.currTab}
-                            <div className="selectTabArrow" id="selectTabArrow"></div></div>
+                            <div className="selectTabText" id="selecttabtext">{this.state.newTab !== null ? this.state.newTab : this.state.tab}</div>
+                            <div className="selectTabArrow" id="selectTabArrow"></div>
                         </div>
                         <div className="selectTabDrop" id="selecttabdrop">
                             <ul className="selectTabList" id="selecttablist">
                                 {
-                                    this.state.tabs.map((each) => 
+                                    this.state.tabs.map((each) =>
                                         <li className="selectTabItem" onClick={e => this.setNewTab(each.name)} key={key++}>{each.name}</li>
                                     )
                                 }
@@ -329,32 +335,12 @@ export class EditLink extends React.Component {
                     </div>
 
                     <label><b>Title</b></label>
-                    <input type="text" name="linkName" id="edittitle" defaultValue={this.state.name} onChange={e =>this.setName(e)} spellCheck="false" required/>
+                    <input type="text" name="linkName" id="edittitle" defaultValue={this.state.name} onChange={e => this.setName(e)} spellCheck="false" required />
                     <p className="errMsg" id="errmsg2">Can't contain: . [ ] # $ /</p>
-                    <p className="errMsg" id="titleerrmsg2" style={{right:"1rem"}}>You've already used that name</p>
-
-                    <ul className="suggestionList" id="suggestiontitlelist2" style={{top:"18%"}}>
-                        {
-                            this.state.suggestedTitle.slice(0, 5).map( (each) => 
-                                <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
-                                    <img className="suggestionImg" src={each.image}></img>
-                                </button>
-                            )
-                        }
-                    </ul>
+                    <p className="errMsg" id="titleerrmsg2" style={{ right: "1rem" }}>You've already used that name</p>
 
                     <label><b>URL</b></label>
-                    <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e, false)} spellCheck="false" required/>
-                    
-                    <ul className="suggestionList" id="suggestionlist2">
-                        {
-                            this.state.suggestedLinks.slice(0, 5).map( (each) => 
-                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
-                                    <img className="suggestionImg" src={each.image}></img>
-                                </button>
-                            )
-                        }
-                    </ul>
+                    <input type="text" name="link" id="editurl" defaultValue={this.state.link} onChange={e => this.setLink(e, false)} spellCheck="false" required />
 
                     <div id="defaultimg2" onClick={e => this.toggleDefault(true)} className={this.state.defaultImg === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">
@@ -365,26 +351,51 @@ export class EditLink extends React.Component {
 
                     <div onClick={e => this.toggleDefault(false)} id="uploadimg2" className={this.state.image === this.props.currLink.image ? "imgContainer active" : "imgContainer"}>
                         <div className="defaultImg">
-                            <img id="outimage2" src={this.state.image} className="linkImgForm"></img>
+                            <img id="outimage2" src={!this.state.image ? "arrow.webp" : this.state.image} className="linkImgForm"></img>
                             <input onClick={e => this.setImage(e)} type="file" id="fileUploader2" className="addFile" accept="image/*"></input>
                         </div>
                         <p className="imgLabel">Upload</p>
                     </div>
 
-                    <br/>
+                    <br />
                     <label id="orLinkTextEdit"><b>OR</b></label>
-                    <br/>
+                    <br />
                     <label className={this.state.imageAddress !== "" ? "imageAddress active" : "imageAddress"} id="imageaddress2" onClick={e => this.toggleURL()}><b>Image URL</b></label>
                     <input type="text" className="imgAddressInput" id="imageaddressinput2" name="link" defaultValue={this.state.imageAddress} onChange={e => this.setImageAddress(e)} spellCheck="false"></input>
 
-                    <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox2">
-                        <img src={this.state.imageAddress} style={{display:this.state.imageAddress !== "" ? "block" : "none"}}></img>
-                    </div>
-                    <button className="clearImg" id="clearimg2" type="button" style={{display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput2" ? "inline" : "none"}} onClick={e => this.clearImg()}>Clear</button>
+                    <button className="clearImg" id="clearimg2" type="button" style={{ display: this.state.imageAddress !== "" && document.activeElement.id === "imageaddressinput2" ? "inline" : "none" }} onClick={e => this.clearImg()}>Clear</button>
 
                     <button type="submit" className="submit"><b>SUBMIT</b></button>
                     <img type="button" src="cancel.webp" className="addLinkCancel" onClick={e => this.closeEditForm()}></img>
                 </form>
+
+                <div className="suggestionWrapper" id="suggestiontitlewrapper2">
+                    <ul className="suggestionList">
+                        {
+                            this.state.suggestedTitle.slice(0, 5).map((each) =>
+                                <button className="suggestionTitle" key={key++} value={each} onClick={e => this.setName(e, each)} onSubmit={e => this.setName(e, each)}>{each.name}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
+                </div>
+
+                <div className="suggestionWrapper">
+                    <ul className="suggestionList">
+                        {
+                            this.state.suggestedLinks.slice(0, 5).map((each) =>
+                                <button className="suggestionLink" key={key++} value={each} onClick={e => this.setLink(e, each)} onSubmit={e => this.setLink(e, each)}>{each.url}
+                                    <img className="suggestionImg" src={each.image}></img>
+                                </button>
+                            )
+                        }
+                    </ul>
+                </div>
+
+                <div className={this.state.imageAddress !== "" ? "previewBox active" : "previewBox"} id="previewbox2">
+                    <img src={this.state.imageAddress} style={{ display: this.state.imageAddress !== "" ? "block" : "none" }}></img>
+                </div>
             </div>
         );
     }

@@ -16,32 +16,11 @@ var provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({
   prompt: 'select_account'
 });
+
 var key = 0;
 var resize
 var doneLoading = false;
 var firstLoad = true;
-const defaultPreferences = {
-  addLink: false,
-  addTab: false,
-  buttonsColor: false,
-  editBtn: false,
-  gridWidth: 20,
-  gridHeight: 20,
-  imageShadowColor: false,
-  imageShadowSize: 20,
-  linkImageSize: 50,
-  linkShadowColor: false,
-  linkShadowSize: 35,
-  linkText: false,
-  linkTextColor: false,
-  linkTextSize: 50,
-  night: false,
-  removeBtn: false,
-  tabArrows: false,
-  tabShadowSize: 1,
-  tabTextShadowColor: false,
-  theme: false,
-}
 
 class Home extends React.Component {
 
@@ -67,6 +46,7 @@ class Home extends React.Component {
       bookmarks: [],
       preferences: [],
       oldPreferences: [],
+      defaultPreferences: [],
       suggestions: [],
       themes: [],
       currTab: {
@@ -77,6 +57,7 @@ class Home extends React.Component {
         name: "",
         link: "",
         image: "",
+        tab: ""
       }
     };
     this.tabCallback = this.tabCallback.bind(this);
@@ -99,7 +80,8 @@ class Home extends React.Component {
   async UNSAFE_componentWillMount() {
     firebase.auth().onAuthStateChanged(async function (user) {
       await this.get(user);
-      if (firstLoad) document.getElementById("title").classList.toggle("hide");
+      if (firstLoad)
+        document.getElementById("title").classList.toggle("hide");
       firstLoad = false;
       this.getKeyPresses();
       this.getResizeTabs();
@@ -108,6 +90,7 @@ class Home extends React.Component {
 
   async get(user) {
     var uid = user ? user.uid : "default";
+    var defaultPreferences = await database.getDefaultPreferences();
     var preferences = await database.getPreferences(uid, defaultPreferences);
     var tabs = await database.getTabs(uid);
     var allLinks = await database.getAllLinks(uid);
@@ -117,6 +100,7 @@ class Home extends React.Component {
       uid: uid,
       preferences: preferences,
       oldPreferences: JSON.parse(JSON.stringify(preferences)),
+      defaultPreferences: defaultPreferences,
       tabs: tabs,
       numTabs: 550 + (preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (preferences.gridWidth * 20)) / 220),
       selectedTab: tabs.length !== 0 ? tabs[0].name : "",
@@ -147,15 +131,8 @@ class Home extends React.Component {
       document.getElementById("savebox").classList.toggle("active");
     if (document.getElementById("profilewrapper").className.includes("active"))
       document.getElementById("profilewrapper").classList.toggle("active");
-    this.setState({
-      user: "default",
-      uid: "default",
-    })
     await firebase.auth().signOut();
-    this.setPreferences({ preferences: JSON.parse(JSON.stringify(defaultPreferences)) });
     this.get();
-    if (document.getElementById("container").className.includes("night"))
-      this.toggleNightMode();
   }
 
   async spinAnimation() {
@@ -227,7 +204,7 @@ class Home extends React.Component {
       document.getElementById("leftarrow").classList.toggle("hide");
       document.getElementById("rightarrow").classList.toggle("hide");
     }
-    if (JSON.stringify(this.state.preferences) !== JSON.stringify(defaultPreferences))
+    if (JSON.stringify(this.state.preferences) !== JSON.stringify(this.state.defaultPreferences))
       document.getElementById("resetbox").classList.toggle("active");
   }
   async setPreferences(pref) {
@@ -250,13 +227,18 @@ class Home extends React.Component {
   }
 
   async setInputText(event) {
-    this.setState({ inputText: event.target.value }, async function () {
-      if (this.state.inputText !== '') {
-        this.setState({ links: await database.stringSearch(this.state.inputText, JSON.parse(JSON.stringify(this.state.allLinks)), 0.75, false) });
-      } else {
-        this.setState({ links: await this.getLinks(this.state.selectedTab) })
-      }
-    });
+    var name = event.target ? event.target.value : event;
+    if (name !== '') {
+      this.setState({ 
+        inputText: name,
+        links: await database.stringSearch(name, JSON.parse(JSON.stringify(this.state.allLinks)), 0.75, false) 
+      });
+    } else {
+      this.setState({ 
+        inputText: name,
+        links: await this.getLinks(this.state.selectedTab) 
+      })
+    }
   }
 
   async updateTabs(e, each) {
@@ -265,7 +247,6 @@ class Home extends React.Component {
       this.setState({
         selectedTab: await each.name,
         links: await this.getLinks(each.name),
-        linkIndex: 0,
       });
       this.spinAnimation();
     }
@@ -303,8 +284,10 @@ class Home extends React.Component {
     await database.addLinks([link], this.state.uid);
     var newLinks = this.state.allLinks;
     newLinks.push(link);
-    this.setState({ allLinks: newLinks })
-    this.setState({ links: await this.getLinks(this.state.selectedTab) })
+    this.setState({ 
+      allLinks: newLinks,
+      links: await this.getLinks(this.state.selectedTab, newLinks) 
+    })
     this.spinAnimation();
     document.getElementById("uploadlinkloader").classList.toggle("active");
   }
@@ -315,13 +298,12 @@ class Home extends React.Component {
     var newArr = this.state.allLinks;
     for (var i = 0; i < links.length; i++)
       newArr.push(links[i])
-    this.setState({
-      allLinks: newArr,
-      linkIndex: 0
-    })
     while (this.state.selectedTab !== "My Bookmarks")
       await this.switchToNextTab();
-    this.setState({ links: await this.getLinks("My Bookmarks") })
+    this.setState({
+      allLinks: newArr,
+      links: await this.getLinks("My Bookmarks", newArr)
+    })
     this.spinAnimation();
     document.getElementById("uploadlinkloader").classList.toggle("active");
   }
@@ -348,6 +330,7 @@ class Home extends React.Component {
           name: "",
           link: "",
           image: "",
+          tab: ""
         }
       })
     } else {
@@ -362,8 +345,13 @@ class Home extends React.Component {
           break;
         }
       }
-      this.setState({ allLinks: newLinks });
-      this.setState({ links: await this.getLinks(this.state.selectedTab) });
+      console.log(link.tab, this.state.selectedTab)
+      while (link.tab !== this.state.selectedTab)
+        await this.switchToNextTab();
+      this.setState({ 
+        allLinks: newLinks,
+        links: await this.getLinks(this.state.selectedTab, newLinks) 
+      });
       document.getElementById("uploadlinkloader").classList.toggle("active");
     }
   }
@@ -387,8 +375,8 @@ class Home extends React.Component {
       tabs: newTabs,
       selectedTab: tab.name,
       allLinks: allLinks,
+      links: await this.getLinks(tab.name, allLinks)
     })
-    this.setState({ links: await this.getLinks(tab.name) });
   }
 
   eraseActive() {
@@ -457,20 +445,19 @@ class Home extends React.Component {
         tabs.splice(j, 1);
         break;
       }
-    this.setState({
-      tabs: tabs,
-      allLinks: links
-    })
     if (this.state.tabToErase === this.state.selectedTab && this.state.tabs.length > 0) {
       this.setState({
-        linkIndex: 0,
+        tabs: tabs,
+        allLinks: links,
         tabIndex: 0,
-        selectedTab: this.state.tabs[0].name,
-        links: await this.getLinks(this.state.tabs[0].name)
+        selectedTab: tabs[0].name,
+        links: await this.getLinks(tabs[0].name, links)
       })
     } else {
       this.setState({
-        links: await this.getLinks(this.state.selectedTab)
+        tabs: tabs,
+        allLinks: links,
+        links: await this.getLinks(this.state.selectedTab, links)
       })
     }
     this.confirmTabBox(e, null)
@@ -536,11 +523,13 @@ class Home extends React.Component {
             var elem = newArr.splice(i, 1)[0];
             elem.pos = this.state.links[0].pos - 1;
             newArr.unshift(elem);
-            this.setState({ allLinks: newArr })
+            this.setState({ 
+              allLinks: newArr,
+              links: await this.getLinks(this.state.selectedTab, newArr)
+            })
             break;
           }
         }
-        this.setState({ links: await this.getLinks(this.state.selectedTab) })
         this.spinAnimation();
       } else if (!moveFront && name !== this.state.links[this.state.links.length - 1].name) {
         firebase.database().ref(this.state.uid + '/Links/' + name).update({ pos: this.state.links[this.state.links.length - 1].pos + 1 })
@@ -550,11 +539,13 @@ class Home extends React.Component {
             var elem = newArr.splice(i, 1)[0];
             elem.pos = this.state.links[this.state.links.length - 1].pos + 1;
             newArr.push(elem);
-            this.setState({ allLinks: newArr })
+            this.setState({ 
+              allLinks: newArr,
+              links: await this.getLinks(this.state.selectedTab, newArr)
+            })
             break;
           }
         }
-        this.setState({ links: await this.getLinks(this.state.selectedTab) })
         this.spinAnimation();
       }
     }
@@ -569,11 +560,13 @@ class Home extends React.Component {
         if (name === this.state.allLinks[i].name) {
           var update = this.state.allLinks;
           update[i].tab = newTab;
-          this.setState({ allLinks: update })
+          this.setState({ 
+            allLinks: update,
+            links: await this.getLinks(this.state.selectedTab, update)
+          })
           break;
         }
       }
-      this.setState({ links: await this.getLinks(this.state.selectedTab) })
       this.spinAnimation();
     }
   }
@@ -588,7 +581,6 @@ class Home extends React.Component {
     if (result === max) {
       if (this.state.tabs.length % this.state.numTabs === 0 && this.state.preferences.addTab) {
         this.setState({
-          linkIndex: 0,
           tabIndex: 0,
           selectedTab: this.state.tabs[0].name,
           links: await this.getLinks(this.state.tabs[0].name)
@@ -597,7 +589,6 @@ class Home extends React.Component {
         if (this.state.tabs.length % this.state.numTabs === 0)
           document.getElementById("confirmerase").className = "modBoxConfirm";
         this.setState({
-          linkIndex: 0,
           tabIndex: max,
           selectedTab: this.state.tabs.length % this.state.numTabs === 0 ? [] : this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name,
           links: this.state.tabs.length % this.state.numTabs === 0 ? await this.getLinks([]) : await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name)
@@ -606,7 +597,6 @@ class Home extends React.Component {
     } else if (result === -1) {
       if (this.state.tabs.length % this.state.numTabs === 0 && this.state.preferences.addTab) {
         this.setState({
-          linkIndex: 0,
           tabIndex: max - 1,
           selectedTab: this.state.tabs[this.state.tabs.length - this.state.numTabs].name,
           links: await this.getLinks(this.state.tabs[this.state.tabs.length - this.state.numTabs].name)
@@ -615,7 +605,6 @@ class Home extends React.Component {
         if (this.state.tabs.length % this.state.numTabs === 0)
           document.getElementById("confirmerase").className = "modBoxConfirm";
         this.setState({
-          linkIndex: 0,
           tabIndex: max,
           selectedTab: this.state.tabs.length % this.state.numTabs === 0 ? [] : this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name,
           links: this.state.tabs.length % this.state.numTabs === 0 ? await this.getLinks([]) : await this.getLinks(this.state.tabs[this.state.tabs.length - (this.state.tabs.length % this.state.numTabs)].name)
@@ -623,7 +612,6 @@ class Home extends React.Component {
       }
     } else {
       this.setState({
-        linkIndex: 0,
         tabIndex: result,
         selectedTab: this.state.tabs[result * this.state.numTabs].name,
         links: await this.getLinks(this.state.tabs[result * this.state.numTabs].name)
@@ -639,7 +627,6 @@ class Home extends React.Component {
       if (this.state.tabs[i].name === this.state.selectedTab) {
         if (i === this.state.tabs.length - 1) {
           this.setState({
-            linkIndex: 0,
             tabIndex: 0,
             selectedTab: this.state.tabs[0].name,
             links: await this.getLinks(this.state.tabs[0].name)
@@ -648,7 +635,6 @@ class Home extends React.Component {
           this.changeTabs(1)
         } else {
           this.setState({
-            linkIndex: 0,
             selectedTab: this.state.tabs[i + 1].name,
             links: await this.getLinks(this.state.tabs[i + 1].name)
           })
@@ -664,21 +650,18 @@ class Home extends React.Component {
       if (this.state.tabs[i].name === this.state.selectedTab) {
         if (i === 0) {
           this.setState({
-            linkIndex: 0,
             tabIndex: this.state.tabs.length % this.state.numTabs !== 0 ? Math.floor(this.state.tabs.length / this.state.numTabs) : Math.floor(this.state.tabs.length / this.state.numTabs) - 1,
             selectedTab: this.state.tabs[this.state.tabs.length - 1].name,
             links: await this.getLinks(this.state.tabs[this.state.tabs.length - 1].name)
           })
         } else if (i % this.state.numTabs === 0) {
           this.setState({
-            linkIndex: 0,
             tabIndex: this.state.tabIndex - 1,
             selectedTab: this.state.tabs[i - 1].name,
             links: await this.getLinks(this.state.tabs[i - 1].name)
           })
         } else {
           this.setState({
-            linkIndex: 0,
             selectedTab: this.state.tabs[i - 1].name,
             links: await this.getLinks(this.state.tabs[i - 1].name)
           })
@@ -781,7 +764,7 @@ class Home extends React.Component {
 
               <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
                 oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
-                defaultPreferences={defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
+                defaultPreferences={this.state.defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
 
               <Hotbar uid={this.state.uid} trendingLinks={this.state.trendingLinks} popularLinks={this.state.popularLinks} recentLinks={this.state.recentLinks} updateShortcutCount={this.updateShortcutCount.bind(this)} 
                 signIn={this.signIn.bind(this)}></Hotbar>
@@ -971,7 +954,7 @@ class Home extends React.Component {
         this.editActive();
       else if (document.getElementById("buttonnav").className.includes("erase"))
         this.eraseActive();
-      document.getElementById("AddFormDiv").classList.toggle("active");
+      document.getElementById("addLinkForm").classList.toggle("active");
       document.getElementById("shadow").classList.toggle("active");
     }
   }
@@ -979,7 +962,7 @@ class Home extends React.Component {
     if (this.state.user !== "default") {
       e.preventDefault();
       this.setState({ selectedLink: link });
-      document.getElementById("EditFormDiv").classList.toggle("active");
+      document.getElementById("editLinkForm").classList.toggle("active");
       document.getElementById("shadow").classList.toggle("active");
     }
   }
@@ -1079,7 +1062,7 @@ class Home extends React.Component {
               break;
             case 27: // esc
               if (document.getElementById("searchbar").value !== "") {
-                this.setState({ links: await this.getLinks(this.state.selectedTab) })
+                this.setInputText('');
                 document.getElementById("searchbar").value = "";
               }
               document.getElementById("searchbar").blur();
@@ -1136,7 +1119,7 @@ class Home extends React.Component {
                 this.switchToPreviousTab();
               break;
           }
-        } else if (document.getElementById("AddFormDiv").className.includes("active")) {
+        } else if (document.getElementById("addLinkForm").className.includes("active")) {
           if (document.activeElement.id === "addtitle" || document.activeElement.id === "addurl")
             this.setState({
               suggestedIndex: -1,
@@ -1152,14 +1135,6 @@ class Home extends React.Component {
               } else {
                 document.getElementById("addurl").blur();
               }
-              break;
-            case 27: // esc
-              if (document.activeElement.id === "addtitle") {
-                document.getElementById("addtitle").blur();
-              } else if (document.activeElement.id === "addurl") {
-                document.getElementById("addurl").blur();
-              }
-              this.openAddLink();
               break;
             case 38: // up arrow
               if ((document.activeElement.id === "addurl" || document.activeElement.className === "suggestionLink") && document.getElementById("addurl").value !== "")
@@ -1178,7 +1153,7 @@ class Home extends React.Component {
                 this.openAddLink();
               break;
           }
-        } else if (document.getElementById("EditFormDiv").className.includes("active")) {
+        } else if (document.getElementById("editLinkForm").className.includes("active")) {
           if (document.activeElement.id === "edittitle" || document.activeElement.id === "editurl")
             this.setState({
               suggestedIndex: -1,
@@ -1194,14 +1169,6 @@ class Home extends React.Component {
               } else {
                 document.getElementById("editurl").blur();
               }
-              break;
-            case 27: // esc
-              if (document.activeElement.id === "edittitle") {
-                document.getElementById("edittitle").blur();
-              } else if (document.activeElement.id === "editurl") {
-                document.getElementById("editurl").blur();
-              }
-              this.openEditForm(e, this.selectedLink);
               break;
             case 38: // up arrow
               if ((document.activeElement.id === "editurl" || document.activeElement.className === "suggestionLink") && document.getElementById("editurl").value !== "")

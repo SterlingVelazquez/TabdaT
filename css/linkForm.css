@@ -1,4 +1,7 @@
-.addForm {
+.linkForm {
+    pointer-events:none;
+}
+.linkFormDiv {
     position: fixed;
     text-align:center;
     padding-top:0px;
@@ -7,44 +10,42 @@
     height:60%; max-height:570px;
     left: calc(50% - 170px);
     top:50%;
+    overflow-y:auto;
     background-color: rgb(246, 247, 253);
     box-shadow: 0px 0px 20px rgb(114, 114, 114);
-    z-index: 11;
     border-radius: 10px;
     transition:transform 0.5s, opacity 0.5s;
+    opacity:0;
     transform:scale(1.4) translateY(-100%);
     transform-origin:50% 0%;
-    opacity:0;
-    pointer-events:none;
     font-family:'Noto Sans JP', sans-serif;
+    z-index:9;
 }
-.addForm.active {
+.linkForm.active {
     pointer-events:all;
+}
+.linkForm.active .linkFormDiv {
+    opacity:1;
     transform:scale(1.4) translateY(-50%);
-    opacity: 1;
 }
 
-#addFormDiv {
-    height:100%; width:100%;
-    overflow-y:auto;
-}
-#addFormDiv::-webkit-scrollbar {
+.linkFormDiv::-webkit-scrollbar {
     width:10px; 
     background:none;
 }
-#addFormDiv::-webkit-scrollbar-track {
+.linkFormDiv::-webkit-scrollbar-track {
     background:none;
     background-clip: padding-box;
     border-radius: 9999px;
     background-color: none;
 }
-#addFormDiv::-webkit-scrollbar-thumb {
+.linkFormDiv::-webkit-scrollbar-thumb {
     border: 2.5px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
     border-radius: 9999px;
     background-color: #c4d3e9;
 }
-.addForm h1 {
+.linkFormDiv h1 {
     padding-top:25px;
     margin-bottom:10px;
     font-size:30px;
@@ -57,34 +58,32 @@
     top:0;
     left:0;
     width:100%;
+    text-align:center;
 }
 .selectTabChosen {
     position:relative;
-    display:flex;
-    width:80%;
-    left:10%;
-    overflow:hidden;
+    width:auto;
+    display:inline-block;
     cursor:pointer;
 }
 .selectTabText {
     position:relative;
-    margin:auto;
+    display:inline-block;
     font-size:15px;
-    top:0;
-    height:25px;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    height:25px; max-width:200px;
     white-space:nowrap;
     text-overflow: ellipsis;
+    overflow:hidden;
     color:rgb(109, 116, 133);
 }
 .selectTabChosen:hover .selectTabText{color:rgb(91, 120, 146)}
 .selectTabArrow {
     position:relative;
-    text-align:left;
-    display:inline-table;
-    width:8px;
-    height:8px;
-    top:-4px;
-    left:12px;
+    display:inline-block;
+    width:8px; height:8px;
+    top:-13px; left:16px;
     border-bottom:2px solid rgb(132, 140, 160);
     border-right:2px solid rgb(132, 140, 160);
     transform:rotateZ(45deg);
@@ -159,23 +158,23 @@
 .addLinkCancel {
     position:absolute;
     top:6px;
-    right:8px;
+    right:0px;
     box-shadow:none;
     padding:13px;
     width:44px;
     height:auto;
 }
 .addLinkCancel:hover {
-    transform:scale(1.3);
+    transform:scale(1);
 }
 
-.addForm label {
+.linkFormDiv label {
     color:rgb(141, 152, 172);
     margin-left: 8%;
     float:left;
     letter-spacing:0.5px;
 }
-.addForm input[type=text] {
+.linkFormDiv input[type=text] {
     width: 83%;
     padding: 8px;
     margin:auto;
@@ -186,7 +185,7 @@
     font-size: large;
     color:rgba(86, 95, 110, 0.8);
 }
-.addForm input:focus {
+.linkFormDiv input:focus {
     outline:none;
 }
 .errMsg {
@@ -199,14 +198,26 @@
     font-size:13px;
     pointer-events:none;
 }
-.suggestionList {
-    position:absolute;
+
+.suggestionWrapper {
+    position:fixed;
+    pointer-events:none;
+    top:clamp(440px, 50%, 1000px); left:50%; 
+    transform:translate(-50%, -50%);
+    margin: -80px 0 0 450px;
+    width:380px;
     background-color: rgb(246, 247, 253);
-    left:105%;
-    top:35%;
-    width:80%;
     border-radius:10px;
-    z-index:1;
+    transition:opacity 0.5s, transform 0.5s;
+    opacity:0;
+    z-index:9;
+}
+.linkForm.active .suggestionWrapper {
+    pointer-events:all;
+    opacity:1;
+}
+#suggestiontitlewrapper, #suggestiontitlewrapper2 {
+    margin-top:-200px;
 }
 .suggestionLink,
 .suggestionTitle {
@@ -216,9 +227,10 @@
     line-height:40px;
     color:rgb(89, 96, 109);
     border-bottom: thin solid rgba(141, 152, 172, 0.328);
-    padding: 6px 0;
+    padding: 14px 0;
     padding-right:45px;
     width:90%;
+    font-size:21px;
     text-overflow:ellipsis;
     white-space: nowrap;
     overflow:hidden;
@@ -235,14 +247,13 @@
     display:inline-table;
     float:right;
     box-shadow:none;
-    width:30px;
-    height:30px;
-    margin-top:5px;
+    width:40px;
+    height:40px;
     right:3px;
 }
 .suggestionTitle:hover .suggestionImg,
 .suggestionLink:hover .suggestionImg {
-    transform:scale(1.2);
+    transform:scale(1.1);
 }
 
 .imgContainer {
@@ -308,7 +319,7 @@
     margin:auto;
 }
 
-.addForm button.submit {
+.linkFormDiv button.submit {
     position:relative;
     top:0px;
     background: rgb(246, 247, 253);
@@ -319,17 +330,17 @@
     padding: 6px 18px;
     font-family:'Noto Sans JP', sans-serif;
     font-size: 14px;
-    transition:color 0.5s, padding 0.5s;
+    transition:color 0.5s, padding 0.5s, letter-spacing 0.5s;
     margin-bottom:20px;
 }
 
-.addForm button.submit:hover {
+.linkFormDiv button.submit:hover {
     color: rgb(26, 51, 122);
     cursor:pointer;
     padding:6px 100px;
 }
 
-.addForm button.submit:focus {
+.linkFormDiv button.submit:focus {
     outline:none;
 }
 
@@ -355,23 +366,29 @@
 
 .previewBox {
     position:fixed;
-    width:90px;
-    height:90px;
+    width:120px;
+    height:120px;
     background-color: rgb(246, 247, 253);
     box-shadow: 0 0 10px rgb(246, 247, 253);
     border-radius:10px;
-    margin-left:410px;
-    top:72%;
+    margin-left:300px;
+    top:64%; left:50%;
+    transform:translateX(0px);
     opacity:0;
     transition:transform 0.5s, opacity 0.5s;
-    z-index:-1;
+    z-index:9;
+    pointer-events:none;
+}
+.linkForm.active .previewBox {
+    transform:translateX(-45px);
 }
 .previewBox img {
+    height:100%; width:100%;
     box-shadow:none;
     opacity:0;
 }
 .previewBox.active {
-    transform:translateX(-55px);
+    transform:translateX(-45px);
     opacity:1;
 }
 .previewBox.active img {
@@ -388,7 +405,7 @@
 
 .addFile:active::before {
     background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
-  }
+}
 
 @keyframes moveArrow {
     0% {
@@ -418,6 +435,28 @@
     }
 }
 
+@media (max-width: 1300px) {
+    .suggestionWrapper {
+        width:260px;
+        margin-left:385px;
+    }
+    .suggestionLink,
+    .suggestionTitle {
+        padding-right:5px;
+        width:90%;
+        font-size:21px;
+    }
+    .suggestionImg {
+        display:none;
+    }
+}
+
+@media (max-width: 1040px) {
+    .suggestionList {
+        display:none;
+    }
+}
+
 @media (max-width:790px) {
     .previewBox {
         display:none;
@@ -430,12 +469,24 @@
     }
 }
 
-@media (max-width:400px) {
-    .addForm {
+@media (max-height:540px) {
+    .suggestionLink {
+        display:none;
+    }
+}
+
+@media (max-height:440px) {
+    .suggestionTitle {
+        display:none;
+    }
+}
+
+@media (max-width:450px) {
+    .linkFormDiv {
         height:100%; max-height:570px;
         transform:scale(0.9) translateY(-100%);
     }
-    .addForm.active {
+    .linkForm.active .linkFormDiv {
         transform:scale(0.9) translateY(-50%);
     }
 

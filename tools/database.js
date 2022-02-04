@@ -7,59 +7,21 @@ class Database {
         var preferences = [];
         await firebase.database().ref(user + '/Preferences').once('value').then(async function (snapshot) {
             if (snapshot.exists()) {
-                preferences.push({
-                    addLink: snapshot.val()["addLink"],
-                    addTab: snapshot.val()["addTab"],
-                    buttonsColor: snapshot.val()["buttonsColor"],
-                    editBtn: snapshot.val()["editBtn"],
-                    gridWidth: snapshot.val()["gridWidth"],
-                    gridHeight: snapshot.val()["gridHeight"],
-                    imageShadowColor: snapshot.val()["imageShadowColor"],
-                    imageShadowSize: snapshot.val()["imageShadowSize"],
-                    linkImageSize: snapshot.val()["linkImageSize"],
-                    linkShadowColor: snapshot.val()["linkShadowColor"],
-                    linkShadowSize: snapshot.val()["linkShadowSize"],
-                    linkText: snapshot.val()["linkText"],
-                    linkTextColor: snapshot.val()["linkTextColor"],
-                    linkTextSize: snapshot.val()["linkTextSize"],
-                    night: snapshot.val()["night"],
-                    removeBtn: snapshot.val()["removeBtn"],
-                    tabArrows: snapshot.val()["tabArrows"],
-                    tabShadowSize: snapshot.val()["tabShadowSize"],
-                    tabTextShadowColor: snapshot.val()["tabTextShadowColor"],
-                    theme: snapshot.val()["theme"],
-                })
+                preferences = snapshot.toJSON();
             } else {
-                preferences.push({
-                    addLink: false,
-                    addTab: false,
-                    buttonsColor: false,
-                    editBtn: false,
-                    gridWidth: 20,
-                    gridHeight: 20,
-                    imageShadowColor: false,
-                    imageShadowSize: 20,
-                    linkImageSize: 50,
-                    linkShadowColor: false,
-                    linkShadowSize: 35,
-                    linkText: false,
-                    linkTextColor: false,
-                    linkTextSize: 50,
-                    night: false,
-                    removeBtn: false,
-                    tabArrows: false,
-                    tabShadowSize: 1,
-                    tabTextShadowColor: false,
-                    theme: false,
-                })
-                if (user !== "default")
-                    firebase.database().ref(user + '/Preferences').set(preferences[0]);
+                preferences = defaults;
+                firebase.database().ref(user + '/Preferences').set(defaults);
             }
         })
-        for (var key in preferences[0])
-            if (!preferences[0][key])
-                preferences[0][key] = defaults[key];
-        return preferences[0];
+        return preferences;
+    }
+
+    async getDefaultPreferences() {
+        var preferences = [];
+        await firebase.database().ref('default/Preferences').once('value').then(async function (snapshot) {
+            preferences = snapshot.toJSON();
+        })
+        return preferences;
     }
 
     async setPreferences(upload, preferences, oldPreferences, user) {
@@ -83,11 +45,7 @@ class Database {
         var suggestions = [];
         await firebase.database().ref('default/Suggestions').once('value').then(async function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                suggestions.push({
-                    name: childSnapshot.val()["name"],
-                    url: childSnapshot.val()["url"],
-                    image: childSnapshot.val()["image"],
-                })
+                suggestions.push(childSnapshot.toJSON())
             })
         })
         return suggestions;
@@ -97,10 +55,7 @@ class Database {
         var themes = [];
         await firebase.database().ref('default/Themes').once('value').then(async function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                themes.push({
-                    name: childSnapshot.val()["name"],
-                    image: childSnapshot.val()["image"],
-                })
+                themes.push(childSnapshot.toJSON())
             })
         })
         return themes;
@@ -110,11 +65,7 @@ class Database {
         var tabs = [];
         await firebase.database().ref(user + '/Tabs').orderByChild("pos").once('value').then(async function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                tabs.push({
-                    name: childSnapshot.val()["name"],
-                    color: childSnapshot.val()["color"],
-                    pos: childSnapshot.val()["pos"]
-                })
+                tabs.push(childSnapshot.toJSON())
             })
         })
         return tabs;
@@ -131,15 +82,7 @@ class Database {
         if (!isEmpty) {
             await firebase.database().ref(user + '/Links').orderByChild("pos").once('value').then(async function (snapshot) {
                 snapshot.forEach(function (childSnapshot) {
-                    links.push({
-                        name: childSnapshot.val()["name"],
-                        link: childSnapshot.val()["link"],
-                        image: childSnapshot.val()["image"],
-                        tab: childSnapshot.val()["tab"],
-                        pos: childSnapshot.val()["pos"],
-                        clicks: childSnapshot.val()["clicks"],
-                        time: childSnapshot.val()["time"]
-                    })
+                    links.push(childSnapshot.toJSON())
                 })
             })
         }
@@ -150,12 +93,7 @@ class Database {
         var links = [];
         await firebase.database().ref('default/Trending').orderByChild("pos").once('value').then(async function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                links.push({
-                    name: childSnapshot.val()["name"],
-                    link: childSnapshot.val()["link"],
-                    image: childSnapshot.val()["image"],
-                    pos: childSnapshot.val()["pos"],
-                })
+                links.push(childSnapshot.toJSON())
             })
         })
         return links;
@@ -253,10 +191,7 @@ class Database {
         var links = [];
         firebase.database().ref(uid + '/Links').orderByChild("tab").equalTo(tab).once('value').then(async function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                links.push({
-                    name: childSnapshot.val()["name"],
-                    image: childSnapshot.val()["image"]
-                })
+                links.push(childSnapshot.toJSON())
             })
         })
         for (var i = 0; i < links.length; i++) {

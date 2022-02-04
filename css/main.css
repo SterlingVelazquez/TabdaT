@@ -27,21 +27,6 @@
     text-align:center;
     background:rgb(232, 238, 247);
   }
-  /* body::-webkit-scrollbar {
-    width:20px; 
-    background:rgb(232, 238, 247);
-  }
-  body::-webkit-scrollbar-track {
-    background:rgb(232, 238, 247);
-    background-clip: padding-box;
-    background-color: rgb(196, 211, 233);
-  }
-  body::-webkit-scrollbar-thumb {
-    border: 5px solid rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-    border-radius: 9999px;
-    background-color: white;
-  } */
 
   .theme {
     display:none;
@@ -743,7 +728,7 @@
     position:fixed;
     width:250px;
     height:auto;
-    top:-20%;
+    top:50%;
     left:calc(50% - 125px);
     background-color: rgb(246, 247, 253);
     box-shadow: 0 0 10px rgb(246, 247, 253);
@@ -753,12 +738,12 @@
     transition:opacity 0.5s, top 0.5s;
     opacity:0;
     pointer-events:none;
-    transform:scale(1.5);
+    transform:scale(1.5) translateY(-100%);
   }
   .tabEraseConfirm.active {
     opacity:1;
     pointer-events:all;
-    top:calc(50% - 100px);
+    transform:scale(1.5) translateY(-50%);
   }
   .tabEraseConfirmBox {
     display:block;
@@ -1069,4 +1054,28 @@
     .titleLoader {
       transform: translateX(-50%) scale(0.8);
     }
+
+    .tabEraseConfirm {
+      transform:scale(1.2) translateY(-100%);
+    }
+    .tabEraseConfirm.active {
+      transform:scale(1.2) translateY(-50%);
+    }
   }
+
+
+  /* body::-webkit-scrollbar {
+    width:17px; 
+    background:rgb(232, 238, 247);
+  }
+  body::-webkit-scrollbar-track {
+    background:rgb(232, 238, 247);
+    background-clip: padding-box;
+    background-color: rgb(196, 211, 233);
+  }
+  body::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: white;
+  } */
