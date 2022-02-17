@@ -766,9 +766,9 @@
     color:rgb(241, 241, 241);
     text-shadow:0 0 4px black;
   }
-  .linkContextMenuEraseCancel {
+  .container.themes .linkContextMenuEraseCancel {
     filter:brightness(2) drop-shadow(0 0 4px rgba(0, 0, 0, 0.507));
   }
-  .linkContextMenuCheckmark {
+  .container.themes .linkContextMenuCheckmark {
     filter:brightness(2) drop-shadow(0 0 4px rgba(0, 0, 0, 0.507));
   }
