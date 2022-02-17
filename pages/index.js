@@ -251,6 +251,7 @@ class Home extends React.Component {
   }
 
   async updateTabs(e, each) {
+    document.getElementById("linkcontextmenu").style.display = "none";
     e.stopPropagation();
     if (each.name !== this.state.selectedTab) {
       this.setState({
