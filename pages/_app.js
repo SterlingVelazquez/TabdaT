@@ -10,6 +10,7 @@ import '../css/themes.css'
 import '../css/profile.css'
 import '../css/globals.css'
 import '../css/hotbar.css'
+import '../css/contextMenu.css'
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {

@@ -10,6 +10,8 @@ import { EditTab } from "../forms/editTab.js"
 import { Import } from "../forms/import.js"
 import { NavBar } from "../forms/navBar.js"
 import { Hotbar } from "../react/hotbar.js"
+import { LinkContextMenu } from "../react/linkContextMenu.js"
+import { TabContextMenu } from "../react/tabContextMenu.js"
 import "./_app.js"
 
 var provider = new firebase.auth.GoogleAuthProvider();
@@ -48,6 +50,7 @@ class Home extends React.Component {
       oldPreferences: [],
       defaultPreferences: [],
       suggestions: [],
+      rightClick: null,
       themes: [],
       currTab: {
         name: "",
@@ -67,6 +70,7 @@ class Home extends React.Component {
     this.editTabCallback = this.editTabCallback.bind(this);
     this.editActive = this.editActive.bind(this);
     this.eraseActive = this.eraseActive.bind(this);
+    this.eraseLink = this.eraseLink.bind(this);
     this.openAddTab = this.openAddTab.bind(this);
     this.checkAddTab = this.checkAddTab.bind(this);
     this.closeActiveEdit = this.closeActiveEdit.bind(this);
@@ -84,7 +88,7 @@ class Home extends React.Component {
         document.getElementById("title").classList.toggle("hide");
       firstLoad = false;
       this.getKeyPresses();
-      this.getResizeTabs();
+      this.eventListeners();
     }.bind(this))
   }
 
@@ -115,6 +119,7 @@ class Home extends React.Component {
   }
 
   async signIn() {
+    document.getElementById("linkcontextmenu").style.display = "none";
     firebase.auth().signInWithPopup(provider).then((user) => {
       if (user) this.get(user.user)
     })
@@ -127,6 +132,7 @@ class Home extends React.Component {
       this.eraseActive();
     else if (document.getElementById("buttonnav").className.includes("edit"))
       this.editActive();
+    document.getElementById("linkcontextmenu").style.display = "none";
     if (document.getElementById("savebox").className.includes("active"))
       document.getElementById("savebox").classList.toggle("active");
     if (document.getElementById("profilewrapper").className.includes("active"))
@@ -137,8 +143,11 @@ class Home extends React.Component {
 
   async spinAnimation() {
     var links = document.getElementsByClassName("linkBox");
-    for (var i = 0; i < links.length; i++)
-      links[i].classList.toggle("active")
+    for (var i = 0; i < links.length; i++) {
+      links[i].className = "linkBox";
+      void links[i].offsetWidth;
+      links[i].className = "linkBox active";
+    }
   }
 
   async getLinks(selectedTab, allLinks) {
@@ -147,7 +156,7 @@ class Home extends React.Component {
     var links = [];
     for (var i = 0; i < allLinks.length; i++) {
       if (selectedTab === allLinks[i].tab)
-        links.push(allLinks[i])
+        links.push(allLinks[i]);
     }
     return links;
   }
@@ -155,16 +164,16 @@ class Home extends React.Component {
   async getShortcutLinks(isPopular, allLinks) {
     var shortcutLinks = [];
     var newLinks = allLinks.slice(0);
+    newLinks = isPopular ? newLinks.filter(link => link.time) : newLinks.filter(link => link.clicks);
     newLinks.sort(function (a, b) {
       return isPopular ? b.clicks - a.clicks : b.time - a.time
     })
     for (var i = 0; i < newLinks.length && shortcutLinks.length < 5; i++) {
       if (isPopular) {
-        if (typeof newLinks[i].clicks !== "undefined" && newLinks[i].clicks !== 0)
-          shortcutLinks.push(newLinks[i])
+        if (newLinks[i].clicks !== 0)
+          shortcutLinks.push(newLinks[i]);
       } else {
-        if (typeof newLinks[i].time !== "undefined")
-          shortcutLinks.push(newLinks[i])
+          shortcutLinks.push(newLinks[i]);
       }
     }
     return shortcutLinks;
@@ -390,6 +399,23 @@ class Home extends React.Component {
     } else {
       document.getElementById("trashimg").src = "trash.webp"
     }
+  }
+
+  async eraseLink(link) {
+    document.getElementById("deletelinkloader").style.display = "block";
+    await database.eraseLinks(this.state.uid, [link]);
+    var newArr = this.state.allLinks;
+    for (var j = 0; j < this.state.allLinks.length; j++)
+      if (link.name === this.state.allLinks[j].name) {
+        newArr.splice(j, 1);
+        break;
+      }
+    this.setState({
+      allLinks: newArr,
+      links: await this.getLinks(this.state.selectedTab, newArr)
+    })
+    this.spinAnimation();
+    document.getElementById("deletelinkloader").style.display = "none";
   }
 
   async confirmErase() {
@@ -671,9 +697,23 @@ class Home extends React.Component {
     this.spinAnimation();
   }
 
-  linkContext(e, name) {
-    // e.preventDefault();
-    // console.log(name);
+  tabContextMenu(e, elem) {
+    e.preventDefault();
+    this.setState({ rightClick: elem });
+  }
+  linkContextMenu(e, elem) {
+    e.preventDefault();
+    this.setState({ rightClick: elem });
+    var distance = window.innerWidth - e.clientX;
+    if (distance < 196 && distance > window.innerWidth - 196)
+      document.getElementById("linkcontextmenuwrapper").style.left = (e.clientX - 98) + "px";
+    else if (distance < 196)
+      document.getElementById("linkcontextmenuwrapper").style.left = (e.clientX - 196) + "px";
+    else  
+      document.getElementById("linkcontextmenuwrapper").style.left = e.clientX + "px";
+    document.getElementById("linkcontextmenuwrapper").style.top = e.clientY + "px";
+    document.getElementById("linkcontextmenuwrapper").className = "linkContextMenuWrapper";
+    document.getElementById("linkcontextmenu").style.display = "block";
   }
 
   changeSuggestion(num, isAdd) {
@@ -761,6 +801,9 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
 
+              <LinkContextMenu uid={this.state.uid} link={this.state.rightClick} preferences={this.state.preferences} editLink={this.openEditForm.bind(this)} eraseLink={this.eraseLink.bind(this)}></LinkContextMenu>
+              <TabContextMenu uid={this.state.uid} rightClick={this.state.rightClick} preferences={this.state.preferences}></TabContextMenu>
+
               <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}
                 oldPreferences={this.state.oldPreferences} savePreferences={this.savePreferences.bind(this)} uid={this.state.uid} editActive={this.editActive.bind(this)} eraseActive={this.eraseActive.bind(this)}
                 defaultPreferences={this.state.defaultPreferences} checkAddTab={this.checkAddTab.bind(this)} numTabs={this.state.tabs.length} displayedTabs={this.state.numTabs} themes={this.state.themes} />
@@ -785,7 +828,7 @@ class Home extends React.Component {
                             textShadow: this.state.preferences.tabTextShadowColor ? '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + ' #' + this.state.preferences.tabTextShadowColor :
                               '0 0 ' + (-1 + (this.state.preferences.tabShadowSize * 0.1) + "px") + (this.state.preferences.theme ? "transparent" : this.state.preferences.night ? "#000000" : "#808080")
                           }}
-                            key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()}
+                            key={key++} onClick={e => this.updateTabs(e, each)} onDrop={e => this.switchTabs(e, each.name)} onDragOver={e => e.preventDefault()} onContextMenu={e => this.tabContextMenu(e, each)}
                           // draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.tabDragStart(e, each)}
                           //onDragEnd={e => this.dropTabActive()}
                           >
@@ -825,7 +868,7 @@ class Home extends React.Component {
                     this.state.links.map((each) =>
                       <a className="linkBox" style={{ textDecoration: "none", width: 100 + (this.state.preferences.linkImageSize * 1.5) + "px" }}
                         target="_blank" rel="noopener noreferrer" href={each.link} draggable={this.state.user !== "default" ? "true" : "false"} onDragStart={e => this.linkDragStart(e, each)}
-                        onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)} onContextMenu={e => this.linkContext(e, each.name)}>
+                        onDragEnd={e => this.dropLinkActive()} onClick={e => this.updateShortcutCount(each.name)} onContextMenu={e => this.linkContextMenu(e, each)}>
                         <label className="eraseLabel"><input className="linkCheckBox" type="checkbox" value={each.name} name={each.image}></input></label>
                         <div className="editDiv" id="editdiv" value={each} onClick={e => this.openEditForm(e, each)}>
                           <img src={each.image} key={key++} className="linkImg" draggable={false} style={{
@@ -1048,6 +1091,7 @@ class Home extends React.Component {
 
   getKeyPresses() {
     document.addEventListener("keydown", async function (e) {
+      document.getElementById("linkcontextmenu").style.display = "none";
       if (this.state.user !== "default" && document.activeElement.id === "" && e.keyCode === 78) // N
         this.toggleNightMode();
       if (!e.altKey && this.state.user !== "default") {
@@ -1250,15 +1294,22 @@ class Home extends React.Component {
     }.bind(this))
   }
 
-  getResizeTabs() {
+  eventListeners() {
+    window.addEventListener("click", async function (e) {
+      document.getElementById("linkcontextmenu").style.display = "none";
+    }.bind(this))
+
     window.addEventListener("resize", async function (e) {
+      document.getElementById("linkcontextmenu").style.display = "none";
       clearTimeout(resize);
       resize = setTimeout(this.doResize(), 100);
     }.bind(this))
   }
+
   doResize() {
     this.setState({ numTabs: 550 + (this.state.preferences.gridWidth * 20) > window.innerWidth * 0.8 ? Math.floor(window.innerWidth * 0.8 / 220) : Math.floor((550 + (this.state.preferences.gridWidth * 20)) / 220) });
   }
+
 }
 
 /*

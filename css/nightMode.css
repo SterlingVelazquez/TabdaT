@@ -604,3 +604,20 @@
   .container.night .openFileButton {
     color: rgba(248, 248, 248, 0.781);
   }
+
+  .container.night .linkContextMenuWrapper {
+    background:rgb(19, 19, 19);
+    box-shadow: 4px 4px 10px rgb(32, 32, 32), -4px -4px 10px rgb(0, 0, 0);
+  }
+  .container.night .linkContextMenuButton {
+    box-shadow: 3px 3px 10px rgb(32, 32, 32), -3px -3px 10px rgb(0, 0, 0);
+  }
+  .container.night .linkContextMenuOptionText, .linkContextMenuButtonText {
+    color:rgb(204, 204, 204);
+  }
+  .container.night .linkContextMenuDivider {
+    background-color:rgb(204, 204, 204);
+  }
+  .container.night .linkContextMenuEraseHeader {
+    color:rgb(204, 204, 204);
+  }

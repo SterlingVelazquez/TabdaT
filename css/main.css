@@ -469,9 +469,6 @@
     z-index:1;
     pointer-events:all;
   }
-  .linkBox.active {
-    animation:linkRotateIn 0.4s;
-  }
   .linkBox.focus {
     animation:linkRotateOut 0.4s;
   }
