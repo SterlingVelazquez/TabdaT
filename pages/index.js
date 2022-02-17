@@ -801,7 +801,8 @@ class Home extends React.Component {
                 <div className="cancelBar"></div>
               </div>
 
-              <LinkContextMenu uid={this.state.uid} link={this.state.rightClick} preferences={this.state.preferences} editLink={this.openEditForm.bind(this)} eraseLink={this.eraseLink.bind(this)}></LinkContextMenu>
+              <LinkContextMenu uid={this.state.uid} link={this.state.rightClick} preferences={this.state.preferences} editLink={this.openEditForm.bind(this)} eraseLink={this.eraseLink.bind(this)} 
+                updateShortcutCount={this.updateShortcutCount.bind(this)}></LinkContextMenu>
               <TabContextMenu uid={this.state.uid} rightClick={this.state.rightClick} preferences={this.state.preferences}></TabContextMenu>
 
               <NavBar signIn={this.signIn.bind(this)} toggleNightMode={this.toggleNightMode.bind(this)} setPreferences={this.setPreferences.bind(this)} user={this.state.user} preferences={this.state.preferences}

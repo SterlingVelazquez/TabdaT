@@ -24,7 +24,11 @@ export class LinkContextMenu extends React.Component {
         document.getElementById("linkcontextmenuwrapper").classList.toggle("erase");
     }
     openWindow(link) {
-        window.open(link, '_blank','location=1, status=1, scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1');
+        this.props.updateShortcutCount(link.name);
+        window.open(link.link, '_blank','location=1, status=1, scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1');
+    }
+    openImage(link) {
+        window.open(link);
     }
     copyToClipboard(text) {
         navigator.clipboard.writeText(text);
@@ -49,10 +53,10 @@ export class LinkContextMenu extends React.Component {
 
                         <div className="linkContextMenuOptions">
                             <div className="linkContextMenuOption">
-                                <p className="linkContextMenuOptionText" onClick={e => this.openWindow(this.state.link.link)}>Open in New Window</p>
+                                <p className="linkContextMenuOptionText" onClick={e => this.openWindow(this.state.link)}>Open in New Window</p>
                             </div>
                             <div className="linkContextMenuOption">
-                                <p className="linkContextMenuOptionText" onClick={e => this.openWindow(this.state.link.image)}>Open Image in New Tab</p>
+                                <p className="linkContextMenuOptionText" onClick={e => this.openImage(this.state.link.image)}>Open Image in New Tab</p>
                             </div>
                         </div>
 
