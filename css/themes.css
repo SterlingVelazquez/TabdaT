@@ -754,7 +754,7 @@
     box-shadow:none;
     background:rgba(255, 255, 255, 0.178);
   }
-  .container.themes .linkContextMenuOptionText, .linkContextMenuButtonText {
+  .container.themes .linkContextMenuOptionText, .container.themes .linkContextMenuButtonText {
     color:rgb(241, 241, 241);
     text-shadow:0 0 4px rgba(0, 0, 0, 0.705);
   }
